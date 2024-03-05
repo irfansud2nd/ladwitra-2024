@@ -28,7 +28,7 @@ const AtletDialog = () => {
       <DialogTrigger asChild>
         <Button>Tambah Atlet</Button>
       </DialogTrigger>
-      <DialogContent className="w-fit max-w-[100vw] max-h-[98vh] overflow-auto">
+      <DialogContent className="w-fit max-w-[100vw] max-h-[90vh] overflow-auto pb-2">
         <AtletForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>
