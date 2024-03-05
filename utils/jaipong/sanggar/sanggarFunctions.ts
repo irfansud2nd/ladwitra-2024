@@ -72,7 +72,7 @@ export const managePersonOnSanggar = async (
     data = {
       ...data,
       nomorTarian: data.nomorTarian - penari.nomorTarian,
-      tagihan: (sanggar.tagihan = getBiayaPenari(penari)),
+      tagihan: sanggar.tagihan - getBiayaPenari(penari),
     };
   }
   return axios

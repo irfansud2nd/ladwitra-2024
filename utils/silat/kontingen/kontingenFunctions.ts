@@ -14,7 +14,7 @@ import { collection, doc } from "firebase/firestore";
 import { toast } from "sonner";
 import { OfficialState } from "../official/officialConstants";
 import { AtletState, biayaAtlet } from "../atlet/atletConstats";
-import { ResetForm, SetSubmitting } from "@/utils/form/FormConstants";
+import { SetSubmitting } from "@/utils/form/FormConstants";
 import { deletePersons, updatePersons } from "@/utils/form/FormFunctions";
 import { toastFirebaseError } from "@/utils/functions";
 
@@ -61,7 +61,7 @@ export const managePersonOnKontingen = async (
           [tipe]: [...kontingen[tipe]].filter((item) => item != personId),
         };
 
-  if (atlet && tipe == "atlets") {
+  if (atlet && action == "delete") {
     data = {
       ...kontingen,
       nomorPertandingan: kontingen.nomorPertandingan - atlet.nomorPertandingan,
