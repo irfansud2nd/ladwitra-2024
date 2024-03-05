@@ -107,7 +107,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
     >
       {(props: FormikProps<UnregisteredAtletState>) => (
         <Form className="grid grid-rows-[1fr_auto] gap-y-1">
-          <div className="flex gap-1 flex-wrap justify-center *:input_group">
+          <div className="flex gap-1 flex-col sm:flex-row justify-center *:input_group">
             <div>
               <InputSelect
                 label="Atlet"

@@ -125,7 +125,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
     >
       {(props: FormikProps<UnregisteredPenariState>) => (
         <Form className="grid grid-rows-[1fr_auto] gap-y-1">
-          <div className="flex gap-1 flex-wrap justify-center *:input_group *:justify-normal">
+          <div className="flex gap-1 flex-col sm:flex-row justify-center *:input_group *:justify-normal">
             <div>
               <InputSelect
                 label="Penari"

@@ -94,7 +94,7 @@ const AtletForm = ({ setOpen }: Props) => {
         setForm(props.setFieldValue, props.values, atletToEdit);
         return (
           <Form className="grid grid-rows-[1fr_auto] gap-y-1">
-            <div className="flex gap-1 flex-wrap justify-center min-[830px]:flex-nowrap *:input_group">
+            <div className="flex gap-1 flex-col sm:flex-row justify-center min-[830px]:flex-nowrap *:input_group">
               <div>
                 <InputFile
                   label="Pas Foto"

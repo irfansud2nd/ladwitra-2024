@@ -90,8 +90,8 @@ const OfficialForm = ({ setOpen }: Props) => {
       {(props: FormikProps<OfficialState>) => {
         setForm(props.setFieldValue, props.values, officialToEdit);
         return (
-          <Form className="grid grid-rows-[1fr_auto]">
-            <div className="flex gap-1 flex-wrap">
+          <Form className="grid grid-rows-[1fr_auto] gap-y-1">
+            <div className="flex gap-1 flex-col sm:flex-row">
               <InputFile
                 label="Pas Foto"
                 name="fotoFile"

@@ -28,7 +28,7 @@ const PenariDialog = () => {
       <DialogTrigger asChild>
         <Button>Tambah Penari</Button>
       </DialogTrigger>
-      <DialogContent className="w-fit max-w-[100vw] max-h-screen overflow-auto">
+      <DialogContent className="w-fit max-w-[100vw] max-h-[98vh] overflow-auto">
         <PenariForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>
