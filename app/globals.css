@@ -67,7 +67,7 @@
     @apply flex flex-col gap-1 max-w-[250px] w-[250px];
   }
   .input_group {
-    @apply h-full flex flex-col gap-1 justify-between;
+    @apply h-full flex flex-col gap-1 sm:justify-between;
   }
 
   /* INPUT FILE */
