@@ -49,21 +49,20 @@ export const managePersonOnKontingen = async (
   }
 ) => {
   const atlet = options?.atlet;
+  console.log("managePersonOnKontingen", tipe, personId, action);
 
-  let data: KontingenState =
-    action == "add"
-      ? {
-          ...kontingen,
-          [tipe]: [...kontingen[tipe], personId],
-        }
-      : {
-          ...kontingen,
-          [tipe]: [...kontingen[tipe]].filter((item) => item != personId),
-        };
+  let data: KontingenState = { ...kontingen };
+  if (action == "add")
+    data = { ...data, [tipe]: [...kontingen[tipe], personId] };
+  if (action == "delete")
+    data = {
+      ...data,
+      [tipe]: [...kontingen[tipe]].filter((item) => item != personId),
+    };
 
   if (atlet && action == "delete") {
     data = {
-      ...kontingen,
+      ...data,
       nomorPertandingan: kontingen.nomorPertandingan - atlet.nomorPertandingan,
       tagihan: kontingen.tagihan - atlet.nomorPertandingan * biayaAtlet,
     };

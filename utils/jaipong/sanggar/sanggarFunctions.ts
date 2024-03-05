@@ -57,16 +57,14 @@ export const managePersonOnSanggar = async (
   }
 ) => {
   const penari = options?.penari;
-  let data: SanggarState =
-    action == "add"
-      ? {
-          ...sanggar,
-          [tipe]: [...sanggar[tipe], personId],
-        }
-      : {
-          ...sanggar,
-          [tipe]: [...sanggar[tipe]].filter((item) => item != personId),
-        };
+  let data: SanggarState = { ...sanggar };
+  if (action == "add") data = { ...data, [tipe]: [...sanggar[tipe], personId] };
+
+  if (action == "delete")
+    data = {
+      ...data,
+      [tipe]: [...sanggar[tipe]].filter((item) => item != personId),
+    };
 
   if (penari && action == "delete") {
     data = {
@@ -75,6 +73,7 @@ export const managePersonOnSanggar = async (
       tagihan: sanggar.tagihan - getBiayaPenari(penari),
     };
   }
+
   return axios
     .patch("/api/sanggars", data)
     .then((res) => {

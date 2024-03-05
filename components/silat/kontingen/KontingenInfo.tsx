@@ -21,17 +21,12 @@ import {
 } from "@/components/ui/tooltip";
 import { setKontingenToEditRedux } from "@/utils/redux/silat/kontingenSlice";
 import KontingenDialog from "./KontingenDialog";
-import { useState } from "react";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
 
 const KontingenInfo = ({ show }: { show: boolean }) => {
-  const [open, setOpen] = useState(false);
   const kontingen = useSelector(
     (state: RootState) => state.kontingen.registered
-  );
-  const kontingenToEdit = useSelector(
-    (state: RootState) => state.kontingen.toEdit
   );
   const officials = useSelector(
     (state: RootState) => state.officials.registered
