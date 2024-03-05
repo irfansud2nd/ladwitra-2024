@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import KontingenForm from "./KontingenForm";
 import { kontingenInitialValue } from "@/utils/silat/kontingen/kontingenConstants";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,10 +28,14 @@ const KontingenDialog = ({
       dispatch(setKontingenToEditRedux(kontingenInitialValue));
   };
 
+  useEffect(() => {
+    if (kontingenToEdit.id) setOpen(true);
+  }, [kontingenToEdit]);
+
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
       <DialogTrigger asChild>
-        {edit ? children : <Button>Daftar Kontingen</Button>}
+        <Button className={`${edit && "hidden"}`}>Daftar Kontingen</Button>
       </DialogTrigger>
       <DialogContent className="w-fit">
         <KontingenForm setOpen={setOpen} />

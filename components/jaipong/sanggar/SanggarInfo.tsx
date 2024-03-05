@@ -52,9 +52,9 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
     result && deleteSanggar(sanggar, koreografers, penaris, dispatch);
   };
 
-  if (!sanggar.id) return <></>;
   return (
     <div className="border-b flex items-center justify-between">
+      <SanggarDialog edit />
       <ConfirmationDialog />
       <p
         className={`font-semibold transition-all 
@@ -82,16 +82,14 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
         </TooltipProvider>
         <DropdownMenuContent>
           {!show && <DropdownMenuLabel>{sanggar.nama}</DropdownMenuLabel>}
-          <SanggarDialog edit>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => {
-                dispatch(setSanggarToEditRedux(sanggar));
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-          </SanggarDialog>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              dispatch(setSanggarToEditRedux(sanggar));
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer text-destructive"

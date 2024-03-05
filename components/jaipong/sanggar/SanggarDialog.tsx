@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { setSanggarToEditRedux } from "@/utils/redux/jaipong/sanggarSlice";
@@ -26,10 +26,14 @@ const SanggarDialog = ({
       dispatch(setSanggarToEditRedux(sanggarInitialValue));
   };
 
+  useEffect(() => {
+    if (sanggarToEdit.id) setOpen(true);
+  }, [sanggarToEdit]);
+
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
       <DialogTrigger asChild>
-        {edit ? children : <Button>Daftar Sanggar</Button>}
+        <Button className={`${edit && "hidden"}`}>Daftar Sanggar</Button>
       </DialogTrigger>
       <DialogContent className="w-fit">
         <SanggarForm setOpen={setOpen} />

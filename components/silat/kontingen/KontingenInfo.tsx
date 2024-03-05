@@ -58,9 +58,9 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
     result && deleteKontingen(kontingen, officials, atlets, dispatch);
   };
 
-  if (!kontingen.id) return <></>;
   return (
     <div className="border-b flex items-center justify-between">
+      <KontingenDialog edit />
       <ConfirmationDialog />
       <p
         className={`font-semibold transition-all 
@@ -68,10 +68,7 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
       >
         {kontingen.nama}
       </p>
-      <DropdownMenu
-        open={kontingenToEdit.id ? true : open}
-        onOpenChange={setOpen}
-      >
+      <DropdownMenu>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -88,16 +85,14 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
         </TooltipProvider>
         <DropdownMenuContent>
           {!show && <DropdownMenuLabel>{kontingen.nama}</DropdownMenuLabel>}
-          <KontingenDialog edit>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => {
-                dispatch(setKontingenToEditRedux(kontingen));
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-          </KontingenDialog>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              dispatch(setKontingenToEditRedux(kontingen));
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer text-destructive"
