@@ -25,13 +25,13 @@ const page = () => {
       </TabsList>
       {/* TABS LIST MOBILE */}
       <div className="block sm:hidden">
-        <Select>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Menunggu Pembayaran" />
-          </SelectTrigger>
-          <SelectContent>
-            <TabsList asChild className="flex flex-col h-full">
-              <SelectGroup>
+        <TabsList className="w-full">
+          <Select>
+            <SelectTrigger className="flex justify-center w-full">
+              <SelectValue placeholder="Menunggu Pembayaran" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup className="text-center *:block">
                 <TabsTrigger value="unpaid" asChild>
                   <SelectItem value="unpaid">Menunggu Pembayaran</SelectItem>
                 </TabsTrigger>
@@ -44,9 +44,9 @@ const page = () => {
                   <SelectItem value="confirmed">Pembayaran Selesai</SelectItem>
                 </TabsTrigger>
               </SelectGroup>
-            </TabsList>
-          </SelectContent>
-        </Select>
+            </SelectContent>
+          </Select>
+        </TabsList>
       </div>
       <div className="*:w-full *:h-full *:rounded *:p-1">
         <TabsContent value="unpaid">
