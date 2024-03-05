@@ -4,6 +4,12 @@ import SilatSideMenu from "@/components/silat/SilatSideMenu";
 import ToggleSideMenu from "@/components/silat/ToggleSideMenu";
 import Container from "@/components/ui/container";
 import ReduxProvider from "@/components/utils/ReduxProvider";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pendaftaran Silat - Ladwitra",
+  description: "Informasi dan Pendaftaran Silat Ladwitra Championship 2024",
+};
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (

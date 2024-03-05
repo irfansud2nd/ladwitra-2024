@@ -4,6 +4,12 @@ import JaipongSideMenu from "@/components/jaipong/JaipongSideMenu";
 import ToggleSideMenu from "@/components/silat/ToggleSideMenu";
 import Container from "@/components/ui/container";
 import ReduxProvider from "@/components/utils/ReduxProvider";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pendaftaran Jaipong - Ladwitra",
+  description: "Informasi dan Pendaftaran Jaipong Ladwitra Championship 2024",
+};
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
