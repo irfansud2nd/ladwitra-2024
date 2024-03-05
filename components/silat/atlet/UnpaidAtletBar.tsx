@@ -1,4 +1,4 @@
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
 import AtletPaymentDialog from "./AtletPaymentDialog";
 import { Row } from "@tanstack/react-table";
 
@@ -11,7 +11,7 @@ const UnpaidAtletBar = (props: any) => {
       </p>
       <p className="text-lg">
         Total Biaya:{" "}
-        <b>Rp {(selectedRows.length * 300000).toLocaleString("id")}</b>
+        <b>Rp {(selectedRows.length * biayaAtlet).toLocaleString("id")}</b>
       </p>
       <AtletPaymentDialog
         selectedAtlets={selectedRows.map(

@@ -9,20 +9,41 @@ import Link from "next/link";
 
 type Props = {
   title: string;
-  apiUrl: string;
+  apiUrl?: string;
   link?: string;
   money?: boolean;
+  onComplete?: (result: number) => void;
+  count?: number;
+  disableRefresh?: boolean;
 };
 
-const CountFirestore = ({ title, apiUrl, link, money }: Props) => {
+const CountFirestore = ({
+  title,
+  apiUrl,
+  link,
+  money,
+  onComplete,
+  count,
+  disableRefresh,
+}: Props) => {
   const [result, setResult] = useState(0);
   const [loading, setLoading] = useState(true);
   const getResult = () => {
+    if (!apiUrl) {
+      setLoading(false);
+      return;
+    }
+    if (count) {
+      setResult(count);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     axios
       .get(apiUrl)
       .then((res) => {
         setResult(res.data.result);
+        onComplete && onComplete(res.data.result);
       })
       .catch((error) => {
         toastFirebaseError(error);
@@ -34,8 +55,12 @@ const CountFirestore = ({ title, apiUrl, link, money }: Props) => {
     getResult();
   }, []);
 
+  useEffect(() => {
+    if (count) setResult(count);
+  }, [count]);
+
   return (
-    <Card className="p-2 w-fit flex flex-col gap-1 items-center">
+    <Card className="p-2 w-fit flex flex-col gap-1 items-center whitespace-nowrap">
       <CardTitle>{title}</CardTitle>
       <div className="flex gap-1 flex-col items-center">
         <span className="text-xl font-bold">
@@ -48,7 +73,7 @@ const CountFirestore = ({ title, apiUrl, link, money }: Props) => {
           )}
         </span>
         <div className="flex justify-around gap-1">
-          <Button onClick={getResult} size={"sm"}>
+          <Button onClick={getResult} size={"sm"} disabled={disableRefresh}>
             Refresh
           </Button>
           {link && (

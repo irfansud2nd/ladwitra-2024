@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import {
   KontingenState,
   kontingenInitialValue,
@@ -5,11 +6,13 @@ import {
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type State = {
+  all: KontingenState[];
   registered: KontingenState;
   toEdit: KontingenState;
 };
 
 const initialState: State = {
+  all: [],
   registered: kontingenInitialValue,
   toEdit: kontingenInitialValue,
 };
@@ -18,6 +21,14 @@ const kontingenSlice = createSlice({
   name: "kontingen",
   initialState,
   reducers: {
+    // ADD KONTINGENS
+    addKontingensRedux: (state, action: PayloadAction<KontingenState[]>) => {
+      const newKontingens = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as KontingenState[];
+      state.all = newKontingens;
+    },
     // SET KONTINGEN
     setKontingenRedux: (state, action: PayloadAction<KontingenState>) => {
       state.registered = action.payload;
@@ -38,6 +49,7 @@ const kontingenSlice = createSlice({
 });
 
 export const {
+  addKontingensRedux,
   setKontingenRedux,
   updateKontingenRedux,
   deleteKontingenRedux,

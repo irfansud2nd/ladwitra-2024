@@ -106,8 +106,7 @@ export const jenisPertandingan = ["Tanding", "Seni"];
 // ATLET TYPE
 export type AtletState = {
   id: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   creatorEmail: string;
   nama: string;
   NIK: string;
@@ -118,9 +117,12 @@ export type AtletState = {
   alamatLengkap: string;
   jenisKelamin: string;
   pertandingan: {
-    tingkatan: string;
     jenis: string;
+    tingkatan: string;
     kategori: string;
+  }[];
+  pembayaran: {
+    idPertandingan: string;
     idPembayaran: string;
   }[];
   nomorPertandingan: number;
@@ -143,8 +145,7 @@ export type AtletState = {
 export const atletInitialValue: AtletState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   NIK: "",
   tempatLahir: "",
@@ -154,6 +155,7 @@ export const atletInitialValue: AtletState = {
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   pertandingan: [],
+  pembayaran: [],
   nomorPertandingan: 0,
   idKontingen: "",
   namaKontingen: "",
@@ -232,17 +234,19 @@ export const atletValidationSchemaWithoutFile = Yup.object({
 // REGISTER ATLET TYPE
 export type UnregisteredAtletState = {
   atletId: string;
-  tingkatanPertandingan: string;
   jenisPertandingan: string;
+  tingkatanPertandingan: string;
   kategoriPertandingan: string;
 };
 
 // REGISTER ATLET INITIAL STATE
 export const unregisteredAtletValue: UnregisteredAtletState = {
   atletId: "",
-  tingkatanPertandingan: tingkatanKategoriSilat[0].tingkatan,
   jenisPertandingan: jenisPertandingan[0],
+  tingkatanPertandingan: tingkatanKategoriSilat[0].tingkatan,
   kategoriPertandingan: tingkatanKategoriSilat[0].kategoriTanding[0],
 };
 
 export type JenisPertandingan = "Tanding" | "Seni";
+
+export const biayaAtlet = 300000;

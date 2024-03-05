@@ -10,7 +10,7 @@ import { setOfficialsRedux } from "@/utils/redux/silat/officialsSlice";
 import { setAtletsRedux } from "@/utils/redux/silat/atletsSlice";
 import { RootState } from "@/utils/redux/store";
 import KontingenNotFound from "./kontingen/KontingenNotFound";
-import { setPaymentsRedux } from "@/utils/redux/silat/paymentsSlice";
+import { addPaymentsRedux } from "@/utils/redux/silat/paymentsSlice";
 
 const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(0);
@@ -20,11 +20,6 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   const kontingen = useSelector(
     (state: RootState) => state.kontingen.registered
   );
-  const atlets = useSelector((state: RootState) => state.atlets.registered);
-  const officials = useSelector(
-    (state: RootState) => state.officials.registered
-  );
-  const payments = useSelector((state: RootState) => state.payments.all);
 
   const getKontingen = () => {
     console.log("getKontingen");
@@ -32,7 +27,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/kontingens/${email}`)
       .then((res) => {
-        dispatch(setKontingenRedux(res.data.container[0]));
+        dispatch(setKontingenRedux(res.data.result[0]));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -44,7 +39,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/officials/${email}`)
       .then((res) => {
-        dispatch(setOfficialsRedux(res.data.container));
+        dispatch(setOfficialsRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -56,7 +51,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/atlets/${email}`)
       .then((res) => {
-        dispatch(setAtletsRedux(res.data.container));
+        dispatch(setAtletsRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -66,9 +61,9 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/payments/${email}`)
+      .get(`/api/payments/all/silat/${email}`)
       .then((res) => {
-        dispatch(setPaymentsRedux(res.data.container));
+        dispatch(addPaymentsRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));

@@ -22,13 +22,11 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  showNamaTim?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  showNamaTim,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -40,9 +38,6 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
-      columnVisibility: {
-        namaTim: showNamaTim || false,
-      },
     },
   });
 

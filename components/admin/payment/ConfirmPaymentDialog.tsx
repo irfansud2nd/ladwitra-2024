@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { setPaymentToConfirmRedux } from "@/utils/redux/silat/paymentsSlice";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Button } from "@/components/ui/button";
 
 const ConfirmPaymentDialog = () => {
   const [open, setOpen] = useState(false);
@@ -23,7 +25,6 @@ const ConfirmPaymentDialog = () => {
     }
   };
   useEffect(() => {
-    console.log(paymentToConfirm);
     setOpen(paymentToConfirm.id != "");
   }, [paymentToConfirm]);
 

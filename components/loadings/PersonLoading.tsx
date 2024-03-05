@@ -4,7 +4,10 @@ const PersonLoading = () => {
   return (
     <div className="max-w-full h-full grid grid-rows-[auto_1fr]">
       <div className="flex justify-between items-center mb-1">
-        <Skeleton className="sm:ml-10 w-[150px] h-9" />
+        <div className="flex gap-2">
+          <Skeleton className="w-8 h-9 hidden sm:block" />
+          <Skeleton className="w-[150px] h-9" />
+        </div>
         <Skeleton className="w-[150px] h-9" />
       </div>
       <Skeleton className="w-full h-full" />

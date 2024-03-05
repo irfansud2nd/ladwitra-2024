@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import { compare } from "@/utils/functions";
 import {
   KoreograferState,
@@ -7,11 +8,13 @@ import {
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type State = {
+  all: KoreograferState[];
   registered: KoreograferState[];
   toEdit: KoreograferState;
 };
 
 const initialState: State = {
+  all: [],
   registered: [],
   toEdit: koreograferInitialValue,
 };
@@ -26,6 +29,18 @@ const koreografersSlice = createSlice({
       action: PayloadAction<KoreograferState[]>
     ) => {
       state.registered = action.payload.sort(compare("nama", "asc"));
+    },
+    // ADD KOREOGRAFERS
+    addKoreografersRedux: (
+      state,
+      action: PayloadAction<KoreograferState[]>
+    ) => {
+      state.registered = action.payload;
+      const newKoreografers = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as KoreograferState[];
+      state.all = newKoreografers;
     },
     // UPDATE KOREOGRAFER
     updateKoreograferRedux: (
@@ -70,6 +85,7 @@ const koreografersSlice = createSlice({
 
 export const {
   setKoreografersRedux,
+  addKoreografersRedux,
   updateKoreograferRedux,
   addKoreograferRedux,
   deleteKoreograferRedux,

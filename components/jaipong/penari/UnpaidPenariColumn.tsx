@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
+import { getPenariNamaTim } from "@/utils/jaipong/penari/penariFunctions";
 
 export const UnpaidPenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -63,7 +64,7 @@ export const UnpaidPenariColumn: ColumnDef<PenariState>[] = [
     header: "Nama Tim",
     cell: ({ row }) => {
       const penari = row.original;
-      return <div>{penari.tarian[0].namaTim || "-"}</div>;
+      return <div>{getPenariNamaTim(penari) || "-"}</div>;
     },
   },
   {

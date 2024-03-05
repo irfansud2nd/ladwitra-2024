@@ -6,7 +6,10 @@ import axios from "axios";
 import { toastFirebaseError } from "@/utils/functions";
 import PersonLoading from "../loadings/PersonLoading";
 import { RootState } from "@/utils/redux/store";
-import { setPaymentsRedux } from "@/utils/redux/silat/paymentsSlice";
+import {
+  addPaymentsRedux,
+  setPaymentsRedux,
+} from "@/utils/redux/silat/paymentsSlice";
 import { setKoreografersRedux } from "@/utils/redux/jaipong/koreografersSlice";
 import { setSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import { setPenarisRedux } from "@/utils/redux/jaipong/penarisSlice";
@@ -30,7 +33,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/sanggars/${email}`)
       .then((res) => {
-        dispatch(setSanggarRedux(res.data.container[0]));
+        dispatch(setSanggarRedux(res.data.result[0]));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -42,7 +45,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/koreografers/${email}`)
       .then((res) => {
-        dispatch(setKoreografersRedux(res.data.container));
+        dispatch(setKoreografersRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -54,7 +57,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     axios
       .get(`/api/penaris/${email}`)
       .then((res) => {
-        dispatch(setPenarisRedux(res.data.container));
+        dispatch(setPenarisRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));
@@ -64,9 +67,9 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/payments/${email}`)
+      .get(`/api/payments/all/jaipong/${email}`)
       .then((res) => {
-        dispatch(setPaymentsRedux(res.data.container));
+        dispatch(addPaymentsRedux(res.data.result));
         setLoading((prev) => prev + 1);
       })
       .catch((error) => toastFirebaseError(error));

@@ -6,6 +6,7 @@ import {
   JenisTarian,
   PenariState,
   UnregisteredPenariState,
+  biayaPenari,
   jenisTarian,
   kelasTarian,
   penariInitialValue,
@@ -14,9 +15,12 @@ import {
   unregisteredPenariValue,
 } from "@/utils/jaipong/penari/penariConstants";
 import {
+  getTarianId,
   selectCategoryJaipong,
   updatePenari,
 } from "@/utils/jaipong/penari/penariFunctions";
+import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
+import { updateSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
 import { RootState } from "@/utils/redux/store";
 
 import { Form, Formik, FormikProps } from "formik";
@@ -32,6 +36,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
   const [penari, setPenari] = useState(penariInitialValue);
 
   const allPenaris = useSelector((state: RootState) => state.penaris.all);
+  const sanggar = useSelector((state: RootState) => state.sanggar.registered);
   const dispatch = useDispatch();
 
   const handleSubmit = (
@@ -49,14 +54,24 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       kelas: values.kelasTarian,
       tingkatan: values.tingkatanTarian,
       kategori: values.kategoriTarian,
-      namaTim: values.namaTim,
-      idPembayaran: "",
     };
-    const newPenari: PenariState = {
+    let newPenari: PenariState = {
       ...penari,
       tarian: [...penari.tarian, tarian],
       nomorTarian: penari.nomorTarian + 1,
     };
+    if (values.namaTim) {
+      newPenari = {
+        ...newPenari,
+        namaTim: [
+          ...penari.namaTim,
+          {
+            idTarian: getTarianId(tarian),
+            namaTim: values.namaTim,
+          },
+        ],
+      };
+    }
     if (
       penari.tarian.some(
         (penari) =>
@@ -70,7 +85,23 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       setSubmitting(false);
       return;
     }
-    updatePenari(newPenari, dispatch, setSubmitting, resetForm);
+    updatePenari(newPenari, dispatch, {
+      setSubmitting,
+      onComplete: () => {
+        setSubmitting(true);
+        const biaya =
+          jenis == "Rampak" ? biayaPenari.rampak : biayaPenari.tunggal;
+        const newSanggar: SanggarState = {
+          ...sanggar,
+          tagihan: sanggar.tagihan + biaya,
+          nomorTarian: sanggar.nomorTarian + 1,
+        };
+        updateSanggar(newSanggar, sanggar, dispatch, {
+          setSubmitting,
+          onComplete: resetForm,
+        });
+      },
+    });
   };
 
   const handleCancel = (resetForm: ResetForm) => {

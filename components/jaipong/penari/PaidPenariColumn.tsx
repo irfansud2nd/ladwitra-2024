@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
+import { getPenariPaymentId } from "@/utils/jaipong/penari/penariFunctions";
 
 export const PaidPenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -60,7 +61,7 @@ export const PaidPenariColumn: ColumnDef<PenariState>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(penari.tarian[0].idPembayaran)
+                navigator.clipboard.writeText(getPenariPaymentId(penari))
               }
             >
               Salin ID pembayaran

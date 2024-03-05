@@ -11,14 +11,25 @@ import {
 import { Form, Formik, FormikProps } from "formik";
 import ShowFile from "../ShowFile";
 import { useSession } from "next-auth/react";
+import { confirmPayment } from "@/utils/payment/paymentFunctions";
+import { useDispatch } from "react-redux";
 
-const ConfirmPaymentForm = ({ payment }: { payment: PaymentState }) => {
+type Props = {
+  payment: PaymentState;
+};
+
+const ConfirmPaymentForm = ({ payment }: Props) => {
   const session = useSession();
+  const dispatch = useDispatch();
 
   const setForm = (
     setFieldValue: setFieldValue,
     values: ConfirmPaymentState
   ) => {
+    if (payment.confirmed) {
+      !values.confirmedBy && setFieldValue("confirmedBy", payment.confirmedBy);
+      return;
+    }
     !values.totalPembayaran &&
       payment.totalPembayaran &&
       setFieldValue("totalPembayaran", payment.totalPembayaran);
@@ -26,29 +37,34 @@ const ConfirmPaymentForm = ({ payment }: { payment: PaymentState }) => {
       setFieldValue("confirmedBy", session.data?.user?.email);
   };
 
+  const handleSubmit = (values: ConfirmPaymentState) => {
+    if (payment.confirmed) return;
+    confirmPayment(payment, values.confirmedBy, dispatch);
+  };
+
   return (
     <Formik
-      onSubmit={(values) => console.log(values)}
+      onSubmit={(values) => handleSubmit(values)}
       initialValues={confirmPaymentInitialValue}
-      validationSchema={confirmPaymentValidationSchema}
+      // validationSchema={confirmPaymentValidationSchema}
     >
       {(props: FormikProps<ConfirmPaymentState>) => {
         setForm(props.setFieldValue, props.values);
         return (
           <Form className="grid grid-rows-[1fr_auto] gap-2">
-            <div className="flex gap-1">
+            <div className="flex gap-1 flex-col sm:flex-row">
               <ShowFile
                 label="Bukti Pembayararan"
                 src={payment.downloadBuktiUrl}
               />
-              <div className="input_group">
+              <div className="input_group justify-normal">
                 <InputText
                   label="Total Pembayaran"
                   name="totalPembayaran"
                   formik={props}
                   forceDisabled
                 />
-                <div className="relative">
+                {/* <div className="relative">
                   <InputText
                     label="Total Pembayaran Dikonfirmasi"
                     name="confirmedTotalPembayaran"
@@ -67,7 +83,7 @@ const ConfirmPaymentForm = ({ payment }: { payment: PaymentState }) => {
                   >
                     All
                   </Button>
-                </div>
+                </div> */}
                 <InputText
                   label="Confirmed By"
                   name="confirmedBy"
@@ -77,7 +93,7 @@ const ConfirmPaymentForm = ({ payment }: { payment: PaymentState }) => {
               </div>
             </div>
 
-            <Button type="submit">Konfirmasi</Button>
+            {!payment.confirmed && <Button type="submit">Konfirmasi</Button>}
           </Form>
         );
       }}

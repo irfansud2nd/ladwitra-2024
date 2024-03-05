@@ -2,6 +2,7 @@ import * as Yup from "yup";
 export type PaymentState = {
   id: string;
   totalPembayaran: number;
+  waktuPembayaran: number;
   buktiFile: File | undefined;
   buktiUrl: string;
   downloadBuktiUrl: string;
@@ -15,6 +16,7 @@ export type PaymentState = {
 export const paymentInitialValue: PaymentState = {
   id: "",
   totalPembayaran: 0,
+  waktuPembayaran: 0,
   buktiFile: undefined,
   buktiUrl: "",
   downloadBuktiUrl: "",
@@ -27,13 +29,13 @@ export const paymentInitialValue: PaymentState = {
 
 export type ConfirmPaymentState = {
   totalPembayaran: number;
-  confirmedTotalPembayaran: number;
+  // confirmedTotalPembayaran: number;
   confirmedBy: string;
 };
 
 export const confirmPaymentInitialValue: ConfirmPaymentState = {
   totalPembayaran: 0,
-  confirmedTotalPembayaran: 0,
+  // confirmedTotalPembayaran: 0,
   confirmedBy: "",
 };
 

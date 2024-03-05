@@ -44,9 +44,12 @@ const PenariForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (penariToEdit.id) {
-      updatePenari(penari, dispatch, setSubmitting, () => {
-        resetForm();
-        dispatch(setPenariToEditRedux(penariInitialValue));
+      updatePenari(penari, dispatch, {
+        setSubmitting,
+        onComplete: () => {
+          resetForm();
+          dispatch(setPenariToEditRedux(penariInitialValue));
+        },
       });
     } else {
       sendPenari(penari, sanggar, dispatch, setSubmitting, resetForm);

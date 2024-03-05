@@ -43,9 +43,7 @@ export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
     header: ({ column }) => {
       return <TableSortButton column={column} text="Waktu Pendaftaran" />;
     },
-    cell: ({ row }) => (
-      <div>{formatDate(row.getValue("waktuPendaftaran"))}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.original.waktuPendaftaran)}</div>,
   },
   {
     header: "Aksi",

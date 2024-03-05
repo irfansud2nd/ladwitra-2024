@@ -1,6 +1,10 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { SanggarState } from "../sanggar/sanggarConstants";
-import { PenariState, tingkatanKategoriJaipong } from "./penariConstants";
+import {
+  PenariState,
+  biayaPenari,
+  tingkatanKategoriJaipong,
+} from "./penariConstants";
 import { SetSubmitting } from "@/utils/form/FormConstants";
 import { toast } from "sonner";
 import { collection, doc } from "firebase/firestore";
@@ -140,13 +144,20 @@ export const sendPenari = (
 export const updatePenari = (
   penari: PenariState,
   dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  withStatus: boolean = true
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    withoutStatus?: boolean;
+  }
 ) => {
-  const toastId = withStatus
-    ? toast.loading("Memperbaharui data penari")
-    : undefined;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const withoutStatus = options?.withoutStatus || false;
+
+  const toastId = withoutStatus
+    ? undefined
+    : toast.loading("Memperbaharui data penari");
+
   const stepController = (step: number) => {
     switch (step) {
       case 1:
@@ -159,7 +170,8 @@ export const updatePenari = (
         break;
       case 2:
         // DELETE OLD PAS FOTO
-        withStatus && toast.loading("Menghapus pas foto lama", { id: toastId });
+        !withoutStatus &&
+          toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
           .delete(`/api/file/${penari.fotoUrl}`)
           .then(() => stepController(3))
@@ -170,7 +182,7 @@ export const updatePenari = (
         break;
       case 3:
         // UPLOAD NEW PAS FOTO
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Mengunggah pas foto baru", { id: toastId });
         penari.fotoFile &&
           sendFile(penari.fotoFile, penari.fotoUrl)
@@ -193,7 +205,7 @@ export const updatePenari = (
         break;
       case 5:
         // DELETE OLD KTP
-        withStatus && toast.loading("Menghapus KTP lama", { id: toastId });
+        !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
         axios
           .delete(`/api/file/${penari.ktpUrl}`)
           .then(() => stepController(6))
@@ -204,7 +216,7 @@ export const updatePenari = (
         break;
       case 6:
         // UPLOAD NEW KTP
-        withStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
+        !withoutStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
         penari.ktpFile &&
           sendFile(penari.ktpFile, penari.ktpUrl)
             .then((url) => {
@@ -226,7 +238,7 @@ export const updatePenari = (
         break;
       case 8:
         // DELETE OLD KK
-        withStatus && toast.loading("Menghapus KK lama", { id: toastId });
+        !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
         axios
           .delete(`/api/file/${penari.kkUrl}`)
           .then(() => stepController(9))
@@ -237,7 +249,7 @@ export const updatePenari = (
         break;
       case 9:
         // UPLOAD NEW KK
-        withStatus && toast.loading("Mengunggah KK baru", { id: toastId });
+        !withoutStatus && toast.loading("Mengunggah KK baru", { id: toastId });
         penari.kkFile &&
           sendFile(penari.kkFile, penari.kkUrl)
             .then((url) => {
@@ -251,7 +263,7 @@ export const updatePenari = (
         break;
       case 10:
         // UPDATE PENARI
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Memperbaharui data penari", { id: toastId });
         penari.fotoFile && delete penari.fotoFile;
         penari.ktpFile && delete penari.ktpFile;
@@ -261,7 +273,7 @@ export const updatePenari = (
           .patch("/api/penaris", penari)
           .then((res) => {
             dispatch(updatePenariRedux(penari));
-            withStatus &&
+            !withoutStatus &&
               toast.success("Penari berhasil diperbaharui", { id: toastId });
             onComplete && onComplete();
             setSubmitting && setSubmitting(false);
@@ -295,7 +307,14 @@ export const deletePenari = (
         }
         withStatus &&
           toast.loading("Menghapus penari dari sanggar", { id: toastId });
-        managePersonOnSanggar(sanggar, "penaris", penari.id, "delete", dispatch)
+        managePersonOnSanggar(
+          sanggar,
+          "penaris",
+          penari.id,
+          "delete",
+          dispatch,
+          { penari }
+        )
           .then(() => {
             stepController(2);
           })
@@ -356,4 +375,61 @@ export const getBiayaPenaris = (penaris: PenariState[]) => {
     penari.tarian[0].jenis == "Tunggal" ? (total += 200000) : (total += 350000);
   });
   return total;
+};
+
+export const getTarianId = (
+  tarian: {
+    jenis: string;
+    tingkatan: string;
+    kategori: string;
+  },
+  useSpace: boolean = false
+) => {
+  let idTarian = `${tarian.jenis}-${tarian.tingkatan}-${tarian.kategori}`;
+
+  if (useSpace) idTarian = idTarian.split("-").join(" - ");
+  return idTarian;
+};
+
+export const isPenariPaid = (penari: PenariState) => {
+  let paid = false;
+
+  penari.tarian.map((tarian) => {
+    if (paid) return;
+    if (
+      penari.pembayaran.find(
+        (pembayaran) => pembayaran.idTarian == getTarianId(tarian)
+      )
+    )
+      paid = true;
+  });
+
+  return paid;
+};
+
+export const getPenariPaymentId = (penari: PenariState) => {
+  const idTarian = getTarianId(penari.tarian[0]);
+  const idPembayaran = penari.pembayaran.find(
+    (pembayaran) => pembayaran.idTarian == idTarian
+  )?.idPembayaran;
+  return idPembayaran as string;
+};
+
+export const getPenariNamaTim = (penari: PenariState, indexTarian?: number) => {
+  const index = indexTarian || 0;
+  return penari.namaTim.find(
+    (namaTim) => namaTim.idTarian == getTarianId(penari.tarian[index])
+  )?.namaTim as string;
+};
+
+export const getBiayaPenari = (penari: PenariState) => {
+  let biaya = 0;
+  penari.tarian.map((tarian) => {
+    if (tarian.jenis == "Rampak") {
+      biaya += biayaPenari.rampak;
+    } else {
+      biaya += biayaPenari.tunggal;
+    }
+  });
+  return biaya;
 };

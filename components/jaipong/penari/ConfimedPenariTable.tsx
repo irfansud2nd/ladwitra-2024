@@ -3,6 +3,7 @@ import { DataTable } from "@/components/utils/tabel/DataTable";
 import { RootState } from "@/utils/redux/store";
 import { useSelector } from "react-redux";
 import { PaidPenariColumn } from "./PaidPenariColumn";
+import { getPenariPaymentId } from "@/utils/jaipong/penari/penariFunctions";
 
 const ConfirmedPenariTable = () => {
   const registeredPenaris = useSelector(
@@ -13,7 +14,7 @@ const ConfirmedPenariTable = () => {
   );
   const confirmedPenaris = registeredPenaris.filter((penari) =>
     confirmedPayments.find(
-      (payment) => payment.id == penari.tarian[0].idPembayaran
+      (payment) => payment.id == getPenariPaymentId(penari)
     )
   );
   return <DataTable columns={PaidPenariColumn} data={confirmedPenaris} />;

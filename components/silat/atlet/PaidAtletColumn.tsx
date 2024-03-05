@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { AtletState } from "@/utils/silat/atlet/atletConstats";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
+import { getAtletPaymentId } from "@/utils/silat/atlet/atletFunctions";
 
 export const PaidAtletColumn: ColumnDef<AtletState>[] = [
   {
@@ -60,9 +61,7 @@ export const PaidAtletColumn: ColumnDef<AtletState>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(
-                  atlet.pertandingan[0].idPembayaran
-                )
+                navigator.clipboard.writeText(getAtletPaymentId(atlet))
               }
             >
               Salin ID pembayaran

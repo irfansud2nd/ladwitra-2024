@@ -91,17 +91,23 @@ export const updatePersons = (
   persontType: "atlet" | "official" | "penari" | "koreografer",
   changeData: (data: Persons) => Persons,
   dispatch: Dispatch<UnknownAction>,
-  onComplete: () => void,
-  setSubmitting: SetSubmitting,
-  toastId: string | number
+  options?: {
+    onComplete?: () => void;
+    setSubmitting?: SetSubmitting;
+    toastId?: string | number;
+  }
 ) => {
+  const onComplete = options?.onComplete;
+  const setSubmitting = options?.setSubmitting;
+  const toastId = options?.toastId;
+
   if (!datas || !datas.length) {
-    onComplete();
+    onComplete && onComplete();
     return;
   }
   const repeater = (index: number) => {
     if (index >= datas.length) {
-      onComplete();
+      onComplete && onComplete();
       toast.success(
         `Berhasil memperbaharui ${persontType} ${index}/${datas.length}`,
         { id: toastId }
@@ -115,37 +121,29 @@ export const updatePersons = (
     const newData = changeData(oldData);
     const repeat = () => repeater(index + 1);
     persontType == "official" &&
-      updateOfficial(
-        newData as OfficialState,
-        dispatch,
+      updateOfficial(newData as OfficialState, dispatch, {
         setSubmitting,
-        repeat,
-        false
-      );
+        onComplete: repeat,
+        withoutStatus: true,
+      });
     persontType == "atlet" &&
-      updateAtlet(
-        newData as AtletState,
-        dispatch,
+      updateAtlet(newData as AtletState, dispatch, {
         setSubmitting,
-        repeat,
-        false
-      );
+        onComplete: repeat,
+        withoutStatus: true,
+      });
     persontType == "penari" &&
-      updatePenari(
-        newData as PenariState,
-        dispatch,
+      updatePenari(newData as PenariState, dispatch, {
         setSubmitting,
-        repeat,
-        false
-      );
+        onComplete: repeat,
+        withoutStatus: true,
+      });
     persontType == "koreografer" &&
-      updateKoreografer(
-        newData as KoreograferState,
-        dispatch,
+      updateKoreografer(newData as KoreograferState, dispatch, {
         setSubmitting,
-        repeat,
-        false
-      );
+        onComplete: repeat,
+        withoutStatus: true,
+      });
   };
   repeater(0);
 };

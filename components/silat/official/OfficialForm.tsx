@@ -45,9 +45,12 @@ const OfficialForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (officialToEdit.id) {
-      updateOfficial(official, dispatch, setSubmitting, () => {
-        resetForm();
-        dispatch(setOfficialToEditRedux(officialInitialValue));
+      updateOfficial(official, dispatch, {
+        setSubmitting,
+        onComplete: () => {
+          resetForm();
+          dispatch(setOfficialToEditRedux(officialInitialValue));
+        },
       });
     } else {
       sendOfficial(official, kontingen, dispatch, setSubmitting, resetForm);

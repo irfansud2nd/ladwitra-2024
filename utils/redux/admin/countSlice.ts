@@ -1,13 +1,35 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+type CategorizedAtlet = {
+  id: string;
+  count: number;
+};
 
 type State = {
   kontingen: number;
   official: number;
   atlet: number;
   registeredAtlet: number;
+
+  categorizedAtlets: CategorizedAtlet[];
+
+  sanggar: number;
+  koreografer: number;
+  penari: number;
+  registeredPenari: number;
+
+  payment: number;
+  confirmedPayment: number;
+  unconfirmedPayment: number;
+
   silatPayment: number;
-  silatConfirmedPayment: number;
-  silatUnconfirmedPayment: number;
+  silatPaymentConfirmed: number;
+  silatPaymentUnconfirmed: number;
+
+  penariPayment: number;
+  penariPaymentConfirmed: number;
+  penariPaymentUnconfirmed: number;
 };
 
 const initialState: State = {
@@ -15,47 +37,73 @@ const initialState: State = {
   official: 0,
   atlet: 0,
   registeredAtlet: 0,
+
+  categorizedAtlets: [],
+
+  sanggar: 0,
+  koreografer: 0,
+  penari: 0,
+  registeredPenari: 0,
+
+  payment: 0,
+  confirmedPayment: 0,
+  unconfirmedPayment: 0,
+
   silatPayment: 0,
-  silatConfirmedPayment: 0,
-  silatUnconfirmedPayment: 0,
+  silatPaymentConfirmed: 0,
+  silatPaymentUnconfirmed: 0,
+
+  penariPayment: 0,
+  penariPaymentConfirmed: 0,
+  penariPaymentUnconfirmed: 0,
 };
 
 const countSlice = createSlice({
   name: "count",
   initialState,
   reducers: {
-    setKontingenCountRedux: (state, action: PayloadAction<number>) => {
+    setCountKontingen: (state, action: PayloadAction<number>) => {
       state.kontingen = action.payload;
     },
-    setOfficialCountRedux: (state, action: PayloadAction<number>) => {
+    setCountOfficial: (state, action: PayloadAction<number>) => {
       state.official = action.payload;
     },
-    setAtletCountRedux: (state, action: PayloadAction<number>) => {
+    setCountAtlet: (state, action: PayloadAction<number>) => {
       state.atlet = action.payload;
     },
-    setRegisteredAtletCountRedux: (state, action: PayloadAction<number>) => {
+    setCountRegisteredAtlet: (state, action: PayloadAction<number>) => {
       state.registeredAtlet = action.payload;
     },
-    setSilatPaymentCountRedux: (state, action: PayloadAction<number>) => {
+    setCountSilatPayment: (state, action: PayloadAction<number>) => {
       state.silatPayment = action.payload;
     },
-    setSilatConfirmedPaymentCountRedux: (
+    setCountSilatPaymentUnconfirmed: (state, action: PayloadAction<number>) => {
+      state.silatPaymentUnconfirmed = action.payload;
+      state.silatPaymentConfirmed = state.silatPayment - action.payload;
+    },
+    addCountCategorizedAtlets: (
       state,
-      action: PayloadAction<number>
+      action: PayloadAction<{
+        id: string;
+        count: number;
+      }>
     ) => {
-      state.silatConfirmedPayment = action.payload;
-      state.silatUnconfirmedPayment = state.silatPayment - action.payload;
+      state.categorizedAtlets = reduceData([
+        ...state.categorizedAtlets,
+        action.payload,
+      ]) as CategorizedAtlet[];
     },
   },
 });
 
 export const {
-  setKontingenCountRedux,
-  setOfficialCountRedux,
-  setAtletCountRedux,
-  setRegisteredAtletCountRedux,
-  setSilatPaymentCountRedux,
-  setSilatConfirmedPaymentCountRedux,
+  setCountKontingen,
+  setCountOfficial,
+  setCountAtlet,
+  setCountRegisteredAtlet,
+  setCountSilatPayment,
+  setCountSilatPaymentUnconfirmed,
+  addCountCategorizedAtlets,
 } = countSlice.actions;
 
 export default countSlice.reducer;

@@ -15,6 +15,7 @@ import { PenariState } from "../penari/penariConstants";
 import { deletePersons, updatePersons } from "@/utils/form/FormFunctions";
 import { KoreograferState } from "../koreografer/koreograferConstants";
 import { toastFirebaseError } from "@/utils/functions";
+import { getBiayaPenari } from "../penari/penariFunctions";
 
 // SEND SANGGAR
 export const sendSanggar = async (
@@ -48,21 +49,32 @@ export const sendSanggar = async (
 export const managePersonOnSanggar = async (
   sanggar: SanggarState,
   tipe: "koreografers" | "penaris",
-  penariId: string,
+  personId: string,
   action: "add" | "delete",
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
+  options?: {
+    penari?: PenariState;
+  }
 ) => {
+  const penari = options?.penari;
   let data: SanggarState =
     action == "add"
       ? {
           ...sanggar,
-          [tipe]: [...sanggar[tipe], penariId],
+          [tipe]: [...sanggar[tipe], personId],
         }
       : {
           ...sanggar,
-          [tipe]: [...sanggar[tipe]].filter((item) => item != penariId),
+          [tipe]: [...sanggar[tipe]].filter((item) => item != personId),
         };
 
+  if (penari && action == "delete") {
+    data = {
+      ...data,
+      nomorTarian: data.nomorTarian - penari.nomorTarian,
+      tagihan: (sanggar.tagihan = getBiayaPenari(penari)),
+    };
+  }
   return axios
     .patch("/api/sanggars", data)
     .then((res) => {
@@ -77,14 +89,21 @@ export const managePersonOnSanggar = async (
 export const updateSanggar = (
   newSanggar: SanggarState,
   oldSanggar: SanggarState,
-  koreografers: KoreograferState[],
-  penari: PenariState[],
   dispatch: Dispatch<UnknownAction>,
-  resetForm: ResetForm,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  prevToastId?: string | number
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    koreografers?: KoreograferState[];
+    penaris?: PenariState[];
+    prevToastId?: string | number;
+  }
 ) => {
+  const koreografers = options?.koreografers;
+  const penaris = options?.penaris;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const prevToastId = options?.prevToastId;
+
   const toastId = prevToastId
     ? prevToastId
     : toast.loading("Memperbaharui data sanggar");
@@ -104,27 +123,27 @@ export const updateSanggar = (
         break;
       case 2:
         // CHANGE KOREOGRAFER.NAMASANGGAR
-        updatePersons(
-          koreografers,
-          "koreografer",
-          changePersonData,
-          dispatch,
-          () => stepController(3),
+        if (!koreografers?.length) {
+          stepController(3);
+          return;
+        }
+        updatePersons(koreografers, "koreografer", changePersonData, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(3),
+          toastId,
+        });
         break;
       case 3:
         // CHANGE PENARI.NAMASANGGAR
-        updatePersons(
-          penari,
-          "penari",
-          changePersonData,
-          dispatch,
-          () => stepController(4),
+        if (!penaris?.length) {
+          stepController(4);
+          return;
+        }
+        updatePersons(penaris, "penari", changePersonData, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(4),
+          toastId,
+        });
         break;
       case 4:
         // UPDATE SANGGAR
@@ -136,7 +155,6 @@ export const updateSanggar = (
             dispatch(updateSanggarRedux(newSanggar));
             dispatch(setSanggarToEditRedux(sanggarInitialValue));
             onComplete && onComplete();
-            resetForm && resetForm();
             setSubmitting && setSubmitting(false);
           })
           .catch((error) => toastFirebaseError(error, toastId));

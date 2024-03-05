@@ -10,8 +10,7 @@ export const jabatanKoreografers = ["Official", "Manajer Tim", "Pelatih"];
 export type KoreograferState = {
   id: string;
   creatorEmail: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   nama: string;
   jenisKelamin: string;
   jabatan: string;
@@ -26,8 +25,7 @@ export type KoreograferState = {
 export const koreograferInitialValue: KoreograferState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   jenisKelamin: jenisKelaminDewasa[0],
   jabatan: jabatanKoreografers[0],

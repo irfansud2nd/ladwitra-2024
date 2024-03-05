@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import {
   PaymentState,
   paymentInitialValue,
@@ -32,9 +33,19 @@ const paymentsSlice = createSlice({
       state.all = action.payload;
       getConfirmed(state, action.payload);
     },
+    // ADD PAYMENTS
+    addPaymentsRedux: (state, action: PayloadAction<PaymentState[]>) => {
+      const newPayments = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as PaymentState[];
+      state.all = newPayments;
+      getConfirmed(state, newPayments);
+    },
     // ADD PAYMENT
     addPaymentRedux: (state, action: PayloadAction<PaymentState>) => {
       const newPayments = [...state.all, action.payload];
+
       state.all = newPayments;
       getConfirmed(state, newPayments);
     },
@@ -56,6 +67,7 @@ const paymentsSlice = createSlice({
 
 export const {
   setPaymentsRedux,
+  addPaymentsRedux,
   addPaymentRedux,
   updatePaymentRedux,
   setPaymentToConfirmRedux,

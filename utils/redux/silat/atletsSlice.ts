@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import { compare } from "@/utils/functions";
 import {
   AtletState,
@@ -5,29 +6,59 @@ import {
 } from "@/utils/silat/atlet/atletConstats";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+type FilteredAtlets = {
+  idPertandingan: string;
+  atlets: AtletState[];
+};
+
 type State = {
+  filtered: FilteredAtlets[];
   all: AtletState[];
   registered: AtletState[];
   toEdit: AtletState;
 };
 
 const initialState: State = {
+  filtered: [],
   all: [],
   registered: [],
   toEdit: atletInitialValue,
 };
 
-const getRegistered = (state: any, data: AtletState[]) => {
-  let container: AtletState[] = [];
+const getRegistered = (state: State, data: AtletState[]) => {
+  let result: AtletState[] = [];
   data.map((atlet) => {
     if (atlet.pertandingan.length) {
       atlet.pertandingan.map((pertandingan) => {
         const data: AtletState = { ...atlet, pertandingan: [pertandingan] };
-        container.push(data);
+        result.push(data);
       });
     }
   });
-  state.registered = container.sort(compare("nama", "asc"));
+  state.registered = result.sort(compare("nama", "asc"));
+};
+
+const getFiltered = (state: State, atlets: AtletState[]) => {
+  atlets.map((atlet) => {
+    atlet.pertandingan.map((pertandingan) => {
+      const idPertandingan = `${pertandingan.jenis}/${pertandingan.tingkatan}/${pertandingan.kategori}/${atlet.jenisKelamin}`;
+      const exist = state.filtered.find(
+        (item) => item.idPertandingan == idPertandingan
+      );
+      if (exist) {
+        const newAtlets = reduceData([...exist.atlets, atlet]) as AtletState[];
+        state.filtered = reduceData([
+          ...state.filtered,
+          { idPertandingan, atlets: newAtlets },
+        ]) as FilteredAtlets[];
+      } else {
+        state.filtered = [
+          ...state.filtered,
+          { idPertandingan, atlets: [atlet] },
+        ];
+      }
+    });
+  });
 };
 
 const atletSlice = createSlice({
@@ -40,10 +71,18 @@ const atletSlice = createSlice({
       state.all = atlets.sort(compare("nama", "asc"));
       getRegistered(state, atlets);
     },
+    // ADD ATLETS
+    addAtletsRedux: (state, action: PayloadAction<AtletState[]>) => {
+      const newAtlets = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as AtletState[];
+      state.all = newAtlets;
+      getFiltered(state, newAtlets);
+    },
     // UPDATE ATLET
     updateAtletRedux: (state, action: PayloadAction<AtletState>) => {
       const atlet = action.payload;
-
       let newAtlets = [...state.all];
       newAtlets = newAtlets.filter((item) => item.id != atlet.id);
       newAtlets.push(atlet);
@@ -73,6 +112,7 @@ const atletSlice = createSlice({
 
 export const {
   setAtletsRedux,
+  addAtletsRedux,
   updateAtletRedux,
   addAtletRedux,
   deleteAtletRedux,

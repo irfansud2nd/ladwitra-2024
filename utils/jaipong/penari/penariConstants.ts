@@ -26,8 +26,7 @@ export const tingkatanKategoriJaipong = [
 // PENARI TYPE
 export type PenariState = {
   id: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   creatorEmail: string;
   nama: string;
   NIK: string;
@@ -40,7 +39,13 @@ export type PenariState = {
     kelas: string;
     tingkatan: string;
     kategori: string;
+  }[];
+  namaTim: {
+    idTarian: string;
     namaTim: string;
+  }[];
+  pembayaran: {
+    idTarian: string;
     idPembayaran: string;
   }[];
   nomorTarian: number;
@@ -62,8 +67,7 @@ export type PenariState = {
 export const penariInitialValue: PenariState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   NIK: "",
   tempatLahir: "",
@@ -71,6 +75,8 @@ export const penariInitialValue: PenariState = {
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   tarian: [],
+  namaTim: [],
+  pembayaran: [],
   nomorTarian: 0,
   idSanggar: "",
   namaSanggar: "",
@@ -159,3 +165,8 @@ export type JenisTarian = "Tunggal" | "Rampak";
 export const penariRampakValidationSchema = Yup.object({
   namaTim: Yup.string().required("Tolong lengkapi nama tim"),
 });
+
+export const biayaPenari = {
+  rampak: 350000,
+  tunggal: 200000,
+};

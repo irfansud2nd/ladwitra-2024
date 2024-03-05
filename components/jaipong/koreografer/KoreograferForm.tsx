@@ -43,9 +43,12 @@ const KoreograferForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (koreograferToEdit.id) {
-      updateKoreografer(koreografer, dispatch, setSubmitting, () => {
-        resetForm();
-        dispatch(setKoreograferToEditRedux(koreograferInitialValue));
+      updateKoreografer(koreografer, dispatch, {
+        setSubmitting,
+        onComplete: () => {
+          resetForm();
+          dispatch(setKoreograferToEditRedux(koreograferInitialValue));
+        },
       });
     } else {
       sendKoreografer(koreografer, sanggar, dispatch, setSubmitting, resetForm);

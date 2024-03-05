@@ -1,5 +1,11 @@
 import { BiLoader } from "react-icons/bi";
-const FullLoading = ({ text }: { text?: string }) => {
+
+type Props = {
+  text?: string;
+  overlay?: boolean;
+};
+
+const FullLoading = ({ text, overlay }: Props) => {
   return (
     <div className="w-full h-full flex justify-center items-center">
       <div className="flex flex-col gap-3 items-center">

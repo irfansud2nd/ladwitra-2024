@@ -20,36 +20,39 @@ import { deleteOfficial } from "@/utils/silat/official/officialFunctions";
 
 export const OfficialColumn: ColumnDef<OfficialState>[] = [
   {
+    id: "No",
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
   },
 
   {
+    id: "Nama",
     accessorKey: "nama",
     header: ({ column }) => {
       return <TableSortButton column={column} text="Nama" />;
     },
   },
   {
-    accessorKey: "jenisKelamin",
+    id: "Jenis Kelamin",
     header: "Jenis Kelamin",
+    accessorKey: "jenisKelamin",
   },
   {
-    accessorKey: "jabatan",
+    id: "Jabatan",
     header: "Jabatan",
+    accessorKey: "jabatan",
   },
   {
+    id: "Waktu Pendaftaran",
     accessorKey: "waktuPendaftaran",
     header: ({ column }) => {
       return <TableSortButton column={column} text="Waktu Pendaftaran" />;
     },
-    cell: ({ row }) => (
-      <div>{formatDate(row.getValue("waktuPendaftaran"))}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.original.waktuPendaftaran)}</div>,
   },
   {
+    id: "Aksi",
     header: "Aksi",
-    id: "actions",
     cell: ({ row }) => {
       const official = row.original;
       const dispatch = useDispatch();

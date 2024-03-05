@@ -4,26 +4,28 @@ import * as Yup from "yup";
 export const kontingenInitialValue: KontingenState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   atlets: [],
+  nomorPertandingan: 0,
   officials: [],
   idPembayaran: [],
   totalPembayaran: 0,
+  tagihan: 0,
 };
 
 // KONTINGEN STATE
 export type KontingenState = {
   id: string;
   creatorEmail: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   nama: string;
   atlets: string[];
+  nomorPertandingan: number;
   officials: string[];
   idPembayaran: string[];
   totalPembayaran: number;
+  tagihan: number;
 };
 
 // KONTINGEN VALIDATION SCHEMA

@@ -9,15 +9,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
-import { formatDate } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
-import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
-import { deleteAtlet, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
+import { isAtletPaid, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { useState } from "react";
+import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
+import { updateKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
 
 export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
   {
@@ -58,14 +58,17 @@ export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
       const atlet = row.original;
       const dispatch = useDispatch();
       const allAtlets = useSelector((state: RootState) => state.atlets.all);
+      const kontingen = useSelector(
+        (state: RootState) => state.kontingen.registered
+      );
 
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async (atletToDelete: AtletState) => {
-        const message = atlet.pertandingan[0].idPembayaran
+        const message = isAtletPaid(atlet)
           ? "Atlet yang sudah dibayar tidak dapat dihapus."
           : "Apakah anda yakin?";
-        const options = atlet.pertandingan[0].idPembayaran
+        const options = isAtletPaid(atlet)
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm(
@@ -85,7 +88,20 @@ export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
             pertandingan: newPertandingan,
             nomorPertandingan: atlet.nomorPertandingan - 1,
           };
-          updateAtlet(newAtlet, dispatch, setLoading);
+          updateAtlet(newAtlet, dispatch, {
+            setSubmitting: setLoading,
+            onComplete: () => {
+              setLoading(true);
+              const newKontingen: KontingenState = {
+                ...kontingen,
+                tagihan: kontingen.tagihan - biayaAtlet,
+                nomorPertandingan: kontingen.nomorPertandingan - 1,
+              };
+              updateKontingen(newKontingen, kontingen, dispatch, {
+                setSubmitting: setLoading,
+              });
+            },
+          });
         }
       };
 

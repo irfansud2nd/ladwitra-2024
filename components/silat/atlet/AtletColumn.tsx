@@ -14,7 +14,7 @@ import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
 import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
-import { deleteAtlet } from "@/utils/silat/atlet/atletFunctions";
+import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 
@@ -36,21 +36,19 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
   {
     accessorKey: "tinggiBadan",
     header: "Tinggi Badan",
-    cell: ({ row }) => <div>{row.getValue("tinggiBadan")} CM</div>,
+    cell: ({ row }) => <div>{row.original.tinggiBadan} CM</div>,
   },
   {
     accessorKey: "beratBadan",
     header: "Berat Badan",
-    cell: ({ row }) => <div>{row.getValue("beratBadan")} KG</div>,
+    cell: ({ row }) => <div>{row.original.beratBadan} KG</div>,
   },
   {
     accessorKey: "waktuPendaftaran",
     header: ({ column }) => {
       return <TableSortButton column={column} text="Waktu Pendaftaran" />;
     },
-    cell: ({ row }) => (
-      <div>{formatDate(row.getValue("waktuPendaftaran"))}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.original.waktuPendaftaran)}</div>,
   },
   {
     header: "Aksi",
@@ -65,13 +63,11 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async (atlet: AtletState) => {
-        const paid = atlet.pertandingan.filter(
-          (pertandingan) => pertandingan.idPembayaran
-        );
-        const message = paid.length
+        const paid = isAtletPaid(atlet);
+        const message = paid
           ? "Atlet yang sudah dibayar tidak dapat dihapus."
           : "Apakah anda yakin?";
-        const options = paid.length
+        const options = paid
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Atlet", message, options);

@@ -31,10 +31,10 @@ export const calculateAge = (date: any) => {
 // SELECT DEFAULT CATEGORY
 export const selectCategorySilat = (
   tingkatan: string,
-  pertandingan: string,
+  jenis: string,
   jenisKelamin: string
 ) => {
-  if (pertandingan == jenisPertandingan[0]) {
+  if (jenis == jenisPertandingan[0]) {
     return tingkatanKategoriSilat[
       tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
     ].kategoriTanding;
@@ -170,13 +170,19 @@ export const sendAtlet = (
 export const updateAtlet = (
   atlet: AtletState,
   dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  withStatus: boolean = true
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    withoutStatus?: boolean;
+  }
 ) => {
-  const toastId = withStatus
-    ? toast.loading("Memperbaharui data atlet")
-    : undefined;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const withoutStatus = options?.withoutStatus || false;
+
+  const toastId = withoutStatus
+    ? undefined
+    : toast.loading("Memperbaharui data atlet");
   const stepController = (step: number) => {
     switch (step) {
       case 1:
@@ -189,7 +195,8 @@ export const updateAtlet = (
         break;
       case 2:
         // DELETE OLD PAS FOTO
-        withStatus && toast.loading("Menghapus pas foto lama", { id: toastId });
+        !withoutStatus &&
+          toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
           .delete(`/api/file/${atlet.fotoUrl}`)
           .then(() => stepController(3))
@@ -200,7 +207,7 @@ export const updateAtlet = (
         break;
       case 3:
         // UPLOAD NEW PAS FOTO
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Mengunggah pas foto baru", { id: toastId });
         atlet.fotoFile &&
           sendFile(atlet.fotoFile, atlet.fotoUrl)
@@ -223,7 +230,7 @@ export const updateAtlet = (
         break;
       case 5:
         // DELETE OLD KTP
-        withStatus && toast.loading("Menghapus KTP lama", { id: toastId });
+        !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
         axios
           .delete(`/api/file/${atlet.ktpUrl}`)
           .then(() => stepController(6))
@@ -234,7 +241,7 @@ export const updateAtlet = (
         break;
       case 6:
         // UPLOAD NEW KTP
-        withStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
+        !withoutStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
         atlet.ktpFile &&
           sendFile(atlet.ktpFile, atlet.ktpUrl)
             .then((url) => {
@@ -256,7 +263,7 @@ export const updateAtlet = (
         break;
       case 8:
         // DELETE OLD KK
-        withStatus && toast.loading("Menghapus KK lama", { id: toastId });
+        !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
         axios
           .delete(`/api/file/${atlet.kkUrl}`)
           .then(() => stepController(9))
@@ -267,7 +274,7 @@ export const updateAtlet = (
         break;
       case 9:
         // UPLOAD NEW KK
-        withStatus && toast.loading("Mengunggah KK baru", { id: toastId });
+        !withoutStatus && toast.loading("Mengunggah KK baru", { id: toastId });
         atlet.kkFile &&
           sendFile(atlet.kkFile, atlet.kkUrl)
             .then((url) => {
@@ -281,7 +288,7 @@ export const updateAtlet = (
         break;
       case 10:
         // UPDATE ATLET
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Memperbaharui data atlet", { id: toastId });
         atlet.fotoFile && delete atlet.fotoFile;
         atlet.ktpFile && delete atlet.ktpFile;
@@ -291,7 +298,7 @@ export const updateAtlet = (
           .patch("/api/atlets", atlet)
           .then((res) => {
             dispatch(updateAtletRedux(atlet));
-            withStatus &&
+            !withoutStatus &&
               toast.success("Atlet berhasil diperbaharui", { id: toastId });
             onComplete && onComplete();
             setSubmitting && setSubmitting(false);
@@ -330,7 +337,10 @@ export const deleteAtlet = (
           "atlets",
           atlet.id,
           "delete",
-          dispatch
+          dispatch,
+          {
+            atlet,
+          }
         )
           .then(() => {
             stepController(2);
@@ -384,4 +394,67 @@ export const deleteAtlet = (
     }
   };
   stepController(1);
+};
+
+export const getPertandinganId = (
+  pertandingan: {
+    jenis: string;
+    tingkatan: string;
+    kategori: string;
+  },
+  useSpace: boolean = false
+) => {
+  let idPertandingan = `${pertandingan.jenis}-${pertandingan.tingkatan}-${pertandingan.kategori}`;
+  if (useSpace) idPertandingan = idPertandingan.split("-").join(" - ");
+  return idPertandingan;
+};
+
+export const isAtletPaid = (atlet: AtletState) => {
+  let paid = false;
+
+  atlet.pertandingan.map((pertandingan) => {
+    if (paid) return;
+    if (
+      atlet.pembayaran.find(
+        (pembayaran) =>
+          pembayaran.idPertandingan == getPertandinganId(pertandingan)
+      )
+    )
+      paid = true;
+  });
+
+  return paid;
+};
+
+export const getAtletPaymentId = (atlet: AtletState) => {
+  const idPertandingan = getPertandinganId(atlet.pertandingan[0]);
+  const idPembayaran = atlet.pembayaran.find(
+    (pembayaran) => pembayaran.idPertandingan == idPertandingan
+  )?.idPembayaran;
+  return idPembayaran as string;
+};
+
+export const getAllPertandinganUrl = () => {
+  let pertandinganIds: string[] = [];
+  tingkatanKategoriSilat.map((tingkatanKategori) => {
+    tingkatanKategori.kategoriTanding.map((kategoriTanding) => {
+      pertandinganIds.push(
+        `Tanding/${tingkatanKategori.tingkatan}/${kategoriTanding}/Putra`
+      );
+      pertandinganIds.push(
+        `Tanding/${tingkatanKategori.tingkatan}/${kategoriTanding}/Putri`
+      );
+    });
+    tingkatanKategori.kategoriSeni.putra.map((kategoriSeni) => {
+      pertandinganIds.push(
+        `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putra`
+      );
+    });
+    tingkatanKategori.kategoriSeni.putri.map((kategoriSeni) => {
+      pertandinganIds.push(
+        `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putri`
+      );
+    });
+  });
+  return pertandinganIds;
 };

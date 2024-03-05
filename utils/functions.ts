@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { toast } from "sonner";
 
 // CAPITALIZE
@@ -28,14 +29,22 @@ export const compare = (query: string, type: "asc" | "desc") => {
 };
 
 // FORMAT TANGGAL =
-export const formatDate = (inputDate: number | string) => {
+export const formatDate = (
+  inputDate: number | string,
+  withoutHour: boolean = false
+) => {
   const formattedDate = new Date(inputDate);
   const date = formattedDate.getDate();
+  const year = formattedDate.getFullYear();
   const month = formattedDate.toLocaleString("id", { month: "short" });
   const hour = formattedDate.getHours().toString().padStart(2, "0");
   const minute = formattedDate.getMinutes().toString().padStart(2, "0");
 
-  return `${date} ${month}, ${hour}:${minute}`;
+  let result = `${date} ${month}, `;
+
+  withoutHour ? (result += `${year}`) : (result += `${hour}:${minute}`);
+
+  return result;
 };
 
 export const formatToRupiah = (input: string | number, rerverse?: boolean) => {
@@ -46,8 +55,6 @@ export const formatToRupiah = (input: string | number, rerverse?: boolean) => {
     Number(input)
   ).toLocaleString("id")}`;
 };
-
-import { revalidateTag } from "next/cache";
 
 export default async function refreshCount() {
   revalidateTag("test");

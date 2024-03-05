@@ -48,15 +48,12 @@ const KontingenForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (kontingenToEdit.id) {
-      updateKontingen(
-        values,
-        kontingenToEdit,
+      updateKontingen(values, kontingenToEdit, dispatch, {
+        setSubmitting,
+        onComplete: resetForm,
         officials,
         atlets,
-        dispatch,
-        resetForm,
-        setSubmitting
-      );
+      });
     } else {
       sendKontingen(values)
         .then((res) => {

@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,23 +28,40 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import FullLoading from "@/components/loadings/FullLoading";
+import { useDownloadExcel } from "react-export-table-to-excel";
+import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
+import { IoMdMore } from "react-icons/io";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 interface AdminTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  title: string;
+  page?: number;
   nextPage?: () => void;
   prevPage?: () => void;
   disableNextPage?: boolean;
   disablePrevPage?: boolean;
+  loading?: boolean;
+  showAll?: () => void;
+  downloadable?: boolean;
+  customFileName?: string;
 }
 
 export function AdminTable<TData, TValue>({
   columns,
   data,
+  title,
+  page,
   nextPage,
   prevPage,
   disableNextPage,
   disablePrevPage,
+  loading,
+  showAll,
+  downloadable,
+  customFileName,
 }: AdminTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -66,16 +83,21 @@ export function AdminTable<TData, TValue>({
     },
   });
 
+  const tableRef = useRef(null);
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: customFileName ?? "Tabel",
+    sheet: "Data",
+  });
+
   return (
     <div className="relative h-full w-full max-w-full grid grid-rows-[auto_1fr] overflow-auto max-h-full">
-      <div
-        className={`flex items-center 
-        ${nextPage ? "justify-between" : "justify-end"}`}
-      >
+      <div className="flex flex-wrap2 items-center w-full py-1 gap-1 max-w-[calc(100vw-18px)] sm:max-w-[calc(100vw-194px)] sticky left-0">
+        <h1 className="capitalize text-lg font-semibold">{title}</h1>
         {/* COLUMN VISIBILITY */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto" size={"sm"}>
               Columns
             </Button>
           </DropdownMenuTrigger>
@@ -99,29 +121,68 @@ export function AdminTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* MOBILE DOWNLOAD AND SHOW ALL BUTTONS */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="sm:hidden" size={"sm"}>
+              <IoMdMore />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={showAll} disabled={loading}>
+              Show All
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onDownload} disabled={loading}>
+              Download
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* SHOW ALL BUTTON */}
+        {showAll && (
+          <Button
+            size="sm"
+            onClick={showAll}
+            disabled={loading}
+            className="max-sm:hidden"
+          >
+            Show All
+          </Button>
+        )}
+        {/* DOWNLOAD BUTTON */}
+        {downloadable && (
+          <Button
+            size="sm"
+            onClick={onDownload}
+            disabled={loading}
+            className="max-sm:hidden"
+          >
+            Download
+          </Button>
+        )}
         {/* PAGINATION */}
         {nextPage && prevPage && (
-          <div className="flex gap-1">
+          <div className=" flex gap-1 items-center">
             <Button
               variant="outline"
               size="sm"
               onClick={prevPage}
-              disabled={disablePrevPage}
+              disabled={disablePrevPage || loading}
             >
-              Previous
+              <MdSkipPrevious />
             </Button>
+            <p className="text-xs">Page: {page}</p>
             <Button
               variant="outline"
               size="sm"
               onClick={nextPage}
-              disabled={disableNextPage}
+              disabled={disableNextPage || loading}
             >
-              Next
+              <MdSkipNext />
             </Button>
           </div>
         )}
       </div>
-      <Table>
+      <Table className={loading ? "h-full" : "h-fit"} ref={tableRef}>
         <TableHeader
           className="bg-secondary"
           style={{ position: "sticky", top: "0" }}
@@ -143,8 +204,14 @@ export function AdminTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
+        <TableBody className="whitespace-nowrap">
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length}>
+                <FullLoading overlay />
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}

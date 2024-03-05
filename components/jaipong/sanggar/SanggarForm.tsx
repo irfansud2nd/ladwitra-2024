@@ -47,15 +47,12 @@ const SanggarForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (sanggarToEdit.id) {
-      updateSanggar(
-        values,
-        sanggarToEdit,
+      updateSanggar(values, sanggarToEdit, dispatch, {
         koreografers,
         penaris,
-        dispatch,
-        resetForm,
-        setSubmitting
-      );
+        setSubmitting,
+        onComplete: resetForm,
+      });
     } else {
       sendSanggar(values, dispatch, resetForm, setSubmitting).then(() =>
         setOpen(false)

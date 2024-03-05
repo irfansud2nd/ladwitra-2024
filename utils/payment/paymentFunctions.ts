@@ -10,10 +10,15 @@ import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
 import { PaymentState } from "./paymentConstants";
 import { formatToRupiah, toastFirebaseError } from "../functions";
-import { addPaymentRedux } from "../redux/silat/paymentsSlice";
+import {
+  addPaymentRedux,
+  updatePaymentRedux,
+} from "../redux/silat/paymentsSlice";
 import { PenariState } from "../jaipong/penari/penariConstants";
 import { SanggarState } from "../jaipong/sanggar/sanggarConstants";
 import { updateSanggar } from "../jaipong/sanggar/sanggarFunctions";
+import { getPertandinganId, updateAtlet } from "../silat/atlet/atletFunctions";
+import { getTarianId } from "../jaipong/penari/penariFunctions";
 
 export const sendSilatPayment = (
   payment: PaymentState,
@@ -28,41 +33,34 @@ export const sendSilatPayment = (
   const toastId = toast.success("Menyimpan pembayaran");
   const buktiUrl = `payments/${idPembayaran}`;
   let downloadBuktiUrl = "";
-  const updatedAtlets = selectedAtlets.map((atlet) => ({
-    ...atlet,
-    pertandingan: [
-      {
-        ...atlet.pertandingan[0],
-        idPembayaran,
-      },
-    ],
-  }));
-  const reducedAtlets = updatedAtlets.reduce((acc, curr: AtletState) => {
-    const exist = acc.find((item: AtletState) => item.id == curr.id);
-    if (exist) {
-      exist.pertandingan = [...exist.pertandingan, curr.pertandingan[0]];
+
+  let updatedAtlets: AtletState[] = [];
+
+  selectedAtlets.map((selectedAtlet) => {
+    const atletIndex = updatedAtlets.findIndex(
+      (updatedAtlet) => updatedAtlet.id == selectedAtlet.id
+    );
+    if (atletIndex < 0) {
+      const allPertandingan = allAtlets.find(
+        (atlet) => atlet.id == selectedAtlet.id
+      )?.pertandingan as [];
+      updatedAtlets.push({
+        ...selectedAtlet,
+        pertandingan: allPertandingan,
+        pembayaran: [
+          ...selectedAtlet.pembayaran,
+          {
+            idPembayaran,
+            idPertandingan: getPertandinganId(selectedAtlet.pertandingan[0]),
+          },
+        ],
+      });
     } else {
-      acc.push({ ...curr });
+      updatedAtlets[atletIndex].pembayaran.push({
+        idPembayaran,
+        idPertandingan: getPertandinganId(selectedAtlet.pertandingan[0]),
+      });
     }
-    return acc;
-  }, [] as AtletState[]);
-  const mergedAtlets = reducedAtlets.map((reducedAtlet) => {
-    const atlet = allAtlets.find(
-      (atlet) => atlet.id == reducedAtlet.id
-    ) as AtletState;
-    const uniqueEntries: any = {};
-    [...atlet?.pertandingan, ...reducedAtlet.pertandingan].forEach((entry) => {
-      const key = `${entry.jenis}-${entry.kategori}-${entry.tingkatan}`;
-      if (uniqueEntries[key]) {
-        if (entry.idPembayaran) {
-          uniqueEntries[key] = entry;
-        }
-      } else {
-        uniqueEntries[key] = entry;
-      }
-    });
-    const pertandingan = Object.values(uniqueEntries);
-    return { ...atlet, pertandingan } as AtletState;
   });
 
   const stepController = (step: number) => {
@@ -76,29 +74,20 @@ export const sendSilatPayment = (
             kontingen.totalPembayaran +
             Number(formatToRupiah(payment.totalPembayaran, true)),
         };
-        updateKontingen(
-          newKontingen,
-          kontingen,
-          [],
-          mergedAtlets,
-          dispatch,
-          resetForm,
+        updateKontingen(newKontingen, kontingen, dispatch, {
           setSubmitting,
-          () => stepController(2),
-          toastId
-        );
+          onComplete: () => stepController(2),
+          atlets: updatedAtlets,
+          prevToastId: toastId,
+        });
         break;
       case 2:
         // UPDATE ATLETS
-        updatePersons(
-          mergedAtlets,
-          "atlet",
-          (data) => data,
-          dispatch,
-          () => stepController(3),
+        updatePersons(updatedAtlets, "atlet", (data) => data, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(3),
+          toastId,
+        });
         break;
       case 3:
         // UPLOAD BUKTI PAYMENT
@@ -125,6 +114,7 @@ export const sendSilatPayment = (
           totalPembayaran: Number(
             formatToRupiah(payment.totalPembayaran, true)
           ),
+          waktuPembayaran: Date.now(),
           source: "silat",
         };
         axios
@@ -160,41 +150,34 @@ export const sendJaipongPayment = (
   const toastId = toast.success("Menyimpan pembayaran");
   const buktiUrl = `payments/${idPembayaran}`;
   let downloadBuktiUrl = "";
-  const updatedPenaris = selectedPenaris.map((penari) => ({
-    ...penari,
-    tarian: [
-      {
-        ...penari.tarian[0],
-        idPembayaran,
-      },
-    ],
-  }));
-  const reducedPenaris = updatedPenaris.reduce((acc, curr: PenariState) => {
-    const exist = acc.find((item: PenariState) => item.id == curr.id);
-    if (exist) {
-      exist.tarian = [...exist.tarian, curr.tarian[0]];
+
+  let updatedPenaris: PenariState[] = [];
+
+  selectedPenaris.map((selectedPenari) => {
+    const penariIndex = updatedPenaris.findIndex(
+      (updatedPenari) => updatedPenari.id == selectedPenari.id
+    );
+    if (penariIndex < 0) {
+      const allTarian = allPenaris.find(
+        (penari) => penari.id == selectedPenari.id
+      )?.tarian as [];
+      updatedPenaris.push({
+        ...selectedPenari,
+        tarian: allTarian,
+        pembayaran: [
+          ...selectedPenari.pembayaran,
+          {
+            idPembayaran,
+            idTarian: getTarianId(selectedPenari.tarian[0]),
+          },
+        ],
+      });
     } else {
-      acc.push({ ...curr });
+      updatedPenaris[penariIndex].pembayaran.push({
+        idPembayaran,
+        idTarian: getTarianId(selectedPenari.tarian[0]),
+      });
     }
-    return acc;
-  }, [] as PenariState[]);
-  const mergedPenaris = reducedPenaris.map((reducedPenari) => {
-    const penari = allPenaris.find(
-      (penari) => penari.id == reducedPenari.id
-    ) as PenariState;
-    const uniqueEntries: any = {};
-    [...penari?.tarian, ...reducedPenari.tarian].forEach((entry) => {
-      const key = `${entry.jenis}-${entry.kelas}-${entry.tingkatan}-${entry.kategori}-${entry.namaTim}`;
-      if (uniqueEntries[key]) {
-        if (entry.idPembayaran) {
-          uniqueEntries[key] = entry;
-        }
-      } else {
-        uniqueEntries[key] = entry;
-      }
-    });
-    const tarian = Object.values(uniqueEntries);
-    return { ...penari, tarian } as PenariState;
   });
 
   const stepController = (step: number) => {
@@ -208,29 +191,20 @@ export const sendJaipongPayment = (
             sanggar.totalPembayaran +
             Number(formatToRupiah(payment.totalPembayaran, true)),
         };
-        updateSanggar(
-          newSanggar,
-          sanggar,
-          [],
-          mergedPenaris,
-          dispatch,
-          resetForm,
+        updateSanggar(newSanggar, sanggar, dispatch, {
           setSubmitting,
-          () => stepController(2),
-          toastId
-        );
+          onComplete: () => stepController(2),
+          penaris: updatedPenaris,
+          prevToastId: toastId,
+        });
         break;
       case 2:
         // UPDATE PENARIS
-        updatePersons(
-          mergedPenaris,
-          "penari",
-          (data) => data,
-          dispatch,
-          () => stepController(3),
+        updatePersons(updatedPenaris, "penari", (data) => data, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(3),
+          toastId,
+        });
         break;
       case 3:
         // UPLOAD BUKTI PAYMENT
@@ -257,6 +231,7 @@ export const sendJaipongPayment = (
           totalPembayaran: Number(
             formatToRupiah(payment.totalPembayaran, true)
           ),
+          waktuPembayaran: Date.now(),
           source: "jaipong",
         };
         axios
@@ -280,7 +255,7 @@ export const sendJaipongPayment = (
 };
 
 export const confirmPayment = (
-  id: string,
+  payment: PaymentState,
   email: string,
   dispatch: Dispatch<UnknownAction>
 ) => {
@@ -288,4 +263,17 @@ export const confirmPayment = (
     toast.error("Session email not found");
     return;
   }
+  const toastId = toast.loading("Mengkonfirmasi pembayaran");
+  const newPayment: PaymentState = {
+    ...payment,
+    confirmed: true,
+    confirmedBy: email,
+  };
+  return axios
+    .patch("/api/payments", newPayment)
+    .then(() => {
+      dispatch(updatePaymentRedux(newPayment));
+      toast.success("Pembayaran berhasil dikonfirmasi", { id: toastId });
+    })
+    .catch((error) => toastFirebaseError(error, toastId));
 };

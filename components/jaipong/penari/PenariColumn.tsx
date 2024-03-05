@@ -16,7 +16,10 @@ import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
 import { setPenariToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
-import { deletePenari } from "@/utils/jaipong/penari/penariFunctions";
+import {
+  deletePenari,
+  isPenariPaid,
+} from "@/utils/jaipong/penari/penariFunctions";
 
 export const PenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -38,9 +41,7 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
     header: ({ column }) => {
       return <TableSortButton column={column} text="Waktu Pendaftaran" />;
     },
-    cell: ({ row }) => (
-      <div>{formatDate(row.getValue("waktuPendaftaran"))}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.original.waktuPendaftaran)}</div>,
   },
   {
     header: "Aksi",
@@ -55,11 +56,11 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async (penari: PenariState) => {
-        const paid = penari.tarian.filter((tarian) => tarian.idPembayaran);
-        const message = paid.length
+        const paid = isPenariPaid(penari);
+        const message = paid
           ? "Penari yang sudah dibayar tidak dapat dihapus."
           : "Apakah anda yakin?";
-        const options = paid.length
+        const options = paid
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Penari", message, options);

@@ -96,13 +96,19 @@ export const sendOfficial = (
 export const updateOfficial = (
   official: OfficialState,
   dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  withStatus: boolean = true
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    withoutStatus?: boolean;
+  }
 ) => {
-  const toastId = withStatus
-    ? toast.loading("Memperbaharui data official")
-    : undefined;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const withoutStatus = options?.withoutStatus || false;
+
+  const toastId = withoutStatus
+    ? undefined
+    : toast.loading("Memperbaharui data official");
   const stepController = (step: number) => {
     switch (step) {
       case 1:
@@ -115,7 +121,8 @@ export const updateOfficial = (
         break;
       case 2:
         // DELETE OLD PAS FOTO
-        withStatus && toast.loading("Menghapus pas foto lama", { id: toastId });
+        !withoutStatus &&
+          toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
           .delete(`/api/file/${official.fotoUrl}`)
           .then(() => stepController(3))
@@ -126,7 +133,7 @@ export const updateOfficial = (
         break;
       case 3:
         // UPLOAD NEW PAS FOTO
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Mengunggah pas foto baru", { id: toastId });
         official.fotoFile &&
           sendFile(official.fotoFile, official.fotoUrl)
@@ -141,7 +148,7 @@ export const updateOfficial = (
         break;
       case 4:
         // UPDATE OFFICIAL
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Memperbaharui data official", { id: toastId });
         official.fotoFile && delete official.fotoFile;
 
@@ -149,7 +156,7 @@ export const updateOfficial = (
           .patch("/api/officials", official)
           .then((res) => {
             dispatch(updateOfficialRedux(official));
-            withStatus &&
+            !withoutStatus &&
               toast.success("Official berhasil diperbaharui", { id: toastId });
             onComplete && onComplete();
             setSubmitting && setSubmitting(false);

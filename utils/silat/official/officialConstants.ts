@@ -10,8 +10,7 @@ export const jabatanOfficials = ["Official", "Manajer Tim", "Pelatih"];
 export type OfficialState = {
   id: string;
   creatorEmail: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   nama: string;
   jenisKelamin: string;
   jabatan: string;
@@ -26,8 +25,7 @@ export type OfficialState = {
 export const officialInitialValue: OfficialState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   jenisKelamin: jenisKelaminDewasa[0],
   jabatan: jabatanOfficials[0],

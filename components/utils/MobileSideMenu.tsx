@@ -8,13 +8,13 @@ import ThemeSwitcher from "../header/ThemeSwitcher";
 import { usePathname } from "next/navigation";
 import AdminSideMenu from "../admin/AdminSideMenu";
 import { useSession } from "next-auth/react";
+import JaipongSideMenu from "../jaipong/JaipongSideMenu";
 
 const MobileSideMenu = () => {
   const session = useSession();
   const email = session.data?.user?.email;
   const pathnames = usePathname().split("/");
-  const onSilat = pathnames[1] == "silat";
-  const onAdmin = pathnames[1] == "admin";
+  const page = pathnames[1];
   return (
     <Sheet>
       <SheetTrigger asChild className={`sm:hidden ${!email && "hidden"}`}>
@@ -27,10 +27,12 @@ const MobileSideMenu = () => {
           <h1>Menu</h1>
           <ThemeSwitcher />
         </div>
-        {onSilat && (
-          <ReduxProvider>{onSilat && <SilatSideMenu />}</ReduxProvider>
+        {(page == "silat" || page == "jaipong") && (
+          <ReduxProvider>
+            {page == "silat" ? <SilatSideMenu /> : <JaipongSideMenu />}
+          </ReduxProvider>
         )}
-        {onAdmin && <AdminSideMenu />}
+        {page == "admin" && <AdminSideMenu />}
       </SheetContent>
     </Sheet>
   );

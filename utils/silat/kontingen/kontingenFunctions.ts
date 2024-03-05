@@ -13,7 +13,7 @@ import axios from "axios";
 import { collection, doc } from "firebase/firestore";
 import { toast } from "sonner";
 import { OfficialState } from "../official/officialConstants";
-import { AtletState } from "../atlet/atletConstats";
+import { AtletState, biayaAtlet } from "../atlet/atletConstats";
 import { ResetForm, SetSubmitting } from "@/utils/form/FormConstants";
 import { deletePersons, updatePersons } from "@/utils/form/FormFunctions";
 import { toastFirebaseError } from "@/utils/functions";
@@ -43,8 +43,13 @@ export const managePersonOnKontingen = async (
   tipe: "officials" | "atlets",
   personId: string,
   action: "add" | "delete",
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
+  options?: {
+    atlet: AtletState;
+  }
 ) => {
+  const atlet = options?.atlet;
+
   let data: KontingenState =
     action == "add"
       ? {
@@ -55,6 +60,14 @@ export const managePersonOnKontingen = async (
           ...kontingen,
           [tipe]: [...kontingen[tipe]].filter((item) => item != personId),
         };
+
+  if (atlet && tipe == "atlets") {
+    data = {
+      ...kontingen,
+      nomorPertandingan: kontingen.nomorPertandingan - atlet.nomorPertandingan,
+      tagihan: kontingen.tagihan - atlet.nomorPertandingan * biayaAtlet,
+    };
+  }
 
   return axios
     .patch("/api/kontingens", data)
@@ -70,14 +83,21 @@ export const managePersonOnKontingen = async (
 export const updateKontingen = (
   newKontingen: KontingenState,
   oldKontingen: KontingenState,
-  officials: OfficialState[],
-  atlets: AtletState[],
   dispatch: Dispatch<UnknownAction>,
-  resetForm: ResetForm,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  prevToastId?: string | number
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    officials?: OfficialState[];
+    atlets?: AtletState[];
+    prevToastId?: string | number;
+  }
 ) => {
+  const officials = options?.officials;
+  const atlets = options?.atlets;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const prevToastId = options?.prevToastId;
+
   const toastId = prevToastId
     ? prevToastId
     : toast.loading("Memperbaharui data kontingen");
@@ -97,27 +117,27 @@ export const updateKontingen = (
         break;
       case 2:
         // CHANGE OFFICIAL.NAMAKONTINGEN
-        updatePersons(
-          officials,
-          "official",
-          changePersonData,
-          dispatch,
-          () => stepController(3),
+        if (!officials?.length) {
+          stepController(3);
+          return;
+        }
+        updatePersons(officials, "official", changePersonData, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(3),
+          toastId,
+        });
         break;
       case 3:
         // CHANGE PESERTA.NAMAKONTINGEN
-        updatePersons(
-          atlets,
-          "atlet",
-          changePersonData,
-          dispatch,
-          () => stepController(4),
+        if (!atlets?.length) {
+          stepController(4);
+          return;
+        }
+        updatePersons(atlets, "atlet", changePersonData, dispatch, {
           setSubmitting,
-          toastId
-        );
+          onComplete: () => stepController(4),
+          toastId,
+        });
         break;
       case 4:
         // UPDATE KONTINGEN
@@ -129,7 +149,6 @@ export const updateKontingen = (
             dispatch(updateKontingenRedux(newKontingen));
             dispatch(setKontingenToEditRedux(kontingenInitialValue));
             onComplete && onComplete();
-            resetForm && resetForm();
             setSubmitting && setSubmitting(false);
           })
           .catch((error) => toastFirebaseError(error, toastId));

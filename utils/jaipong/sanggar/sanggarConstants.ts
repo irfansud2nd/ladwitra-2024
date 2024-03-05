@@ -4,26 +4,28 @@ import * as Yup from "yup";
 export const sanggarInitialValue: SanggarState = {
   id: "",
   creatorEmail: "",
-  waktuPendaftaran: "",
-  waktuPerubahan: "",
+  waktuPendaftaran: 0,
   nama: "",
   penaris: [],
+  nomorTarian: 0,
   koreografers: [],
   idPembayaran: [],
   totalPembayaran: 0,
+  tagihan: 0,
 };
 
 // SANGGAR STATE
 export type SanggarState = {
   id: string;
   creatorEmail: string;
-  waktuPendaftaran: number | string;
-  waktuPerubahan: number | string;
+  waktuPendaftaran: number;
   nama: string;
   penaris: string[];
+  nomorTarian: number;
   koreografers: string[];
   idPembayaran: string[];
   totalPembayaran: number;
+  tagihan: number;
 };
 
 // SANGGAR VALIDATION SCHEMA

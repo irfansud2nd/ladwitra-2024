@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import { compare } from "@/utils/functions";
 import {
   OfficialState,
@@ -6,11 +7,13 @@ import {
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type State = {
+  all: OfficialState[];
   registered: OfficialState[];
   toEdit: OfficialState;
 };
 
 const initialState: State = {
+  all: [],
   registered: [],
   toEdit: officialInitialValue,
 };
@@ -22,6 +25,15 @@ const officialsSlice = createSlice({
     // SET OFFFICIAL
     setOfficialsRedux: (state, action: PayloadAction<OfficialState[]>) => {
       state.registered = action.payload.sort(compare("nama", "asc"));
+    },
+    // ADD OFFICIALS
+    addOfficialsRedux: (state, action: PayloadAction<OfficialState[]>) => {
+      state.registered = action.payload;
+      const newOfficials = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as OfficialState[];
+      state.all = newOfficials;
     },
     // UPDATE OFFICIAL
     updateOfficialRedux: (state, action: PayloadAction<OfficialState>) => {
@@ -59,5 +71,6 @@ export const {
   addOfficialRedux,
   deleteOfficialRedux,
   setOfficialToEditRedux,
+  addOfficialsRedux,
 } = officialsSlice.actions;
 export default officialsSlice.reducer;

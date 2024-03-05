@@ -4,11 +4,12 @@ import { UnpaidAtletColumn } from "./UnpaidAtletColumn";
 import { useSelector } from "react-redux";
 import { SelectableTable } from "../../utils/tabel/SelectableTable";
 import UnpaidAtletBar from "./UnpaidAtletBar";
+import { isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 
 const UnpaidAtlet = () => {
   const unpaidAtlets = useSelector(
     (state: RootState) => state.atlets.registered
-  ).filter((atlet) => !atlet.pertandingan[0].idPembayaran);
+  ).filter((atlet) => !isAtletPaid(atlet));
   return (
     <SelectableTable columns={UnpaidAtletColumn} data={unpaidAtlets}>
       <UnpaidAtletBar />

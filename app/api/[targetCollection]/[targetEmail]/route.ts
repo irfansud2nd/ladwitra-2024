@@ -29,7 +29,7 @@ export const GET = async (
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
 
-  let container: any[] = [];
+  let result: any[] = [];
 
   return getDocs(
     query(
@@ -39,9 +39,9 @@ export const GET = async (
   )
     .then((docSnapshot) => {
       docSnapshot.forEach((doc) => {
-        container.push(doc.data());
+        result.push(doc.data());
       });
-      return NextResponse.json({ container }, { status: 200 });
+      return NextResponse.json({ result }, { status: 200 });
     })
     .catch((error: FirestoreError) => {
       return NextResponse.json(

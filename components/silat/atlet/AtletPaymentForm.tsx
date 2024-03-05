@@ -23,7 +23,7 @@ import {
 } from "@/utils/payment/paymentConstants";
 import { sendSilatPayment } from "@/utils/payment/paymentFunctions";
 import { RootState } from "@/utils/redux/store";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -65,15 +65,17 @@ const AtletPaymentForm = ({
     !values.totalPembayaran &&
       setFieldValue(
         "totalPembayaran",
-        formatToRupiah(selectedAtlets.length * 300000)
+        formatToRupiah(selectedAtlets.length * biayaAtlet)
       );
   };
 
   const getTotalPembayaran = (noHp: string) => {
     if (noHp.length >= 3) {
-      return Number((selectedAtlets.length * 300000) / 1000 + noHp.slice(-3));
+      return Number(
+        (selectedAtlets.length * biayaAtlet) / 1000 + noHp.slice(-3)
+      );
     } else {
-      return selectedAtlets.length * 300000;
+      return selectedAtlets.length * biayaAtlet;
     }
   };
 

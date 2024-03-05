@@ -8,6 +8,7 @@ import {
   JenisPertandingan,
   UnregisteredAtletState,
   atletInitialValue,
+  biayaAtlet,
   jenisPertandingan,
   tingkatanKategoriSilat,
   unregisteredAtletValue,
@@ -16,6 +17,8 @@ import {
   selectCategorySilat,
   updateAtlet,
 } from "@/utils/silat/atlet/atletFunctions";
+import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
+import { updateKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
 import { Form, Formik, FormikProps } from "formik";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +32,9 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
   const [atlet, setAtlet] = useState(atletInitialValue);
 
   const allAtlets = useSelector((state: RootState) => state.atlets.all);
+  const kontingen = useSelector(
+    (state: RootState) => state.kontingen.registered
+  );
   const dispatch = useDispatch();
 
   const handleSubmit = (
@@ -42,10 +48,9 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
       return;
     }
     const pertandingan = {
-      tingkatan: values.tingkatanPertandingan,
       jenis: values.jenisPertandingan,
+      tingkatan: values.tingkatanPertandingan,
       kategori: values.kategoriPertandingan,
-      idPembayaran: "",
     };
     const newAtlet: AtletState = {
       ...atlet,
@@ -55,8 +60,8 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
     if (
       atlet.pertandingan.some(
         (atlet) =>
-          atlet.tingkatan == pertandingan.tingkatan &&
           atlet.jenis == pertandingan.jenis &&
+          atlet.tingkatan == pertandingan.tingkatan &&
           atlet.kategori == pertandingan.kategori
       )
     ) {
@@ -64,7 +69,22 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
       setSubmitting(false);
       return;
     }
-    updateAtlet(newAtlet, dispatch, setSubmitting, resetForm);
+
+    updateAtlet(newAtlet, dispatch, {
+      setSubmitting,
+      onComplete: () => {
+        setSubmitting(true);
+        const newKontingen: KontingenState = {
+          ...kontingen,
+          tagihan: kontingen.tagihan + biayaAtlet,
+          nomorPertandingan: kontingen.nomorPertandingan + 1,
+        };
+        updateKontingen(newKontingen, kontingen, dispatch, {
+          setSubmitting: setSubmitting,
+          onComplete: resetForm,
+        });
+      },
+    });
   };
 
   const handleCancel = (resetForm: ResetForm) => {
@@ -73,7 +93,9 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
   };
 
   const getAtletById = (atletId: string) => {
-    return allAtlets.find((atlet) => atlet.id == atletId) as AtletState;
+    return allAtlets.find(
+      (atlet: AtletState) => atlet.id == atletId
+    ) as AtletState;
   };
 
   return (

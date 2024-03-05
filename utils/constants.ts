@@ -4,3 +4,5 @@ export const axiosFileConfig = {
     "Content-Type": "multipart/form-data",
   },
 };
+
+export const itemPerPage = 3;

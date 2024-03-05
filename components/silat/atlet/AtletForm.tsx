@@ -43,9 +43,13 @@ const AtletForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (atletToEdit.id) {
-      updateAtlet(atlet, dispatch, setSubmitting, () => {
-        resetForm();
-        dispatch(setAtletToEditRedux(atletInitialValue));
+      updateAtlet(atlet, dispatch, {
+        setSubmitting,
+        onComplete: () => {
+          resetForm();
+          dispatch(setAtletToEditRedux(atletInitialValue));
+        },
+        withoutStatus: true,
       });
     } else {
       sendAtlet(atlet, kontingen, dispatch, setSubmitting, resetForm);

@@ -14,8 +14,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { useState } from "react";
-import { PenariState } from "@/utils/jaipong/penari/penariConstants";
-import { updatePenari } from "@/utils/jaipong/penari/penariFunctions";
+import {
+  PenariState,
+  biayaPenari,
+} from "@/utils/jaipong/penari/penariConstants";
+import {
+  getPenariNamaTim,
+  isPenariPaid,
+  updatePenari,
+} from "@/utils/jaipong/penari/penariFunctions";
+import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
+import { updateSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
 
 export const RegisteredPenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -56,7 +65,7 @@ export const RegisteredPenariColumn: ColumnDef<PenariState>[] = [
     },
     cell: ({ row }) => {
       const penari = row.original;
-      return <div>{penari.tarian[0].namaTim}</div>;
+      return <div>{getPenariNamaTim(penari)}</div>;
     },
   },
   {
@@ -67,14 +76,17 @@ export const RegisteredPenariColumn: ColumnDef<PenariState>[] = [
       const penari = row.original;
       const dispatch = useDispatch();
       const allPenaris = useSelector((state: RootState) => state.penaris.all);
+      const sanggar = useSelector(
+        (state: RootState) => state.sanggar.registered
+      );
 
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async (penariToDelete: PenariState) => {
-        const message = penari.tarian[0].idPembayaran
+        const message = isPenariPaid(penari)
           ? "Penari yang sudah dibayar tidak dapat dihapus."
           : "Apakah anda yakin?";
-        const options = penari.tarian[0].idPembayaran
+        const options = isPenariPaid(penari)
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm(
@@ -94,7 +106,24 @@ export const RegisteredPenariColumn: ColumnDef<PenariState>[] = [
             tarian: newTarian,
             nomorTarian: penari.nomorTarian - 1,
           };
-          updatePenari(newPenari, dispatch, setLoading);
+          updatePenari(newPenari, dispatch, {
+            setSubmitting: setLoading,
+            onComplete: () => {
+              setLoading(true);
+              const biaya =
+                penari.tarian[0].jenis == "Rampak"
+                  ? biayaPenari.rampak
+                  : biayaPenari.tunggal;
+              const newSanggar: SanggarState = {
+                ...sanggar,
+                tagihan: sanggar.tagihan - biaya,
+                nomorTarian: sanggar.nomorTarian - 1,
+              };
+              updateSanggar(newSanggar, sanggar, dispatch, {
+                setSubmitting: setLoading,
+              });
+            },
+          });
         }
       };
 
@@ -123,3 +152,7 @@ export const RegisteredPenariColumn: ColumnDef<PenariState>[] = [
     },
   },
 ];
+
+export const RegisteredPenariColumnTunggal = RegisteredPenariColumn.filter(
+  (item) => item.id != "namaTim"
+);

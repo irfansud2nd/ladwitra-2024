@@ -96,13 +96,20 @@ export const sendKoreografer = (
 export const updateKoreografer = (
   koreografer: KoreograferState,
   dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  onComplete?: () => void,
-  withStatus: boolean = true
+  options?: {
+    setSubmitting?: SetSubmitting;
+    onComplete?: () => void;
+    withoutStatus?: boolean;
+  }
 ) => {
-  const toastId = withStatus
-    ? toast.loading("Memperbaharui data koreografer")
-    : undefined;
+  const setSubmitting = options?.setSubmitting;
+  const onComplete = options?.onComplete;
+  const withoutStatus = options?.withoutStatus || false;
+
+  const toastId = withoutStatus
+    ? undefined
+    : toast.loading("Memperbaharui data official");
+
   const stepController = (step: number) => {
     switch (step) {
       case 1:
@@ -115,7 +122,8 @@ export const updateKoreografer = (
         break;
       case 2:
         // DELETE OLD PAS FOTO
-        withStatus && toast.loading("Menghapus pas foto lama", { id: toastId });
+        !withoutStatus &&
+          toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
           .delete(`/api/file/${koreografer.fotoUrl}`)
           .then(() => stepController(3))
@@ -126,7 +134,7 @@ export const updateKoreografer = (
         break;
       case 3:
         // UPLOAD NEW PAS FOTO
-        withStatus &&
+        !withoutStatus &&
           toast.loading("Mengunggah pas foto baru", { id: toastId });
         koreografer.fotoFile &&
           sendFile(koreografer.fotoFile, koreografer.fotoUrl)
@@ -141,16 +149,16 @@ export const updateKoreografer = (
         break;
       case 4:
         // UPDATE KOREOGRAFER
-        withStatus &&
-          toast.loading("Memperbaharui data koreografer", { id: toastId });
+        !withoutStatus &&
+          toast.loading("Memperbaharui data official", { id: toastId });
         koreografer.fotoFile && delete koreografer.fotoFile;
 
         axios
           .patch("/api/koreografers", koreografer)
           .then((res) => {
             dispatch(updateKoreograferRedux(koreografer));
-            withStatus &&
-              toast.success("Koreografer berhasil diperbaharui", {
+            !withoutStatus &&
+              toast.success("Official berhasil diperbaharui", {
                 id: toastId,
               });
             onComplete && onComplete();

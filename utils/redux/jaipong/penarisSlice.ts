@@ -1,3 +1,4 @@
+import { reduceData } from "@/utils/admin/adminFunctions";
 import { compare } from "@/utils/functions";
 import {
   PenariState,
@@ -18,16 +19,16 @@ const initialState: State = {
 };
 
 const getRegistered = (state: any, data: PenariState[]) => {
-  let container: PenariState[] = [];
+  let result: PenariState[] = [];
   data.map((penari) => {
     if (penari.tarian.length) {
       penari.tarian.map((tarian) => {
         const data: PenariState = { ...penari, tarian: [tarian] };
-        container.push(data);
+        result.push(data);
       });
     }
   });
-  state.registered = container.sort(compare("nama", "asc"));
+  state.registered = result.sort(compare("nama", "asc"));
 };
 
 const penariSlice = createSlice({
@@ -39,6 +40,15 @@ const penariSlice = createSlice({
       const penaris = action.payload;
       state.all = penaris.sort(compare("nama", "asc"));
       getRegistered(state, penaris);
+    },
+    // ADD PENARIS
+    addPenarisRedux: (state, action: PayloadAction<PenariState[]>) => {
+      const newPenaris = reduceData([
+        ...state.all,
+        ...action.payload,
+      ]) as PenariState[];
+      state.all = newPenaris;
+      getRegistered(state, newPenaris);
     },
     // UPDATE PENARI
     updatePenariRedux: (state, action: PayloadAction<PenariState>) => {
@@ -73,6 +83,7 @@ const penariSlice = createSlice({
 
 export const {
   setPenarisRedux,
+  addPenarisRedux,
   updatePenariRedux,
   addPenariRedux,
   deletePenariRedux,
