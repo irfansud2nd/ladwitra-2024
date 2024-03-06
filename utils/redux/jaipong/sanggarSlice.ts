@@ -1,4 +1,5 @@
 import { reduceData } from "@/utils/admin/adminFunctions";
+import { compare } from "@/utils/functions";
 import {
   SanggarState,
   sanggarInitialValue,
@@ -23,10 +24,9 @@ const sanggarSlice = createSlice({
   reducers: {
     // ADD SANGGARS
     addSanggarsRedux: (state, action: PayloadAction<SanggarState[]>) => {
-      const newSanggars = reduceData([
-        ...state.all,
-        ...action.payload,
-      ]) as SanggarState[];
+      const newSanggars = reduceData([...state.all, ...action.payload]).sort(
+        compare("waktuPendaftaran", "desc")
+      ) as SanggarState[];
       state.all = newSanggars;
     },
     // SET SANGGAR

@@ -1,4 +1,5 @@
 import { reduceData } from "@/utils/admin/adminFunctions";
+import { compare } from "@/utils/functions";
 import {
   KontingenState,
   kontingenInitialValue,
@@ -23,10 +24,9 @@ const kontingenSlice = createSlice({
   reducers: {
     // ADD KONTINGENS
     addKontingensRedux: (state, action: PayloadAction<KontingenState[]>) => {
-      const newKontingens = reduceData([
-        ...state.all,
-        ...action.payload,
-      ]) as KontingenState[];
+      const newKontingens = reduceData([...state.all, ...action.payload]).sort(
+        compare("waktuPendaftaran", "desc")
+      ) as KontingenState[];
       state.all = newKontingens;
     },
     // SET KONTINGEN

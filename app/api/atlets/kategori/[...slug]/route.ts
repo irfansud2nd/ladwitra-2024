@@ -1,7 +1,6 @@
 import { authOptions } from "@/lib/authOptions";
 import { firestore } from "@/lib/firebase";
 import { isAdmin } from "@/utils/admin/adminFunctions";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
 import {
   FirestoreError,
   and,

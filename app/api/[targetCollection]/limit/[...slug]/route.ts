@@ -11,6 +11,7 @@ import {
   or,
   orderBy,
   query,
+  startAfter,
   where,
 } from "firebase/firestore";
 import { getServerSession } from "next-auth";
@@ -32,12 +33,18 @@ export const GET = async (
   const { slug, targetCollection } = params;
   const timestamp = slug[0];
   const item = slug[1];
+  let exeception: number[] = [0];
+  if (slug.slice(2).length)
+    exeception = slug.slice(2).map((item) => Number(item));
 
   let result: any = [];
   return getDocs(
     query(
       collection(firestore, targetCollection),
-      where("waktuPendaftaran", "<", Number(timestamp)),
+      and(
+        where("waktuPendaftaran", "not-in", exeception),
+        where("waktuPendaftaran", "<", Number(timestamp))
+      ),
       orderBy("waktuPendaftaran", "desc"),
       limit(Number(item))
     )

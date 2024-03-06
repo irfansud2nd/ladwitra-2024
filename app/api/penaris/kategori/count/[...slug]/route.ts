@@ -14,14 +14,20 @@ export const GET = async (
 ) => {
   const { slug } = params;
   const jenis = slug[0];
-  const tingkatan = slug[1];
-  const kategori = slug[2];
-  const jenisKelamin = slug[3];
+  const kelas = slug[1];
+  const tingkatan = slug[2];
+  const kategori = slug[3];
+  const jenisKelamin = slug[4];
 
   return getCountFromServer(
     query(
-      collection(firestore, "atlets"),
-      where("pertandingan", "array-contains", { jenis, tingkatan, kategori }),
+      collection(firestore, "penaris"),
+      where("pertandingan", "array-contains", {
+        jenis,
+        kelas,
+        tingkatan,
+        kategori,
+      }),
       where("jenisKelamin", "==", jenisKelamin)
     )
   )

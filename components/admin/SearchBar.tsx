@@ -6,40 +6,42 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
 type Props = {
-  targetCollection: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
-  query: string;
+  disable?: boolean;
 };
 
-const SearchBar = ({ targetCollection, setQuery, query }: Props) => {
+const SearchBar = ({ setQuery, disable }: Props) => {
   const [property, setProperty] = useState("nama");
   const [keyword, setKeyword] = useState("");
 
-  const handleClick = () => {
-    const currentQuery = `${property}/${keyword}`;
-    if (currentQuery != query) setQuery(currentQuery);
-  };
-
   return (
-    <div className="flex gap-1 items-center">
-      <SelectComponent
-        options={[targetCollection]}
-        value={targetCollection}
-        onChange={() => {}}
-        placeholder=""
-      />
+    <div className="flex gap-1 items-center max-w-[96vw]">
       <SelectComponent
         options={["nama", "creatorEmail"]}
         value={property}
         onChange={(value) => setProperty(value)}
         placeholder=""
+        disable={disable}
+        className="w-[150px] capitalize"
       />
       <Input
         type="text"
+        className="w-fit"
         value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        onChange={(e) =>
+          setKeyword(
+            property == "creatorEmail"
+              ? e.target.value
+              : e.target.value.toUpperCase()
+          )
+        }
+        disabled={disable}
       />
-      <Button size={"sm"} onClick={handleClick}>
+      <Button
+        size={"sm"}
+        onClick={() => setQuery(`${property}/${keyword}`)}
+        disabled={disable}
+      >
         Cari
       </Button>
     </div>

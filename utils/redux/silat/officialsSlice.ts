@@ -29,10 +29,9 @@ const officialsSlice = createSlice({
     // ADD OFFICIALS
     addOfficialsRedux: (state, action: PayloadAction<OfficialState[]>) => {
       state.registered = action.payload;
-      const newOfficials = reduceData([
-        ...state.all,
-        ...action.payload,
-      ]) as OfficialState[];
+      const newOfficials = reduceData([...state.all, ...action.payload]).sort(
+        compare("waktuPendaftaran", "desc")
+      ) as OfficialState[];
       state.all = newOfficials;
     },
     // UPDATE OFFICIAL

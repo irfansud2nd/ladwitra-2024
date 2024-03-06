@@ -3,6 +3,8 @@ import { SanggarState } from "../sanggar/sanggarConstants";
 import {
   PenariState,
   biayaPenari,
+  jenisTarian,
+  kelasTarian,
   tingkatanKategoriJaipong,
 } from "./penariConstants";
 import { SetSubmitting } from "@/utils/form/FormConstants";
@@ -432,4 +434,19 @@ export const getBiayaPenari = (penari: PenariState) => {
     }
   });
   return biaya;
+};
+
+export const getAllTarianUrl = () => {
+  let tarianIds: string[] = [];
+  jenisTarian.map((jenis) => {
+    kelasTarian.map((kelas) => {
+      tingkatanKategoriJaipong.map((tingkatan) => {
+        tingkatan.kategori.map((kategori) => {
+          tarianIds.push(`${jenis}/${kelas}/${tingkatan}/${kategori}/Putra`);
+          tarianIds.push(`${jenis}/${kelas}/${tingkatan}/${kategori}/Putri`);
+        });
+      });
+    });
+  });
+  return tarianIds;
 };

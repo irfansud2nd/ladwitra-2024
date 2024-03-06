@@ -1,7 +1,7 @@
 import { reduceData } from "@/utils/admin/adminFunctions";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-type CategorizedAtlet = {
+type CategorizedPeserta = {
   id: string;
   count: number;
 };
@@ -12,12 +12,14 @@ type State = {
   atlet: number;
   registeredAtlet: number;
 
-  categorizedAtlets: CategorizedAtlet[];
+  categorizedAtlets: CategorizedPeserta[];
 
   sanggar: number;
   koreografer: number;
   penari: number;
   registeredPenari: number;
+
+  categorizedPenaris: CategorizedPeserta[];
 
   payment: number;
   confirmedPayment: number;
@@ -44,6 +46,8 @@ const initialState: State = {
   koreografer: 0,
   penari: 0,
   registeredPenari: 0,
+
+  categorizedPenaris: [],
 
   payment: 0,
   confirmedPayment: 0,
@@ -91,7 +95,21 @@ const countSlice = createSlice({
       state.categorizedAtlets = reduceData([
         ...state.categorizedAtlets,
         action.payload,
-      ]) as CategorizedAtlet[];
+      ]) as CategorizedPeserta[];
+      [];
+    },
+    addCountCategorizedPenaris: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        count: number;
+      }>
+    ) => {
+      state.categorizedPenaris = reduceData([
+        ...state.categorizedPenaris,
+        action.payload,
+      ]) as CategorizedPeserta[];
+      [];
     },
   },
 });
@@ -104,6 +122,7 @@ export const {
   setCountSilatPayment,
   setCountSilatPaymentUnconfirmed,
   addCountCategorizedAtlets,
+  addCountCategorizedPenaris,
 } = countSlice.actions;
 
 export default countSlice.reducer;

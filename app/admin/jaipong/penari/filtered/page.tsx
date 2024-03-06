@@ -6,51 +6,52 @@ import { itemPerPage } from "@/utils/constants";
 import { RootState } from "@/utils/redux/store";
 import axios from "axios";
 import { toastFirebaseError } from "@/utils/functions";
-import { addAtletsRedux } from "@/utils/redux/silat/atletsSlice";
-import { FilteredAtletColumnAdmin } from "@/components/admin/silat/atlet/AtletColumnAdmin";
-
-import {
-  jenisPertandingan,
-  tingkatanKategoriSilat,
-} from "@/utils/silat/atlet/atletConstats";
 import SelectComponent from "@/components/inputs/SelectComponent";
 import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
-import { selectCategorySilat } from "@/utils/silat/atlet/atletFunctions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { addPenarisRedux } from "@/utils/redux/jaipong/penarisSlice";
+import { selectCategoryJaipong } from "@/utils/jaipong/penari/penariFunctions";
+import {
+  jenisTarian,
+  kelasTarian,
+  tingkatanKategoriJaipong,
+} from "@/utils/jaipong/penari/penariConstants";
+import { FilteredPenariColumnAdmin } from "@/components/admin/jaipong/penari/PenariColumnAdmin";
 
 const page = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [timestamp, setTimestamp] = useState(0);
   const [limit, setLimit] = useState(itemPerPage);
-  const [pertandingan, setPertandingan] = useState({
-    jenisPertandingan: "Tanding",
+  const [tarian, setTarian] = useState({
+    jenisTarian: "Tunggal",
+    kelas: "Pemula",
     tingkatan: "SD I",
-    jenisKelamin: "Putra",
     kategori: "",
+    jenisKelamin: "Putra",
   });
-  const [idPertandingan, setIdPertandingan] = useState("");
+  const [idTarian, setIdTarian] = useState("");
 
   const dispatch = useDispatch();
-  const allData = useSelector((state: RootState) => state.atlets.filtered);
+  const allData = useSelector((state: RootState) => state.penaris.filtered);
 
   const getDataById = (id: string) => {
     return (
       allData
-        .find((item) => item.idPertandingan == id)
-        ?.atlets.slice((page - 1) * limit, page * limit) || []
+        .find((item) => item.idTarian == id)
+        ?.penaris.slice((page - 1) * limit, page * limit) || []
     );
   };
 
   const getData = (time: number, id?: string) => {
-    const pertandingan = id ? id : idPertandingan;
-    console.log("getData", time, pertandingan);
+    const tarian = id ? id : idTarian;
+    console.log("getData", time, tarian);
     setLoading(true);
     axios
-      .get(`/api/atlets/kategori/${pertandingan}/${time}/${limit}`)
+      .get(`/api/penaris/kategori/${tarian}/${time}/${limit}`)
       .then((res) => {
-        dispatch(addAtletsRedux(res.data.result));
+        dispatch(addPenarisRedux(res.data.result));
       })
       .catch((error) => {
         toastFirebaseError(error);
@@ -59,24 +60,23 @@ const page = () => {
   };
 
   const handleClick = () => {
-    const { jenisPertandingan, tingkatan, kategori, jenisKelamin } =
-      pertandingan;
-    if (!jenisPertandingan || !tingkatan || !kategori || !jenisKelamin) {
+    const { jenisTarian, kelas, tingkatan, kategori, jenisKelamin } = tarian;
+    if (!jenisTarian || !kelas || !tingkatan || !kategori || !jenisKelamin) {
       toast.error("Tolong lengkapi kategori terlebih dahulu");
       return;
     }
 
-    const currentId = `${jenisPertandingan}/${tingkatan}/${kategori}/${jenisKelamin}`;
+    const currentId = `${jenisTarian}/${kelas}/${tingkatan}/${kategori}/${jenisKelamin}`;
 
-    if (idPertandingan != currentId) {
-      setIdPertandingan(currentId);
+    if (idTarian != currentId) {
+      setIdTarian(currentId);
       if (!getDataById(currentId).length) {
         getData(Date.now(), currentId);
       }
     }
   };
 
-  const data = getDataById(idPertandingan);
+  const data = getDataById(idTarian);
 
   useEffect(() => {
     if (page > 1 && !data.length) {
@@ -91,77 +91,70 @@ const page = () => {
   }, [data]);
 
   useEffect(() => {
-    if (limit > itemPerPage && idPertandingan) getData(timestamp);
+    if (limit > itemPerPage && idTarian) getData(timestamp);
   }, [limit]);
 
   useEffect(() => {
-    const { jenisPertandingan, tingkatan, kategori, jenisKelamin } =
-      pertandingan;
-    const kategoris = selectCategorySilat(
-      tingkatan,
-      jenisPertandingan,
-      jenisKelamin
-    );
+    const { tingkatan, kategori } = tarian;
+    const kategoris = selectCategoryJaipong(tingkatan);
     if (kategori != kategoris[0]) {
-      setPertandingan((prev) => ({ ...prev, kategori: kategoris[0] }));
+      setTarian((prev) => ({ ...prev, kategori: kategoris[0] }));
     }
-  }, [
-    pertandingan.jenisKelamin,
-    pertandingan.jenisPertandingan,
-    pertandingan.tingkatan,
-  ]);
+  }, [tarian.tingkatan]);
 
   return (
     <div className="grid grid-rows-[auto_1fr] gap-y-1">
       <div className="flex gap-1">
         <SelectComponent
-          placeholder="Jenis Pertandingan"
-          options={jenisPertandingan}
-          value={pertandingan.jenisPertandingan}
+          placeholder="Jenis Tarian"
+          options={jenisTarian}
+          value={tarian.jenisTarian}
           onChange={(value) =>
-            setPertandingan((prev) => ({ ...prev, jenisPertandingan: value }))
+            setTarian((prev) => ({ ...prev, jenisTarian: value }))
           }
         />
         <SelectComponent
+          placeholder="Kelas"
+          options={kelasTarian}
+          value={tarian.kelas}
+          onChange={(value) => setTarian((prev) => ({ ...prev, kelas: value }))}
+        />
+        <SelectComponent
           placeholder="Tingkatan"
-          options={tingkatanKategoriSilat.map((item) => item.tingkatan)}
-          value={pertandingan.tingkatan}
+          options={tingkatanKategoriJaipong.map((item) => item.tingkatan)}
+          value={tarian.tingkatan}
           onChange={(value) =>
-            setPertandingan((prev) => ({ ...prev, tingkatan: value }))
+            setTarian((prev) => ({ ...prev, tingkatan: value }))
           }
         />
         <SelectComponent
           placeholder="Kategori"
-          options={selectCategorySilat(
-            pertandingan.tingkatan,
-            pertandingan.jenisPertandingan,
-            pertandingan.jenisKelamin
-          )}
-          value={pertandingan.kategori}
+          options={selectCategoryJaipong(tarian.tingkatan)}
+          value={tarian.kategori}
           onChange={(value) =>
-            setPertandingan((prev) => ({ ...prev, kategori: value }))
+            setTarian((prev) => ({ ...prev, kategori: value }))
           }
         />
         <SelectComponent
           placeholder="Jenis Kelamin"
           options={jenisKelaminPeserta}
-          value={pertandingan.jenisKelamin}
+          value={tarian.jenisKelamin}
           onChange={(value) =>
-            setPertandingan((prev) => ({ ...prev, jenisKelamin: value }))
+            setTarian((prev) => ({ ...prev, jenisKelamin: value }))
           }
         />
         <Button onClick={handleClick}>Search</Button>
       </div>
 
       <AdminTable
-        columns={FilteredAtletColumnAdmin}
+        columns={FilteredPenariColumnAdmin}
         data={data}
-        title={`Tabel Atlet - ${idPertandingan}`}
+        title={`Tabel Penari - ${idTarian}`}
         page={page}
         nextPage={() => setPage((prev) => prev + 1)}
         prevPage={() => setPage((prev) => prev - 1)}
         disablePrevPage={page == 1}
-        disableNextPage={data.length < limit || idPertandingan == ""}
+        disableNextPage={data.length < limit || idTarian == ""}
         loading={loading}
         showAll={() => setLimit(1000)}
         downloadable

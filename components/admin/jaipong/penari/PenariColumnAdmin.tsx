@@ -182,3 +182,7 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
     },
   },
 ];
+
+export const FilteredPenariColumnAdmin = PenariColumnAdmin.filter(
+  (item) => item.id != "tarian"
+);

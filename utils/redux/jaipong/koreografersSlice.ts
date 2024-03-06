@@ -39,7 +39,7 @@ const koreografersSlice = createSlice({
       const newKoreografers = reduceData([
         ...state.all,
         ...action.payload,
-      ]) as KoreograferState[];
+      ]).sort(compare("waktuPendaftaran", "desc")) as KoreograferState[];
       state.all = newKoreografers;
     },
     // UPDATE KOREOGRAFER

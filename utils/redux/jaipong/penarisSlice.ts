@@ -6,13 +6,20 @@ import {
 } from "@/utils/jaipong/penari/penariConstants";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+type FilteredPenaris = {
+  idTarian: string;
+  penaris: PenariState[];
+};
+
 type State = {
+  filtered: FilteredPenaris[];
   all: PenariState[];
   registered: PenariState[];
   toEdit: PenariState;
 };
 
 const initialState: State = {
+  filtered: [],
   all: [],
   registered: [],
   toEdit: penariInitialValue,
@@ -31,6 +38,27 @@ const getRegistered = (state: any, data: PenariState[]) => {
   state.registered = result.sort(compare("nama", "asc"));
 };
 
+const getFiltered = (state: State, penaris: PenariState[]) => {
+  penaris.map((penari) => {
+    penari.tarian.map((tarian) => {
+      const idTarian = `${tarian.jenis}/${tarian.kelas}/${tarian.tingkatan}/${tarian.kategori}/${penari.jenisKelamin}`;
+      const exist = state.filtered.find((item) => item.idTarian == idTarian);
+      if (exist) {
+        const newPenaris = reduceData([
+          ...exist.penaris,
+          penari,
+        ]) as PenariState[];
+        state.filtered = reduceData([
+          ...state.filtered,
+          { idTarian, penaris: newPenaris },
+        ]) as FilteredPenaris[];
+      } else {
+        state.filtered = [...state.filtered, { idTarian, penaris: [penari] }];
+      }
+    });
+  });
+};
+
 const penariSlice = createSlice({
   name: "penaris",
   initialState,
@@ -43,12 +71,11 @@ const penariSlice = createSlice({
     },
     // ADD PENARIS
     addPenarisRedux: (state, action: PayloadAction<PenariState[]>) => {
-      const newPenaris = reduceData([
-        ...state.all,
-        ...action.payload,
-      ]) as PenariState[];
+      const newPenaris = reduceData([...state.all, ...action.payload]).sort(
+        compare("waktuPendaftaran", "desc")
+      ) as PenariState[];
       state.all = newPenaris;
-      getRegistered(state, newPenaris);
+      getFiltered(state, newPenaris);
     },
     // UPDATE PENARI
     updatePenariRedux: (state, action: PayloadAction<PenariState>) => {

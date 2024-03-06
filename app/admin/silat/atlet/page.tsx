@@ -8,6 +8,7 @@ import axios from "axios";
 import { toastFirebaseError } from "@/utils/functions";
 import { addAtletsRedux } from "@/utils/redux/silat/atletsSlice";
 import { AtletColumnAdmin } from "@/components/admin/silat/atlet/AtletColumnAdmin";
+import { AtletState } from "@/utils/silat/atlet/atletConstats";
 
 const page = () => {
   const [page, setPage] = useState(1);
@@ -22,12 +23,16 @@ const page = () => {
 
   const dispatch = useDispatch();
 
-  const getData = (time: number) => {
+  const getData = (time: number, exception?: AtletState[]) => {
     console.log("getAtletsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
+    let url = `/api/atlets/limit/${time}/${limit}`;
+    if (exception?.length)
+      url += `/${exception.map((item) => item.waktuPendaftaran)}`;
     axios
-      .get(`/api/atlets/limit/${time}/${limit}`)
+      .get(url)
       .then((res) => {
+        console.log(res.data.result);
         dispatch(addAtletsRedux(res.data.result));
       })
       .catch((error) => {
@@ -37,11 +42,15 @@ const page = () => {
   };
 
   useEffect(() => {
-    if (!data.length && page == 1) getData(Date.now());
+    if (page == 1) {
+      data.length ? getData(Date.now(), data) : getData(Date.now());
+    }
   }, []);
 
   useEffect(() => {
-    if (page > 1 && !data.length) getData(timestamp);
+    if (page > 1) {
+      data.length ? getData(timestamp, data) : getData(timestamp);
+    }
   }, [page]);
 
   useEffect(() => {
@@ -49,7 +58,7 @@ const page = () => {
   }, [data]);
 
   useEffect(() => {
-    if (limit > itemPerPage) getData(timestamp);
+    if (limit > itemPerPage) getData(timestamp, data);
   }, [limit]);
 
   return (

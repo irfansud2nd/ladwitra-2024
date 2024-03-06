@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/table";
 import { addCountCategorizedAtlets } from "@/utils/redux/admin/countSlice";
 import { RootState } from "@/utils/redux/store";
-import { tingkatanKategoriSilat } from "@/utils/silat/atlet/atletConstats";
+import {
+  jenisPertandingan,
+  tingkatanKategoriSilat,
+} from "@/utils/silat/atlet/atletConstats";
 import { getAllPertandinganUrl } from "@/utils/silat/atlet/atletFunctions";
 import axios from "axios";
 import { useEffect } from "react";
@@ -33,7 +36,7 @@ const page = () => {
   };
 
   const getCountById = (id: string) => {
-    return data.find((item) => item.id == id)?.count;
+    return data.find((item) => item.id == id)?.count || 0;
   };
 
   useEffect(() => {
@@ -54,59 +57,43 @@ const page = () => {
       <TableBody>
         {tingkatanKategoriSilat.map((tingkatanKategori) => (
           <>
-            <TableRow key={tingkatanKategori.tingkatan}>
-              <TableCell
-                rowSpan={
-                  tingkatanKategori.kategoriTanding.length +
-                  tingkatanKategori.kategoriSeni.putra.length
-                }
-                className="align-top"
-              >
-                {tingkatanKategori.tingkatan}
-              </TableCell>
-              <TableCell>{tingkatanKategori.kategoriTanding[0]}</TableCell>
-              <TableCell>
-                {getCountById(
-                  `Tanding/${tingkatanKategori.tingkatan}/${tingkatanKategori.kategoriTanding[0]}/Putra`
-                )}
-              </TableCell>
-              <TableCell>
-                {getCountById(
-                  `Tanding/${tingkatanKategori.tingkatan}/${tingkatanKategori.kategoriTanding[0]}/Putri`
-                )}
-              </TableCell>
-            </TableRow>
-            {tingkatanKategori.kategoriTanding
-              .slice(1)
-              .map((kategoriTanding) => (
-                <TableRow>
-                  <TableCell>{kategoriTanding}</TableCell>
-                  <TableCell>
-                    {getCountById(
-                      `Tanding/${tingkatanKategori.tingkatan}/${kategoriTanding}/Putra`
+            {tingkatanKategori.kategoriTanding.map(
+              (kategori, kategoriIndex) => {
+                const key = `Tanding/${tingkatanKategori.tingkatan}/${kategori}`;
+                return (
+                  <TableRow key={key}>
+                    {kategoriIndex == 0 && (
+                      <TableCell
+                        rowSpan={
+                          tingkatanKategori.kategoriTanding.length +
+                          tingkatanKategori.kategoriSeni.putra.length
+                        }
+                      >
+                        {tingkatanKategori.tingkatan}
+                      </TableCell>
                     )}
-                  </TableCell>
-                  <TableCell>
-                    {getCountById(
-                      `Tanding/${tingkatanKategori.tingkatan}/${kategoriTanding}/Putri`
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            {tingkatanKategori.kategoriSeni.putra.map((kategoriSeni) => {
-              const kategori = kategoriSeni.split(" ").slice(0, -1).join("");
+                    <TableCell>{kategori}</TableCell>
+                    <TableCell>{getCountById(`${key}/Putra`)}</TableCell>
+                    <TableCell>{getCountById(`${key}/Putri`)}</TableCell>
+                    <TableCell>
+                      {getCountById(`${key}/Putra`) +
+                        getCountById(`${key}/Putri`)}
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+            )}
+            {tingkatanKategori.kategoriSeni.putra.map((kategori) => {
+              const kategoriSeni = kategori.split(" ").slice(0, 1).join("");
+              const key = `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}`;
               return (
-                <TableRow>
-                  <TableCell>{kategori}</TableCell>
+                <TableRow key={key}>
+                  <TableCell>{kategoriSeni}</TableCell>
+                  <TableCell>{getCountById(`${key} Putra/Putra`)}</TableCell>
+                  <TableCell>{getCountById(`${key} Putri/Putri`)}</TableCell>
                   <TableCell>
-                    {getCountById(
-                      `Seni/${tingkatanKategori.tingkatan}/${kategori} Putra/Putra`
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {getCountById(
-                      `Seni/${tingkatanKategori.tingkatan}/${kategori} Putri/Putri`
-                    )}
+                    {getCountById(`${key} Putra/Putra`) +
+                      getCountById(`${key} Putri/Putri`)}
                   </TableCell>
                 </TableRow>
               );

@@ -73,10 +73,9 @@ const atletSlice = createSlice({
     },
     // ADD ATLETS
     addAtletsRedux: (state, action: PayloadAction<AtletState[]>) => {
-      const newAtlets = reduceData([
-        ...state.all,
-        ...action.payload,
-      ]) as AtletState[];
+      const newAtlets = reduceData([...state.all, ...action.payload]).sort(
+        compare("waktuPendaftaran", "desc")
+      ) as AtletState[];
       state.all = newAtlets;
       getFiltered(state, newAtlets);
     },
