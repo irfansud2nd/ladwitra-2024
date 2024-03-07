@@ -29,12 +29,7 @@ const CountFirestore = ({
   const [result, setResult] = useState(0);
   const [loading, setLoading] = useState(true);
   const getResult = () => {
-    if (!apiUrl) {
-      setLoading(false);
-      return;
-    }
-    if (count) {
-      setResult(count);
+    if (count || !apiUrl) {
       setLoading(false);
       return;
     }
@@ -52,15 +47,15 @@ const CountFirestore = ({
   };
 
   useEffect(() => {
-    getResult();
+    if (!count) getResult();
   }, []);
 
   useEffect(() => {
-    if (count) setResult(count);
+    if (count && result != count) setResult(count);
   }, [count]);
 
   return (
-    <Card className="p-2 w-fit flex flex-col gap-1 items-center whitespace-nowrap">
+    <Card className="p-2 w-[200px] flex flex-col gap-1 items-center whitespace-nowrap">
       <CardTitle>{title}</CardTitle>
       <div className="flex gap-1 flex-col items-center">
         <span className="text-xl font-bold">

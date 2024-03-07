@@ -17,8 +17,8 @@ import { OfficialState } from "@/utils/silat/official/officialConstants";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const page = ({ params }: { params: { targetCollection: string } }) => {
-  const { targetCollection } = params;
+const page = () => {
+  const [targetCollection, setTargetCollection] = useState("kontingen");
   const [query, setQuery] = useState("");
   const [prevQuery, setPrevQuery] = useState("");
   const [data, setData] = useState([]);
@@ -80,12 +80,11 @@ const page = ({ params }: { params: { targetCollection: string } }) => {
 
   return (
     <div className="grid grid-rows-[auto_1fr] w-full h-full">
-      <div className="flex max-sm:flex-col gap-2 sm:items-center">
-        <h1 className="capitalize text-lg font-semibold">
-          Cari {targetCollection}
-        </h1>
-        <SearchBar setQuery={setQuery} />
-      </div>
+      <SearchBar
+        setTargetCollection={setTargetCollection}
+        targetCollection={targetCollection}
+        setQuery={setQuery}
+      />
       {prevQuery && (
         <AdminTable
           columns={column}

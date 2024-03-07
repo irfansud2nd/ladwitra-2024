@@ -44,7 +44,7 @@ const page = () => {
   }, []);
 
   return (
-    <Table className="w/fit">
+    <Table className="w-fit">
       <TableHeader>
         <TableRow>
           <TableHead>Tingkatan</TableHead>

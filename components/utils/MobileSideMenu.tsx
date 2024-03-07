@@ -27,12 +27,17 @@ const MobileSideMenu = () => {
           <h1>Menu</h1>
           <ThemeSwitcher />
         </div>
-        {(page == "silat" || page == "jaipong") && (
+        {(page == "silat" || page == "jaipong" || page == "admin") && (
           <ReduxProvider>
-            {page == "silat" ? <SilatSideMenu /> : <JaipongSideMenu />}
+            {page == "silat" ? (
+              <SilatSideMenu />
+            ) : page == "jaipong" ? (
+              <JaipongSideMenu />
+            ) : (
+              page == "admin" && <AdminSideMenu />
+            )}
           </ReduxProvider>
         )}
-        {page == "admin" && <AdminSideMenu />}
       </SheetContent>
     </Sheet>
   );

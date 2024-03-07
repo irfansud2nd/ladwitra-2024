@@ -10,56 +10,56 @@ type State = {
   kontingen: number;
   official: number;
   atlet: number;
-  registeredAtlet: number;
+  nomorPertandingan: number;
 
   categorizedAtlets: CategorizedPeserta[];
 
   sanggar: number;
   koreografer: number;
   penari: number;
-  registeredPenari: number;
+  nomorTarian: number;
 
   categorizedPenaris: CategorizedPeserta[];
 
   payment: number;
-  confirmedPayment: number;
-  unconfirmedPayment: number;
+  paymentConfirmed: number;
+  paymentUnconfirmed: number;
 
   silatPayment: number;
   silatPaymentConfirmed: number;
   silatPaymentUnconfirmed: number;
 
-  penariPayment: number;
-  penariPaymentConfirmed: number;
-  penariPaymentUnconfirmed: number;
+  jaipongPayment: number;
+  jaipongPaymentConfirmed: number;
+  jaipongPaymentUnconfirmed: number;
 };
 
 const initialState: State = {
   kontingen: 0,
   official: 0,
   atlet: 0,
-  registeredAtlet: 0,
+  nomorPertandingan: 0,
 
   categorizedAtlets: [],
 
   sanggar: 0,
   koreografer: 0,
   penari: 0,
-  registeredPenari: 0,
+  nomorTarian: 0,
 
   categorizedPenaris: [],
 
   payment: 0,
-  confirmedPayment: 0,
-  unconfirmedPayment: 0,
+  paymentConfirmed: 0,
+  paymentUnconfirmed: 0,
 
   silatPayment: 0,
   silatPaymentConfirmed: 0,
   silatPaymentUnconfirmed: 0,
 
-  penariPayment: 0,
-  penariPaymentConfirmed: 0,
-  penariPaymentUnconfirmed: 0,
+  jaipongPayment: 0,
+  jaipongPaymentConfirmed: 0,
+  jaipongPaymentUnconfirmed: 0,
 };
 
 const countSlice = createSlice({
@@ -75,8 +75,27 @@ const countSlice = createSlice({
     setCountAtlet: (state, action: PayloadAction<number>) => {
       state.atlet = action.payload;
     },
-    setCountRegisteredAtlet: (state, action: PayloadAction<number>) => {
-      state.registeredAtlet = action.payload;
+    setCountNomorPertandingan: (state, action: PayloadAction<number>) => {
+      state.nomorPertandingan = action.payload;
+    },
+    setCountSanggar: (state, action: PayloadAction<number>) => {
+      state.sanggar = action.payload;
+    },
+    setCountKoreografer: (state, action: PayloadAction<number>) => {
+      state.koreografer = action.payload;
+    },
+    setCountPenari: (state, action: PayloadAction<number>) => {
+      state.penari = action.payload;
+    },
+    setCountNomorTarian: (state, action: PayloadAction<number>) => {
+      state.nomorTarian = action.payload;
+    },
+    setCountPayment: (state, action: PayloadAction<number>) => {
+      state.payment = action.payload;
+    },
+    setCountPaymentUnconfirmed: (state, action: PayloadAction<number>) => {
+      state.paymentUnconfirmed = action.payload;
+      state.paymentConfirmed = state.payment - action.payload;
     },
     setCountSilatPayment: (state, action: PayloadAction<number>) => {
       state.silatPayment = action.payload;
@@ -84,6 +103,16 @@ const countSlice = createSlice({
     setCountSilatPaymentUnconfirmed: (state, action: PayloadAction<number>) => {
       state.silatPaymentUnconfirmed = action.payload;
       state.silatPaymentConfirmed = state.silatPayment - action.payload;
+    },
+    setCountJaipongPayment: (state, action: PayloadAction<number>) => {
+      state.jaipongPayment = action.payload;
+    },
+    setCountJaipongPaymentUnconfirmed: (
+      state,
+      action: PayloadAction<number>
+    ) => {
+      state.jaipongPaymentUnconfirmed = action.payload;
+      state.jaipongPaymentConfirmed = state.jaipongPayment - action.payload;
     },
     addCountCategorizedAtlets: (
       state,
@@ -118,9 +147,17 @@ export const {
   setCountKontingen,
   setCountOfficial,
   setCountAtlet,
-  setCountRegisteredAtlet,
+  setCountNomorPertandingan,
+  setCountSanggar,
+  setCountKoreografer,
+  setCountPenari,
+  setCountNomorTarian,
+  setCountPayment,
+  setCountPaymentUnconfirmed,
   setCountSilatPayment,
   setCountSilatPaymentUnconfirmed,
+  setCountJaipongPayment,
+  setCountJaipongPaymentUnconfirmed,
   addCountCategorizedAtlets,
   addCountCategorizedPenaris,
 } = countSlice.actions;

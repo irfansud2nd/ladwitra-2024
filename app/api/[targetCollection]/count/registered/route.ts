@@ -12,8 +12,12 @@ export const GET = async (
   { params }: { params: { targetCollection: string } }
 ) => {
   const { targetCollection } = params;
+
+  const property =
+    targetCollection == "atlets" ? "nomorPertandingan" : "nomorTarian";
+
   return getAggregateFromServer(collection(firestore, targetCollection), {
-    sum: sum("nomorPertandingan"),
+    sum: sum(property),
   })
     .then((snapshot) => {
       return NextResponse.json(
