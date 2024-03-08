@@ -51,7 +51,10 @@ const CountFirestore = ({
   }, []);
 
   useEffect(() => {
-    if (count && result != count) setResult(count);
+    if (count && result != count) {
+      setResult(count);
+      setLoading(false);
+    }
   }, [count]);
 
   return (
