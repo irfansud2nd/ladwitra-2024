@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { editOnly } from "@/utils/constants";
 
 type InputSelectProps = {
   name: string;
@@ -20,6 +21,7 @@ type InputSelectProps = {
   onChange?: (value: any) => void;
   forceDisabled?: boolean;
   forceValue?: string;
+  showOnEditOnly?: boolean;
 };
 
 const InputSelect = ({
@@ -32,6 +34,7 @@ const InputSelect = ({
   onChange,
   forceDisabled,
   forceValue,
+  showOnEditOnly,
 }: InputSelectProps) => {
   const { setFieldValue, values, isSubmitting } = formik;
   const value = values[name];
@@ -47,7 +50,10 @@ const InputSelect = ({
   }, [forceValue]);
 
   return (
-    <div className="input_container">
+    <div
+      className={`input_container 
+      ${editOnly && !showOnEditOnly && "hidden"}`}
+    >
       <Label>{label}</Label>
       <Select
         onValueChange={(value) => {

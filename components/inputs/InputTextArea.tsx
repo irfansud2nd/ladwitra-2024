@@ -3,14 +3,21 @@ import React from "react";
 import ErrorText from "../utils/ErrorText";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
+import { editOnly } from "@/utils/constants";
 
 type InputTextAreaProps = {
   label: string;
   name: string;
   formik: FormikProps<any>;
+  showOnEditOnly?: boolean;
 };
 
-const InputTextArea = ({ label, name, formik }: InputTextAreaProps) => {
+const InputTextArea = ({
+  label,
+  name,
+  formik,
+  showOnEditOnly,
+}: InputTextAreaProps) => {
   const {
     errors,
     touched,
@@ -20,7 +27,10 @@ const InputTextArea = ({ label, name, formik }: InputTextAreaProps) => {
     setFieldTouched,
   } = formik;
   return (
-    <div className="input_container">
+    <div
+      className={`input_container 
+      ${editOnly && !showOnEditOnly && "hidden"}`}
+    >
       <Label htmlFor={name}>{label}</Label>
       <Textarea
         onBlur={() => setFieldTouched(name, true)}

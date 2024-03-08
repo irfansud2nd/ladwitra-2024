@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge";
 import { calculateAge } from "@/utils/silat/atlet/atletFunctions";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/skeleton";
+import { editOnly } from "@/utils/constants";
 
 type InputFileProps = {
   label: string;
@@ -16,6 +17,7 @@ type InputFileProps = {
   landscape?: boolean;
   under17?: boolean;
   className?: string;
+  showOnEditOnly?: boolean;
 };
 
 const InputFile = ({
@@ -26,6 +28,7 @@ const InputFile = ({
   under17,
   landscape,
   className,
+  showOnEditOnly,
 }: InputFileProps) => {
   const { setFieldValue, errors, touched, values, isSubmitting } = formik;
   const downloadUrl = values[urlName];
@@ -71,7 +74,10 @@ const InputFile = ({
   }, [file]);
 
   return (
-    <div className={`input_container ${className}`}>
+    <div
+      className={`input_container ${className} 
+    ${editOnly && !showOnEditOnly && "hidden"}`}
+    >
       <Label htmlFor={name}>
         {label}
         {under17 ? (

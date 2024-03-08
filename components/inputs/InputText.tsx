@@ -5,6 +5,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { calculateAge } from "@/utils/silat/atlet/atletFunctions";
+import { editOnly } from "@/utils/constants";
 
 type InputTextProps = {
   label: string;
@@ -15,6 +16,7 @@ type InputTextProps = {
   helperText?: string;
   forceDisabled?: boolean;
   forceValue?: string;
+  showOnEditOnly?: boolean;
 };
 
 const InputText = ({
@@ -26,6 +28,7 @@ const InputText = ({
   helperText,
   forceDisabled,
   forceValue,
+  showOnEditOnly,
 }: InputTextProps) => {
   const {
     errors,
@@ -42,7 +45,10 @@ const InputText = ({
     umur = calculateAge(values.tanggalLahir);
   }
   return (
-    <div className="input_container">
+    <div
+      className={`input_container 
+      ${editOnly && !showOnEditOnly && "hidden"}`}
+    >
       <Label>
         {label}
         {under17 ? (
