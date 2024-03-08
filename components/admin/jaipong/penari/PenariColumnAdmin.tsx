@@ -169,12 +169,12 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
               <DropdownMenuItem onClick={() => handleClick("Pas Foto")}>
                 Pas Foto
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleClick("KTP")}>
+              {/* <DropdownMenuItem onClick={() => handleClick("KTP")}>
                 KTP
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleClick("KK")}>
                 Kartu Keluarga
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </>

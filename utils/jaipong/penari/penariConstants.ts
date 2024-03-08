@@ -110,8 +110,8 @@ export const penariValidationSchema = Yup.object({
   noHp: Yup.number()
     .typeError("No HP mengandung huruf")
     .required("Tolong lengkapi No HP"),
-  ktpFile: Yup.string().required("Tolong lengkapi file KTP"),
-  kkFile: Yup.string().required("Tolong lengkapi file KK"),
+  // ktpFile: Yup.string().required("Tolong lengkapi file KTP"),
+  // kkFile: Yup.string().required("Tolong lengkapi file KK"),
   fotoFile: Yup.string().required("Tolong lengkapi file Pas Foto"),
   namaSanggar: Yup.string().required(
     "Tolong daftarkan sanggar terlebih dahulu"

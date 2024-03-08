@@ -55,7 +55,10 @@ export const sendPenari = (
       case 1:
         // SEND FOTO
         toast.loading("Mengunggah pas foto penari", { id: toastId });
-        if (!penari.fotoFile) return;
+        if (!penari.fotoFile) {
+          stepController(2);
+          return;
+        }
         sendFile(penari.fotoFile, fotoUrl)
           .then((url) => {
             downloadFotoUrl = url;
@@ -69,7 +72,10 @@ export const sendPenari = (
       case 2:
         // SEND KTP
         toast.loading("Mengunggah KTP penari", { id: toastId });
-        if (!penari.ktpFile) return;
+        if (!penari.ktpFile) {
+          stepController(3);
+          return;
+        }
         sendFile(penari.ktpFile, ktpUrl)
           .then((url) => {
             downloadKtpUrl = url;
@@ -83,7 +89,10 @@ export const sendPenari = (
       case 3:
         // SEND KK
         toast.loading("Mengunggah KK penari", { id: toastId });
-        if (!penari.kkFile) return;
+        if (!penari.kkFile) {
+          stepController(4);
+          return;
+        }
         sendFile(penari.kkFile, kkUrl)
           .then((url) => {
             downloadKkUrl = url;

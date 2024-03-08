@@ -108,15 +108,16 @@ const PenariForm = ({ setOpen }: Props) => {
                   upperCase
                   formik={props}
                 />
+              </div>
+              <div>
+                <InputText label="NIK" name="NIK" formik={props} />
                 <InputSelect
                   label="Jenis Kelamin"
                   name="jenisKelamin"
                   options={jenisKelaminPeserta}
                   formik={props}
+                  showOnEditOnly
                 />
-                <InputText label="NIK" name="NIK" formik={props} />
-              </div>
-              <div>
                 <InputTextArea
                   label="Alamat Lengkap"
                   name="alamatLengkap"
@@ -127,6 +128,8 @@ const PenariForm = ({ setOpen }: Props) => {
                   name="tempatLahir"
                   formik={props}
                 />
+              </div>
+              <div>
                 <InputDate formik={props} />
                 <InputText label="Email" name="email" under17 formik={props} />
                 <InputText label="No HP" name="noHp" under17 formik={props} />
@@ -136,9 +139,7 @@ const PenariForm = ({ setOpen }: Props) => {
                   formik={props}
                   forceDisabled
                 />
-              </div>
-              <div>
-                <InputFile
+                {/* <InputFile
                   label="KTP"
                   name="ktpFile"
                   urlName="downloadKtpUrl"
@@ -152,7 +153,7 @@ const PenariForm = ({ setOpen }: Props) => {
                   urlName="downloadKkUrl"
                   formik={props}
                   landscape
-                />
+                /> */}
               </div>
             </div>
             <div className="flex w-full gap-1 justify-end">
