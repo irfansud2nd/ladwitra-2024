@@ -3,10 +3,7 @@ import { DataTable } from "@/components/utils/tabel/DataTable";
 import { useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { JenisTarian } from "@/utils/jaipong/penari/penariConstants";
-import {
-  RegisteredPenariColumn,
-  RegisteredPenariColumnTunggal,
-} from "./RegisteredPenariColumn";
+import { RegisteredPenariColumn } from "./RegisteredPenariColumn";
 
 const RegisteredPenariTable = ({ jenis }: { jenis: JenisTarian }) => {
   const registeredPenaris = useSelector(
@@ -14,11 +11,7 @@ const RegisteredPenariTable = ({ jenis }: { jenis: JenisTarian }) => {
   );
   return (
     <DataTable
-      columns={
-        jenis == "Tunggal"
-          ? RegisteredPenariColumnTunggal
-          : RegisteredPenariColumn
-      }
+      columns={RegisteredPenariColumn(jenis)}
       data={registeredPenaris.filter(
         (penari) => penari.tarian[0].jenis == jenis
       )}

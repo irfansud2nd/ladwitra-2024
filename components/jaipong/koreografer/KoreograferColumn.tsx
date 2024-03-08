@@ -17,6 +17,7 @@ import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { KoreograferState } from "@/utils/jaipong/koreografer/koreograferConstants";
 import { deleteKoreografer } from "@/utils/jaipong/koreografer/koreograferFunctions";
 import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
+import { editOnly } from "@/utils/constants";
 
 export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
   {
@@ -79,7 +80,7 @@ export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(koreografer)}
-                className="text-destructive"
+                className={`text-destructive ${editOnly && "hidden"}`}
               >
                 Hapus
               </DropdownMenuItem>

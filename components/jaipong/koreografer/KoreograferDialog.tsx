@@ -7,6 +7,7 @@ import { RootState } from "@/utils/redux/store";
 import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
 import { koreograferInitialValue } from "@/utils/jaipong/koreografer/koreograferConstants";
 import KoreograferForm from "./KoreograferForm";
+import { editOnly } from "@/utils/constants";
 
 const KoreograferDialog = () => {
   const [open, setOpen] = useState(false);
@@ -28,7 +29,7 @@ const KoreograferDialog = () => {
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
       <DialogTrigger asChild>
-        <Button>Tambah Official</Button>
+        <Button disabled={editOnly}>Tambah Official</Button>
       </DialogTrigger>
       <DialogContent className="w-fit max-w-[100vw] max-h-screen overflow-auto">
         <KoreograferForm setOpen={setOpen} />

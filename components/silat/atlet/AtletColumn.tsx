@@ -17,6 +17,7 @@ import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
 import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
+import { editOnly } from "@/utils/constants";
 
 export const AtletColumn: ColumnDef<AtletState>[] = [
   {
@@ -92,7 +93,7 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(atlet)}
-                className="text-destructive"
+                className={`text-destructive ${editOnly && "hidden"}`}
               >
                 Hapus
               </DropdownMenuItem>

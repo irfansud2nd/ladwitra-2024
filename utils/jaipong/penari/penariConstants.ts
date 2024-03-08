@@ -2,10 +2,24 @@ import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
 import * as Yup from "yup";
 
 // KELAS TARIAN
-export const kelasTarian = ["Pemula", "Mahir"];
+export const kelasTarian = ["Pemasalan", "Prestasi"];
 
 // JENIS TARIAN
 export const jenisTarian = ["Tunggal", "Rampak"];
+
+// LAGU TUNGGAL PEMASALAN
+export const laguTunggalPemasalan = [
+  "Mojang Priangan",
+  "Senggot",
+  "Kembang Tanjung",
+];
+
+// LAGU TUNGGAL PRESTASI
+export const laguTunggalPrestasi = [
+  "Bentang Panggung",
+  "Bentang - Bentang",
+  "Makalangan",
+];
 
 // TINGKATAN DAN KATEGORI JAIPON
 export const tingkatanKategoriJaipong = [
@@ -29,7 +43,7 @@ export type PenariState = {
   waktuPendaftaran: number;
   creatorEmail: string;
   nama: string;
-  NIK: string;
+  // NIK: string;
   tempatLahir: string;
   tanggalLahir: string;
   alamatLengkap: string;
@@ -39,6 +53,11 @@ export type PenariState = {
     kelas: string;
     tingkatan: string;
     kategori: string;
+    // lagu: string;
+  }[];
+  lagu: {
+    idTarian: string;
+    lagu: string;
   }[];
   namaTim: {
     idTarian: string;
@@ -54,12 +73,12 @@ export type PenariState = {
   fotoFile: File | undefined;
   downloadFotoUrl: string;
   fotoUrl: string;
-  kkFile: File | undefined;
-  kkUrl: string;
-  downloadKkUrl: string;
-  ktpFile: File | undefined;
-  ktpUrl: string;
-  downloadKtpUrl: string;
+  // kkFile: File | undefined;
+  // kkUrl: string;
+  // downloadKkUrl: string;
+  // ktpFile: File | undefined;
+  // ktpUrl: string;
+  // downloadKtpUrl: string;
   email: string;
   noHp: string;
 };
@@ -69,12 +88,13 @@ export const penariInitialValue: PenariState = {
   creatorEmail: "",
   waktuPendaftaran: 0,
   nama: "",
-  NIK: "",
+  // NIK: "",
   tempatLahir: "",
   tanggalLahir: "",
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   tarian: [],
+  lagu: [],
   namaTim: [],
   pembayaran: [],
   nomorTarian: 0,
@@ -83,12 +103,12 @@ export const penariInitialValue: PenariState = {
   fotoFile: undefined,
   fotoUrl: "",
   downloadFotoUrl: "",
-  kkFile: undefined,
-  kkUrl: "",
-  downloadKkUrl: "",
-  ktpFile: undefined,
-  ktpUrl: "",
-  downloadKtpUrl: "",
+  // kkFile: undefined,
+  // kkUrl: "",
+  // downloadKkUrl: "",
+  // ktpFile: undefined,
+  // ktpUrl: "",
+  // downloadKtpUrl: "",
   email: "",
   noHp: "",
 };
@@ -96,11 +116,11 @@ export const penariInitialValue: PenariState = {
 // PENARI VALIDATION SCHEMA
 export const penariValidationSchema = Yup.object({
   nama: Yup.string().required("Tolong lengkapi nama lengkap"),
-  NIK: Yup.string()
-    .matches(/^[0-9]+$/, "NIK mengandung huruf")
-    .min(16, "NIK tidak valid (< 16 digit)")
-    .max(16, "NIK tidak valid (> 16 digit)")
-    .required("Tolong lengkapi NIK"),
+  // NIK: Yup.string()
+  //   .matches(/^[0-9]+$/, "NIK mengandung huruf")
+  //   .min(16, "NIK tidak valid (< 16 digit)")
+  //   .max(16, "NIK tidak valid (> 16 digit)")
+  //   .required("Tolong lengkapi NIK"),
   alamatLengkap: Yup.string().required("Tolong lengkapi alamat"),
   tempatLahir: Yup.string().required("Tolong lengkapi tempat lahir"),
   tanggalLahir: Yup.string().required("Tolong lengkapi tanggal lahir"),
@@ -121,11 +141,11 @@ export const penariValidationSchema = Yup.object({
 // PENARI VALIDATION SCHEMA WITHOUT FILE
 export const penariValidationSchemaWithoutFile = Yup.object({
   nama: Yup.string().required("Tolong lengkapi nama lengkap"),
-  NIK: Yup.string()
-    .matches(/^[0-9]+$/, "NIK mengandung huruf")
-    .min(16, "NIK tidak valid (< 16 digit)")
-    .max(16, "NIK tidak valid (> 16 digit)")
-    .required("Tolong lengkapi NIK"),
+  // NIK: Yup.string()
+  //   .matches(/^[0-9]+$/, "NIK mengandung huruf")
+  //   .min(16, "NIK tidak valid (< 16 digit)")
+  //   .max(16, "NIK tidak valid (> 16 digit)")
+  //   .required("Tolong lengkapi NIK"),
   alamatLengkap: Yup.string().required("Tolong lengkapi alamat"),
   tempatLahir: Yup.string().required("Tolong lengkapi tempat lahir"),
   tanggalLahir: Yup.string().required("Tolong lengkapi tanggal lahir"),
@@ -148,6 +168,7 @@ export type UnregisteredPenariState = {
   tingkatanTarian: string;
   kategoriTarian: string;
   namaTim: string;
+  lagu: string;
 };
 
 // REGISTER PENARI INITIAL STATE
@@ -158,6 +179,7 @@ export const unregisteredPenariValue: UnregisteredPenariState = {
   tingkatanTarian: tingkatanKategoriJaipong[0].tingkatan,
   kategoriTarian: tingkatanKategoriJaipong[0].kategori[0],
   namaTim: "",
+  lagu: laguTunggalPemasalan[0],
 };
 
 export type JenisTarian = "Tunggal" | "Rampak";

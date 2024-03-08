@@ -168,7 +168,12 @@ export const sendJaipongPayment = (
           ...selectedPenari.pembayaran,
           {
             idPembayaran,
-            idTarian: getTarianId(selectedPenari.tarian[0]),
+            idTarian: getTarianId(selectedPenari.tarian[0], {
+              fullId: {
+                namaTim: selectedPenari.namaTim[0].namaTim,
+                lagu: selectedPenari.lagu[0].lagu,
+              },
+            }),
           },
         ],
       });

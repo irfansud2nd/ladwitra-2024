@@ -4,6 +4,7 @@ import {
   PenariState,
   penariInitialValue,
 } from "@/utils/jaipong/penari/penariConstants";
+import { getTarianId } from "@/utils/jaipong/penari/penariFunctions";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type FilteredPenaris = {
@@ -16,6 +17,7 @@ type State = {
   all: PenariState[];
   registered: PenariState[];
   toEdit: PenariState;
+  tarianToEdit: PenariState;
 };
 
 const initialState: State = {
@@ -23,14 +25,46 @@ const initialState: State = {
   all: [],
   registered: [],
   toEdit: penariInitialValue,
+  tarianToEdit: penariInitialValue,
 };
 
 const getRegistered = (state: any, data: PenariState[]) => {
   let result: PenariState[] = [];
   data.map((penari) => {
+    let lagu = penari.lagu;
+    let namaTim = penari.namaTim;
     if (penari.tarian.length) {
       penari.tarian.map((tarian) => {
-        const data: PenariState = { ...penari, tarian: [tarian] };
+        const idTarian = getTarianId(tarian);
+
+        let data: PenariState = {
+          ...penari,
+          tarian: [tarian],
+          lagu: [],
+          namaTim: [],
+        };
+
+        if (tarian.jenis == "Tunggal") {
+          const tarianLagu = lagu.find((item) => item.idTarian == idTarian);
+
+          if (tarianLagu) {
+            data = { ...data, lagu: [tarianLagu] };
+            lagu = lagu.filter((item) => item != tarianLagu);
+          }
+        }
+
+        if (tarian.jenis == "Rampak") {
+          const tarianNamaTim = namaTim.find(
+            (item) => item.idTarian == idTarian
+          );
+
+          if (tarianNamaTim) {
+            data = { ...data, namaTim: [tarianNamaTim] };
+
+            namaTim = namaTim.filter((item) => item != tarianNamaTim);
+          }
+        }
+
         result.push(data);
       });
     }
@@ -105,6 +139,10 @@ const penariSlice = createSlice({
     setPenariToEditRedux: (state, action: PayloadAction<PenariState>) => {
       state.toEdit = action.payload;
     },
+    // SET TARIAN TO EDIT
+    setTarianToEditRedux: (state, action: PayloadAction<PenariState>) => {
+      state.tarianToEdit = action.payload;
+    },
   },
 });
 
@@ -115,5 +153,6 @@ export const {
   addPenariRedux,
   deletePenariRedux,
   setPenariToEditRedux,
+  setTarianToEditRedux,
 } = penariSlice.actions;
 export default penariSlice.reducer;

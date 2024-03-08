@@ -5,7 +5,7 @@ import { PenariState } from "../jaipong/penari/penariConstants";
 import { KoreograferState } from "../jaipong/koreografer/koreograferConstants";
 
 // SET FIELD VALUE TYPE
-export type setFieldValue = (
+export type SetFieldValue = (
   field: string,
   value: any,
   shouldValidate?: boolean | undefined

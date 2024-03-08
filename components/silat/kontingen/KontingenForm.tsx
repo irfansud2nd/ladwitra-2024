@@ -5,7 +5,7 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   ResetForm,
   SetSubmitting,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import {
   KontingenState,
@@ -75,7 +75,7 @@ const KontingenForm = ({ setOpen }: Props) => {
 
   const setForm = (
     values: KontingenState,
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     kontingenToEdit?: KontingenState
   ) => {
     !values.creatorEmail &&

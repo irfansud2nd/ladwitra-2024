@@ -1,7 +1,7 @@
 import InputFile from "@/components/inputs/InputFile";
 import InputText from "@/components/inputs/InputText";
 import { Button } from "@/components/ui/button";
-import { setFieldValue } from "@/utils/form/FormConstants";
+import { SetFieldValue } from "@/utils/form/FormConstants";
 import {
   ConfirmPaymentState,
   PaymentState,
@@ -23,7 +23,7 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
   const dispatch = useDispatch();
 
   const setForm = (
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     values: ConfirmPaymentState
   ) => {
     if (payment.confirmed) {

@@ -18,8 +18,10 @@ import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { useState } from "react";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import { updateKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
+import { editOnly, silatLimit, tutupPendaftaran } from "@/utils/constants";
+import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
 
-export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
+export const column: ColumnDef<AtletState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -51,16 +53,21 @@ export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
     },
   },
   {
+    id: "Aksi",
     header: "Aksi",
-    id: "actions",
     cell: ({ row }) => {
       const [loading, setLoading] = useState(false);
       const atlet = row.original;
       const dispatch = useDispatch();
       const allAtlets = useSelector((state: RootState) => state.atlets.all);
+      const limit = useSelector(
+        (state: RootState) => state.pendaftaran.silatLimit
+      );
       const kontingen = useSelector(
         (state: RootState) => state.kontingen.registered
       );
+
+      const hideDelete = limit >= silatLimit || editOnly;
 
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
@@ -116,9 +123,15 @@ export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {/* <DropdownMenuItem
+                onClick={() => dispatch(setPertandinganToEditRedux(atlet))}
+                disabled={loading}
+              >
+                Edit
+              </DropdownMenuItem> */}
               <DropdownMenuItem
                 onClick={() => handleDelete(atlet)}
-                className="text-destructive"
+                className={`text-destructive ${hideDelete && "hidden"}`}
                 disabled={loading}
               >
                 Hapus
@@ -130,3 +143,7 @@ export const RegisteredAtletColumn: ColumnDef<AtletState>[] = [
     },
   },
 ];
+
+export const RegisteredAtletColumn = tutupPendaftaran
+  ? column.filter((item) => item.id != "Aksi")
+  : column;

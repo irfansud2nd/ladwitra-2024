@@ -7,11 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
 import { atletInitialValue } from "@/utils/silat/atlet/atletConstats";
+import { editOnly, silatLimit } from "@/utils/constants";
 
 const AtletDialog = () => {
   const [open, setOpen] = useState(false);
   const atletToEdit = useSelector((state: RootState) => state.atlets.toEdit);
+  const limit = useSelector((state: RootState) => state.pendaftaran.silatLimit);
   const dispatch = useDispatch();
+
+  const hide = editOnly || limit >= silatLimit;
 
   const toggleDialog = (state: boolean) => {
     setOpen(state);
@@ -26,7 +30,7 @@ const AtletDialog = () => {
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
       <DialogTrigger asChild>
-        <Button>Tambah Atlet</Button>
+        <Button className={`${hide && "hidden"}`}>Tambah Atlet</Button>
       </DialogTrigger>
       <DialogContent className="w-fit max-w-[100vw] max-h-[90vh] overflow-auto pb-2">
         <AtletForm setOpen={setOpen} />

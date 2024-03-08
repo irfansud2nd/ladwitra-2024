@@ -9,7 +9,7 @@ import { isPenariPaid } from "@/utils/jaipong/penari/penariFunctions";
 const UnpaidPenari = () => {
   const unpaidPenaris = useSelector(
     (state: RootState) => state.penaris.registered
-  ).filter((penari) => !isPenariPaid(penari));
+  ).filter((penari) => !isPenariPaid(penari, true));
   return (
     <SelectableTable columns={UnpaidPenariColumn} data={unpaidPenaris}>
       <UnpaidPenariBar />

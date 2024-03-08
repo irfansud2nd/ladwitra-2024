@@ -5,6 +5,8 @@ import {
   biayaPenari,
   jenisTarian,
   kelasTarian,
+  laguTunggalPemasalan,
+  laguTunggalPrestasi,
   tingkatanKategoriJaipong,
 } from "./penariConstants";
 import { SetSubmitting } from "@/utils/form/FormConstants";
@@ -25,6 +27,12 @@ import {
 export const selectCategoryJaipong = (tingkatan: string) => {
   return tingkatanKategoriJaipong.find((item) => item.tingkatan == tingkatan)
     ?.kategori as string[];
+};
+
+// SELECT LAGU JAIONG
+export const selectLagu = (jenis: string) => {
+  if (jenis == "Pemasalan") return laguTunggalPemasalan;
+  return laguTunggalPrestasi;
 };
 
 // SEND PENARI
@@ -62,40 +70,6 @@ export const sendPenari = (
         sendFile(penari.fotoFile, fotoUrl)
           .then((url) => {
             downloadFotoUrl = url;
-            stepController(2);
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 2:
-        // SEND KTP
-        toast.loading("Mengunggah KTP penari", { id: toastId });
-        if (!penari.ktpFile) {
-          stepController(3);
-          return;
-        }
-        sendFile(penari.ktpFile, ktpUrl)
-          .then((url) => {
-            downloadKtpUrl = url;
-            stepController(3);
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // SEND KK
-        toast.loading("Mengunggah KK penari", { id: toastId });
-        if (!penari.kkFile) {
-          stepController(4);
-          return;
-        }
-        sendFile(penari.kkFile, kkUrl)
-          .then((url) => {
-            downloadKkUrl = url;
             stepController(4);
           })
           .catch((error) => {
@@ -103,6 +77,40 @@ export const sendPenari = (
             toastFirebaseError(error, toastId);
           });
         break;
+      // case 2:
+      //   // SEND KTP
+      //   toast.loading("Mengunggah KTP penari", { id: toastId });
+      //   if (!penari.ktpFile) {
+      //     stepController(3);
+      //     return;
+      //   }
+      //   sendFile(penari.ktpFile, ktpUrl)
+      //     .then((url) => {
+      //       downloadKtpUrl = url;
+      //       stepController(3);
+      //     })
+      //     .catch((error) => {
+      //       setSubmitting(false);
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
+      // case 3:
+      //   // SEND KK
+      //   toast.loading("Mengunggah KK penari", { id: toastId });
+      //   if (!penari.kkFile) {
+      //     stepController(4);
+      //     return;
+      //   }
+      //   sendFile(penari.kkFile, kkUrl)
+      //     .then((url) => {
+      //       downloadKkUrl = url;
+      //       stepController(4);
+      //     })
+      //     .catch((error) => {
+      //       setSubmitting(false);
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
       case 4:
         // ADD PENARI TO SANGGAR
         toast.loading("Menambahkan penari ke sanggar", { id: toastId });
@@ -119,17 +127,17 @@ export const sendPenari = (
         // SEND PENARI
         toast.loading("Mendaftarkan penari", { id: toastId });
         delete penari.fotoFile;
-        delete penari.kkFile;
-        delete penari.ktpFile;
+        // delete penari.kkFile;
+        // delete penari.ktpFile;
         const dataPenari: PenariState = {
           ...penari,
           id,
           fotoUrl,
           downloadFotoUrl,
-          ktpUrl,
-          downloadKtpUrl,
-          kkUrl,
-          downloadKkUrl,
+          // ktpUrl,
+          // downloadKtpUrl,
+          // kkUrl,
+          // downloadKkUrl,
           waktuPendaftaran: Date.now(),
         };
 
@@ -176,7 +184,7 @@ export const updatePenari = (
         if (penari.fotoFile) {
           stepController(2);
         } else {
-          stepController(4);
+          stepController(10);
         }
         break;
       case 2:
@@ -199,86 +207,86 @@ export const updatePenari = (
           sendFile(penari.fotoFile, penari.fotoUrl)
             .then((url) => {
               penari.downloadFotoUrl = url;
-              stepController(4);
+              stepController(10);
             })
             .catch((error) => {
               setSubmitting && setSubmitting(false);
               toastFirebaseError(error, toastId);
             });
         break;
-      case 4:
-        // CHECK IF KTP CHANGED
-        if (penari.ktpFile) {
-          stepController(5);
-        } else {
-          stepController(7);
-        }
-        break;
-      case 5:
-        // DELETE OLD KTP
-        !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
-        axios
-          .delete(`/api/file/${penari.ktpUrl}`)
-          .then(() => stepController(6))
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 6:
-        // UPLOAD NEW KTP
-        !withoutStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
-        penari.ktpFile &&
-          sendFile(penari.ktpFile, penari.ktpUrl)
-            .then((url) => {
-              penari.downloadKtpUrl = url;
-              stepController(7);
-            })
-            .catch((error) => {
-              setSubmitting && setSubmitting(false);
-              toastFirebaseError(error, toastId);
-            });
-        break;
-      case 7:
-        // CHECK IF KK CHANGED
-        if (penari.kkFile) {
-          stepController(8);
-        } else {
-          stepController(10);
-        }
-        break;
-      case 8:
-        // DELETE OLD KK
-        !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
-        axios
-          .delete(`/api/file/${penari.kkUrl}`)
-          .then(() => stepController(9))
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 9:
-        // UPLOAD NEW KK
-        !withoutStatus && toast.loading("Mengunggah KK baru", { id: toastId });
-        penari.kkFile &&
-          sendFile(penari.kkFile, penari.kkUrl)
-            .then((url) => {
-              penari.downloadKkUrl = url;
-              stepController(7);
-            })
-            .catch((error) => {
-              setSubmitting && setSubmitting(false);
-              toastFirebaseError(error, toastId);
-            });
-        break;
+      // case 4:
+      //   // CHECK IF KTP CHANGED
+      //   if (penari.ktpFile) {
+      //     stepController(5);
+      //   } else {
+      //     stepController(7);
+      //   }
+      //   break;
+      // case 5:
+      //   // DELETE OLD KTP
+      //   !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
+      //   axios
+      //     .delete(`/api/file/${penari.ktpUrl}`)
+      //     .then(() => stepController(6))
+      //     .catch((error) => {
+      //       setSubmitting && setSubmitting(false);
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
+      // case 6:
+      //   // UPLOAD NEW KTP
+      //   !withoutStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
+      //   penari.ktpFile &&
+      //     sendFile(penari.ktpFile, penari.ktpUrl)
+      //       .then((url) => {
+      //         penari.downloadKtpUrl = url;
+      //         stepController(7);
+      //       })
+      //       .catch((error) => {
+      //         setSubmitting && setSubmitting(false);
+      //         toastFirebaseError(error, toastId);
+      //       });
+      //   break;
+      // case 7:
+      //   // CHECK IF KK CHANGED
+      //   if (penari.kkFile) {
+      //     stepController(8);
+      //   } else {
+      //     stepController(10);
+      //   }
+      //   break;
+      // case 8:
+      //   // DELETE OLD KK
+      //   !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
+      //   axios
+      //     .delete(`/api/file/${penari.kkUrl}`)
+      //     .then(() => stepController(9))
+      //     .catch((error) => {
+      //       setSubmitting && setSubmitting(false);
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
+      // case 9:
+      //   // UPLOAD NEW KK
+      //   !withoutStatus && toast.loading("Mengunggah KK baru", { id: toastId });
+      //   penari.kkFile &&
+      //     sendFile(penari.kkFile, penari.kkUrl)
+      //       .then((url) => {
+      //         penari.downloadKkUrl = url;
+      //         stepController(7);
+      //       })
+      //       .catch((error) => {
+      //         setSubmitting && setSubmitting(false);
+      //         toastFirebaseError(error, toastId);
+      //       });
+      //   break;
       case 10:
         // UPDATE PENARI
         !withoutStatus &&
           toast.loading("Memperbaharui data penari", { id: toastId });
         penari.fotoFile && delete penari.fotoFile;
-        penari.ktpFile && delete penari.ktpFile;
-        penari.kkFile && delete penari.kkFile;
+        // penari.ktpFile && delete penari.ktpFile;
+        // penari.kkFile && delete penari.kkFile;
 
         axios
           .patch("/api/penaris", penari)
@@ -337,31 +345,31 @@ export const deletePenari = (
           toast.loading("Menghapus pas foto penari", { id: toastId });
         axios
           .delete(`/api/file/${penari.fotoUrl}`)
-          .then(() => stepController(3))
-          .catch((error) => {
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // DELETE KTP
-        withStatus && toast.loading("Menghapus KTP penari", { id: toastId });
-        axios
-          .delete(`/api/file/${penari.ktpUrl}`)
-          .then(() => stepController(4))
-          .catch((error) => {
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 4:
-        // DELETE KK
-        withStatus && toast.loading("Menghapus kk penari", { id: toastId });
-        axios
-          .delete(`/api/file/${penari.kkUrl}`)
           .then(() => stepController(5))
           .catch((error) => {
             toastFirebaseError(error, toastId);
           });
         break;
+      // case 3:
+      //   // DELETE KTP
+      //   withStatus && toast.loading("Menghapus KTP penari", { id: toastId });
+      //   axios
+      //     .delete(`/api/file/${penari.ktpUrl}`)
+      //     .then(() => stepController(4))
+      //     .catch((error) => {
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
+      // case 4:
+      //   // DELETE KK
+      //   withStatus && toast.loading("Menghapus kk penari", { id: toastId });
+      //   axios
+      //     .delete(`/api/file/${penari.kkUrl}`)
+      //     .then(() => stepController(5))
+      //     .catch((error) => {
+      //       toastFirebaseError(error, toastId);
+      //     });
+      //   break;
       case 5:
         // DELETE PENARI
         withStatus && toast.loading("Menghapus penari", { id: toastId });
@@ -394,32 +402,64 @@ export const getTarianId = (
     tingkatan: string;
     kategori: string;
   },
-  useSpace: boolean = false
+  options?: {
+    useSpace?: boolean;
+    fullId?: {
+      namaTim: string;
+      lagu: string;
+    };
+  }
 ) => {
+  const useSpace = options?.useSpace;
+  const fullId = options?.fullId;
+
   let idTarian = `${tarian.jenis}-${tarian.tingkatan}-${tarian.kategori}`;
+
+  if (fullId) idTarian += `-${fullId.namaTim}-${fullId.namaTim}`;
 
   if (useSpace) idTarian = idTarian.split("-").join(" - ");
   return idTarian;
 };
 
-export const isPenariPaid = (penari: PenariState) => {
+export const isPenariPaid = (
+  penari: PenariState,
+  registeredPenari: boolean = false
+) => {
   let paid = false;
 
-  penari.tarian.map((tarian) => {
-    if (paid) return;
-    if (
-      penari.pembayaran.find(
-        (pembayaran) => pembayaran.idTarian == getTarianId(tarian)
-      )
-    )
-      paid = true;
-  });
+  if (registeredPenari) {
+    let pembayaranIndex = 0;
+    while (pembayaranIndex < penari.pembayaran.length && !paid) {
+      if (
+        penari.pembayaran.find(
+          (item) =>
+            item.idTarian ==
+            getTarianId(penari.tarian[0], {
+              fullId: {
+                namaTim: penari.namaTim[0].namaTim,
+                lagu: penari.lagu[0].lagu,
+              },
+            })
+        )
+      ) {
+        paid = true;
+      }
+      pembayaranIndex++;
+    }
+  } else {
+    penari.pembayaran.length && (paid = true);
+  }
 
   return paid;
 };
 
 export const getPenariPaymentId = (penari: PenariState) => {
-  const idTarian = getTarianId(penari.tarian[0]);
+  const idTarian = getTarianId(penari.tarian[0], {
+    fullId: {
+      namaTim: penari.namaTim[0].namaTim,
+      lagu: penari.lagu[0].lagu,
+    },
+  });
   const idPembayaran = penari.pembayaran.find(
     (pembayaran) => pembayaran.idTarian == idTarian
   )?.idPembayaran;
@@ -431,6 +471,13 @@ export const getPenariNamaTim = (penari: PenariState, indexTarian?: number) => {
   return penari.namaTim.find(
     (namaTim) => namaTim.idTarian == getTarianId(penari.tarian[index])
   )?.namaTim as string;
+};
+
+export const getPenariLagu = (penari: PenariState, indexTarian?: number) => {
+  const index = indexTarian || 0;
+  return penari.lagu.find(
+    (lagu) => lagu.idTarian == getTarianId(penari.tarian[index])
+  )?.lagu as string;
 };
 
 export const getBiayaPenari = (penari: PenariState) => {

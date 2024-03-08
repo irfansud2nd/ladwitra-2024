@@ -7,11 +7,17 @@ import { RootState } from "@/utils/redux/store";
 import { setPenariToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
 import { penariInitialValue } from "@/utils/jaipong/penari/penariConstants";
 import PenariForm from "./PenariForm";
+import { editOnly, jaipongLimit } from "@/utils/constants";
 
 const PenariDialog = () => {
   const [open, setOpen] = useState(false);
   const penariToEdit = useSelector((state: RootState) => state.penaris.toEdit);
+  const limit = useSelector(
+    (state: RootState) => state.pendaftaran.jaipongLimit
+  );
   const dispatch = useDispatch();
+
+  const disable = editOnly || limit >= jaipongLimit;
 
   const toggleDialog = (state: boolean) => {
     setOpen(state);
@@ -26,7 +32,7 @@ const PenariDialog = () => {
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
       <DialogTrigger asChild>
-        <Button>Tambah Penari</Button>
+        <Button disabled={disable}>Tambah Penari</Button>
       </DialogTrigger>
       <DialogContent className="w-fit max-w-[100vw] max-h-[90vh] overflow-auto pb-2">
         <PenariForm setOpen={setOpen} />

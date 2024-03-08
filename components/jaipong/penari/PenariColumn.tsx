@@ -20,6 +20,7 @@ import {
   deletePenari,
   isPenariPaid,
 } from "@/utils/jaipong/penari/penariFunctions";
+import { editOnly } from "@/utils/constants";
 
 export const PenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -85,7 +86,7 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(penari)}
-                className="text-destructive"
+                className={`text-destructive ${editOnly && "hidden"}`}
               >
                 Hapus
               </DropdownMenuItem>

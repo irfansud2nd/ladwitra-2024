@@ -42,7 +42,7 @@ const JaipongSideMenu = () => {
       href: "tunggal",
       icon: <FaPerson />,
       length: registeredPenaris.filter(
-        (penari) => penari.tarian[0].jenis == "Tungal"
+        (penari) => penari.tarian[0].jenis == "Tunggal"
       ).length,
     },
     {
@@ -81,7 +81,9 @@ const JaipongSideMenu = () => {
                 >
                   {menu.label}
                 </span>
-                <span>{menu.length && show ? menu.length : null}</span>
+                <span className="ml-2">
+                  {menu.length && show ? menu.length : null}
+                </span>
               </Link>
             </TooltipTrigger>
             <TooltipContent className={`${show && "hidden"}`}>

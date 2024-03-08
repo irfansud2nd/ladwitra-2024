@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   ResetForm,
   SetSubmitting,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
 import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
@@ -62,7 +62,7 @@ const KoreograferForm = ({ setOpen }: Props) => {
   };
 
   const setForm = (
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     values: KoreograferState,
     koreograferToEdit?: KoreograferState
   ) => {
@@ -120,6 +120,7 @@ const KoreograferForm = ({ setOpen }: Props) => {
                   name="jabatan"
                   options={jabatanKoreografers}
                   formik={props}
+                  showOnEditOnly
                 />
               </div>
             </div>

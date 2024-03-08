@@ -31,18 +31,18 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
       return <TableSortButton column={column} text="Nama" />;
     },
   },
-  {
-    id: "NIK",
-    header: "NIK",
-    accessorKey: "NIK",
-    cell: ({ row }) => (
-      <div>
-        <span className="hidden">'</span>
-        {row.original.NIK}
-        <span className="hidden">'</span>
-      </div>
-    ),
-  },
+  // {
+  //   id: "NIK",
+  //   header: "NIK",
+  //   accessorKey: "NIK",
+  //   cell: ({ row }) => (
+  //     <div>
+  //       <span className="hidden">'</span>
+  //       {row.original.NIK}
+  //       <span className="hidden">'</span>
+  //     </div>
+  //   ),
+  // },
   {
     id: "Jenis Kelamin",
     header: "Jenis Kelamin",
@@ -71,7 +71,8 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
       <div className="flex flex-col">
         {row.original.tarian.map((tarian, i) => (
           <span key={i}>
-            {getTarianId(tarian, true)} - {getPenariNamaTim(row.original, i)}
+            {getTarianId(tarian, { useSpace: true })} -{" "}
+            {getPenariNamaTim(row.original, i)}
           </span>
         ))}
       </div>
@@ -142,14 +143,14 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
           case "Pas Foto":
             url = penari.downloadFotoUrl;
             break;
-          case "KK":
-            url = penari.downloadKkUrl;
-            landscape = true;
-            break;
-          case "KTP":
-            url = penari.downloadKtpUrl;
-            landscape = true;
-            break;
+          // case "KK":
+          //   url = penari.downloadKkUrl;
+          //   landscape = true;
+          //   break;
+          // case "KTP":
+          //   url = penari.downloadKtpUrl;
+          //   landscape = true;
+          //   break;
         }
 
         showFile(title, url, landscape);

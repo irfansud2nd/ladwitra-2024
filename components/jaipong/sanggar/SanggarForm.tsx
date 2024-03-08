@@ -5,7 +5,7 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   ResetForm,
   SetSubmitting,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -68,7 +68,7 @@ const SanggarForm = ({ setOpen }: Props) => {
 
   const setForm = (
     values: SanggarState,
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     sanggarToEdit?: SanggarState
   ) => {
     !values.creatorEmail &&

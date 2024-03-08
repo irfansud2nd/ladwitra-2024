@@ -1,7 +1,7 @@
 import axios from "axios";
 import { axiosFileConfig } from "../constants";
 import { FormikErrors } from "formik";
-import { Persons, SetSubmitting, setFieldValue } from "./FormConstants";
+import { Persons, SetSubmitting, SetFieldValue } from "./FormConstants";
 import { OfficialState } from "../silat/official/officialConstants";
 import { AtletState } from "../silat/atlet/atletConstats";
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -35,7 +35,7 @@ export const sendFile = async (file: File, directory: string) => {
 };
 
 // SET FIELD VALUES
-export const setFieldValues = (setFieldValue: setFieldValue, data: any) => {
+export const setFieldValues = (setFieldValue: SetFieldValue, data: any) => {
   for (const key in data) {
     setFieldValue(key, data[key]);
   }

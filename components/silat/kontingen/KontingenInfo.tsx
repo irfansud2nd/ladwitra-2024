@@ -23,6 +23,7 @@ import { setKontingenToEditRedux } from "@/utils/redux/silat/kontingenSlice";
 import KontingenDialog from "./KontingenDialog";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
+import { editOnly } from "@/utils/constants";
 
 const KontingenInfo = ({ show }: { show: boolean }) => {
   const kontingen = useSelector(
@@ -88,9 +89,9 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
           >
             Edit
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer text-destructive"
+            className={`cursor-pointer text-destructive 
+            ${editOnly && "hidden"}`}
             onClick={() => handleDelete()}
           >
             Delete

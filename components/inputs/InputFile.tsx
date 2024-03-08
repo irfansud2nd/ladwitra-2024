@@ -75,8 +75,10 @@ const InputFile = ({
 
   return (
     <div
-      className={`input_container ${className} 
-    ${editOnly && !showOnEditOnly && "hidden"}`}
+      className={`input_container w-[150px] 
+      ${landscape ? "w-[250px]" : "w-[150px]"}
+      ${className} 
+      ${editOnly && !showOnEditOnly && "hidden"}`}
     >
       <Label htmlFor={name}>
         {label}

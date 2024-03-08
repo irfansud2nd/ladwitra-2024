@@ -9,7 +9,7 @@ import {
   ResetForm,
   SetSubmitting,
   jenisKelaminPeserta,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
 import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
@@ -63,7 +63,7 @@ const AtletForm = ({ setOpen }: Props) => {
   };
 
   const setForm = (
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     values: AtletState,
     atletToEdit?: AtletState
   ) => {
@@ -113,6 +113,7 @@ const AtletForm = ({ setOpen }: Props) => {
                   name="jenisKelamin"
                   options={jenisKelaminPeserta}
                   formik={props}
+                  showOnEditOnly
                 />
                 <InputTextArea
                   label="Alamat Lengkap"

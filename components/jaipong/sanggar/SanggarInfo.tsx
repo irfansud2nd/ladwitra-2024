@@ -90,7 +90,6 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
           >
             Edit
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer text-destructive"
             onClick={() => handleDelete()}

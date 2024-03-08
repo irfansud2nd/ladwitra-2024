@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteOfficial } from "@/utils/silat/official/officialFunctions";
+import { editOnly } from "@/utils/constants";
 
 export const OfficialColumn: ColumnDef<OfficialState>[] = [
   {
@@ -84,7 +85,7 @@ export const OfficialColumn: ColumnDef<OfficialState>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(official)}
-                className="text-destructive"
+                className={`text-destructive ${editOnly && "hidden"}`}
               >
                 Hapus
               </DropdownMenuItem>

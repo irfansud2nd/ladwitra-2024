@@ -9,7 +9,7 @@ import {
   ResetForm,
   SetSubmitting,
   jenisKelaminPeserta,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
 import {
@@ -63,7 +63,7 @@ const PenariForm = ({ setOpen }: Props) => {
   };
 
   const setForm = (
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     values: PenariState,
     penariToEdit?: PenariState
   ) => {
@@ -102,15 +102,15 @@ const PenariForm = ({ setOpen }: Props) => {
                   urlName="downloadFotoUrl"
                   formik={props}
                 />
+              </div>
+              <div>
                 <InputText
                   label="Nama Lengkap"
                   name="nama"
                   upperCase
                   formik={props}
                 />
-              </div>
-              <div>
-                <InputText label="NIK" name="NIK" formik={props} />
+                {/* <InputText label="NIK" name="NIK" formik={props} /> */}
                 <InputSelect
                   label="Jenis Kelamin"
                   name="jenisKelamin"
@@ -131,8 +131,8 @@ const PenariForm = ({ setOpen }: Props) => {
               </div>
               <div>
                 <InputDate formik={props} />
-                <InputText label="Email" name="email" under17 formik={props} />
-                <InputText label="No HP" name="noHp" under17 formik={props} />
+                <InputText label="Email" name="email" formik={props} />
+                <InputText label="No HP" name="noHp" formik={props} />
                 <InputText
                   label="Nama Sanggar"
                   name="namaSanggar"

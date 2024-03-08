@@ -7,7 +7,7 @@ import CopyButton from "@/components/utils/CopyButton";
 import {
   ResetForm,
   SetSubmitting,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { formatToRupiah } from "@/utils/functions";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
@@ -55,7 +55,7 @@ const PenariPaymentForm = ({
     );
   };
 
-  const setForm = (setFieldValue: setFieldValue, values: PaymentState) => {
+  const setForm = (setFieldValue: SetFieldValue, values: PaymentState) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     !values.totalPembayaran &&

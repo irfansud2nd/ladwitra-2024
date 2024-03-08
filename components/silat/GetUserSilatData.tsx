@@ -11,6 +11,8 @@ import { setAtletsRedux } from "@/utils/redux/silat/atletsSlice";
 import { RootState } from "@/utils/redux/store";
 import KontingenNotFound from "./kontingen/KontingenNotFound";
 import { addPaymentsRedux } from "@/utils/redux/silat/paymentsSlice";
+import { checkLimit } from "@/utils/constants";
+import { setSilatLimit } from "@/utils/redux/pendaftaran/pendaftaranSlice";
 
 const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(0);
@@ -69,18 +71,35 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
       .catch((error) => toastFirebaseError(error));
   };
 
+  const getLimit = () => {
+    console.log("getLimit Silat");
+    axios.get("/api/atlets/count/registered").then((res) => {
+      dispatch(setSilatLimit(res.data.result));
+      setLoading((prev) => prev + 1);
+    });
+  };
+
   const getAll = () => {
     getKontingen();
     getAtlets();
     getOfficials();
     getPayments();
+    if (checkLimit) getLimit();
   };
 
+  const loadingLimit = checkLimit ? 5 : 4;
+
   useEffect(() => {
-    if (loading < 4) !kontingen?.id ? getAll() : setLoading(4);
+    if (loading < loadingLimit)
+      if (!kontingen?.id) {
+        getAll();
+      } else {
+        setLoading((prev) => prev + 4);
+        checkLimit && getLimit();
+      }
   }, [kontingen]);
 
-  if (loading < 4) return <PersonLoading />;
+  if (loading < loadingLimit) return <PersonLoading />;
 
   if (!kontingen?.id) return <KontingenNotFound />;
 

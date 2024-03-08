@@ -16,6 +16,7 @@ type State = {
   all: AtletState[];
   registered: AtletState[];
   toEdit: AtletState;
+  pertandinganToEdit: AtletState;
 };
 
 const initialState: State = {
@@ -23,6 +24,7 @@ const initialState: State = {
   all: [],
   registered: [],
   toEdit: atletInitialValue,
+  pertandinganToEdit: atletInitialValue,
 };
 
 const getRegistered = (state: State, data: AtletState[]) => {
@@ -106,6 +108,10 @@ const atletSlice = createSlice({
     setAtletToEditRedux: (state, action: PayloadAction<AtletState>) => {
       state.toEdit = action.payload;
     },
+    // SET PERTANDINGAN TO EDIT
+    setPertandinganToEditRedux: (state, action: PayloadAction<AtletState>) => {
+      state.pertandinganToEdit = action.payload;
+    },
   },
 });
 
@@ -116,5 +122,6 @@ export const {
   addAtletRedux,
   deleteAtletRedux,
   setAtletToEditRedux,
+  setPertandinganToEditRedux,
 } = atletSlice.actions;
 export default atletSlice.reducer;

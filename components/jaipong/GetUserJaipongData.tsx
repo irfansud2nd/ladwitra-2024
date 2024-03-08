@@ -14,6 +14,8 @@ import { setKoreografersRedux } from "@/utils/redux/jaipong/koreografersSlice";
 import { setSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import { setPenarisRedux } from "@/utils/redux/jaipong/penarisSlice";
 import SanggarNotFound from "./sanggar/SanggarNotFound";
+import { setJaipongLimit } from "@/utils/redux/pendaftaran/pendaftaranSlice";
+import { checkLimit } from "@/utils/constants";
 
 const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(0);
@@ -21,11 +23,6 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
 
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
-  const penaris = useSelector((state: RootState) => state.penaris.registered);
-  const koreografers = useSelector(
-    (state: RootState) => state.koreografers.registered
-  );
-  const payments = useSelector((state: RootState) => state.payments.all);
 
   const getSanggar = () => {
     console.log("getSanggar");
@@ -75,15 +72,32 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
       .catch((error) => toastFirebaseError(error));
   };
 
+  const getLimit = () => {
+    console.log("getLimit Silat");
+    axios.get("/api/penaris/count/registered").then((res) => {
+      dispatch(setJaipongLimit(res.data.result));
+      setLoading((prev) => prev + 1);
+    });
+  };
+
   const getAll = () => {
     getSanggar();
     getPenaris();
     getKoreografers();
     getPayments();
+    if (checkLimit) getLimit();
   };
 
+  const loadingLimit = checkLimit ? 5 : 4;
+
   useEffect(() => {
-    if (loading < 4) !sanggar?.id ? getAll() : setLoading(4);
+    if (loading < loadingLimit)
+      if (!sanggar?.id) {
+        getAll();
+      } else {
+        setLoading((prev) => prev + 4);
+        checkLimit && getLimit();
+      }
   }, [sanggar]);
 
   if (loading < 4) return <PersonLoading />;

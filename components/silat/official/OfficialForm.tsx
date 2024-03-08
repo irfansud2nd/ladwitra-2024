@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   ResetForm,
   SetSubmitting,
-  setFieldValue,
+  SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
 import { setOfficialToEditRedux } from "@/utils/redux/silat/officialsSlice";
@@ -64,7 +64,7 @@ const OfficialForm = ({ setOpen }: Props) => {
   };
 
   const setForm = (
-    setFieldValue: setFieldValue,
+    setFieldValue: SetFieldValue,
     values: OfficialState,
     officialToEdit?: OfficialState
   ) => {
@@ -122,6 +122,7 @@ const OfficialForm = ({ setOpen }: Props) => {
                   name="jabatan"
                   options={jabatanOfficials}
                   formik={props}
+                  showOnEditOnly
                 />
               </div>
             </div>
