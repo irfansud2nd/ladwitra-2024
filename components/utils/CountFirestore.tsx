@@ -29,7 +29,7 @@ const CountFirestore = ({
   const [result, setResult] = useState(0);
   const [loading, setLoading] = useState(true);
   const getResult = () => {
-    if (count || !apiUrl) {
+    if (!apiUrl) {
       setLoading(false);
       return;
     }
@@ -51,8 +51,8 @@ const CountFirestore = ({
   }, []);
 
   useEffect(() => {
-    if (count && result != count) {
-      setResult(count);
+    if (count) {
+      result != count && setResult(count);
       setLoading(false);
     }
   }, [count]);
