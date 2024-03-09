@@ -23,7 +23,7 @@ const page = () => {
   const dispatch = useDispatch();
 
   const getData = (time: number) => {
-    console.log("getKontingensAdmin", page, (page - 1) * limit, page * limit);
+    // console.log("getKontingensAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
       .get(`/api/kontingens/limit/${time}/${limit}`)

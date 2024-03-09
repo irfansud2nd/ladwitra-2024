@@ -25,7 +25,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
 
   const getSanggar = () => {
-    console.log("getSanggar");
+    // console.log("getSanggar");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/sanggars/${email}`)
@@ -37,7 +37,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getKoreografers = () => {
-    console.log("getKoreografers");
+    // console.log("getKoreografers");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/koreografers/${email}`)
@@ -49,7 +49,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getPenaris = () => {
-    console.log("getPenaris");
+    // console.log("getPenaris");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/penaris/${email}`)
@@ -61,7 +61,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getPayments = () => {
-    console.log("getPayments");
+    // console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/payments/all/jaipong/${email}`)
@@ -73,7 +73,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getLimit = () => {
-    console.log("getLimit Silat");
+    // console.log("getLimit Silat");
     axios.get("/api/penaris/count/registered").then((res) => {
       dispatch(setJaipongLimit(res.data.result));
       setLoading((prev) => prev + 1);

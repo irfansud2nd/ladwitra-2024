@@ -23,7 +23,7 @@ const page = () => {
   const dispatch = useDispatch();
 
   const getData = (time: number) => {
-    console.log("getOfficialsAdmin", page, (page - 1) * limit, page * limit);
+    // console.log("getOfficialsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
       .get(`/api/officials/limit/${time}/${limit}`)

@@ -5,7 +5,7 @@ export const axiosFileConfig = {
   },
 };
 
-export const itemPerPage = 3;
+export const itemPerPage = 10;
 
 export const editOnly = false;
 

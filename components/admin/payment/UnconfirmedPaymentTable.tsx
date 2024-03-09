@@ -20,7 +20,7 @@ const UnconfirmedPaymentTable = ({
   const dispatch = useDispatch();
 
   const getData = () => {
-    console.log("getUnconfirmedPayment", source);
+    // console.log("getUnconfirmedPayment", source);
     axios
       .get(`/api/payments/unconfirmed/${source}`)
       .then((res) => dispatch(addPaymentsRedux(res.data.result)))

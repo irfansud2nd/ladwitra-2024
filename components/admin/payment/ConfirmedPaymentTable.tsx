@@ -21,13 +21,13 @@ const ConfirmedPaymentTable = ({ source }: { source: "silat" | "jaipong" }) => {
   const dispatch = useDispatch();
 
   const getData = (time: number) => {
-    console.log(
-      "getConfirmedPayment",
-      source,
-      page,
-      (page - 1) * itemPerPage,
-      page * itemPerPage
-    );
+    //  console.log(
+    //   "getConfirmedPayment",
+    //   source,
+    //   page,
+    //   (page - 1) * itemPerPage,
+    //   page * itemPerPage
+    // );
     setLoading(true);
     axios
       .get(`/api/payments/confirmed/${source}/${time}`)

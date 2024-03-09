@@ -23,7 +23,7 @@ const page = () => {
   const dispatch = useDispatch();
 
   const getData = (time: number) => {
-    console.log("getPenarisAdmin", page, (page - 1) * limit, page * limit);
+    // console.log("getPenarisAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
       .get(`/api/penaris/limit/${time}/${limit}`)

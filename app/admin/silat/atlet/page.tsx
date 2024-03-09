@@ -24,7 +24,7 @@ const page = () => {
   const dispatch = useDispatch();
 
   const getData = (time: number, exception?: AtletState[]) => {
-    console.log("getAtletsAdmin", page, (page - 1) * limit, page * limit);
+    // console.log("getAtletsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     let url = `/api/atlets/limit/${time}/${limit}`;
     if (exception?.length)
@@ -32,7 +32,6 @@ const page = () => {
     axios
       .get(url)
       .then((res) => {
-        console.log(res.data.result);
         dispatch(addAtletsRedux(res.data.result));
       })
       .catch((error) => {

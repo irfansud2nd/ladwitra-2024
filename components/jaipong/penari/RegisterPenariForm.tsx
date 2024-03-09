@@ -226,7 +226,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       const { jenis, kelas, tingkatan, kategori } = tarianToEdit.tarian[0];
       const namaTim = tarianToEdit.namaTim[0].namaTim;
       const lagu = tarianToEdit.lagu[0].lagu;
-      console.log(lagu);
+      // console.log(lagu);
       setFieldValue("penariId", tarianToEdit.id);
       setPenari(tarianToEdit);
       setFieldValue("jenisTarian", jenis);

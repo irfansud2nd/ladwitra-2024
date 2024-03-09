@@ -34,10 +34,11 @@ export const GET = async (
   const timestamp = slug[0];
   const item = slug[1];
   let exeception: number[] = [0];
-  if (slug.slice(2).length)
-    exeception = slug.slice(2).map((item) => Number(item));
+  if (slug[2])
+    exeception = slug[2].split(",").map((item: string) => Number(item));
 
   let result: any = [];
+
   return getDocs(
     query(
       collection(firestore, targetCollection),

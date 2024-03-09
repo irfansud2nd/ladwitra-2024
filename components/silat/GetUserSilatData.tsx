@@ -24,7 +24,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   );
 
   const getKontingen = () => {
-    console.log("getKontingen");
+    // console.log("getKontingen");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/kontingens/${email}`)
@@ -36,7 +36,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getOfficials = () => {
-    console.log("getOfficials");
+    // console.log("getOfficials");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/officials/${email}`)
@@ -48,7 +48,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getAtlets = () => {
-    console.log("getAtlets");
+    // console.log("getAtlets");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/atlets/${email}`)
@@ -60,7 +60,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getPayments = () => {
-    console.log("getPayments");
+    // console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
       .get(`/api/payments/all/silat/${email}`)
@@ -72,7 +72,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getLimit = () => {
-    console.log("getLimit Silat");
+    // console.log("getLimit Silat");
     axios.get("/api/atlets/count/registered").then((res) => {
       dispatch(setSilatLimit(res.data.result));
       setLoading((prev) => prev + 1);

@@ -46,7 +46,7 @@ const page = () => {
 
   const getData = (time: number, id?: string) => {
     const tarian = id ? id : idTarian;
-    console.log("getData", time, tarian);
+    // console.log("getData", time, tarian);
     setLoading(true);
     axios
       .get(`/api/penaris/kategori/${tarian}/${time}/${limit}`)

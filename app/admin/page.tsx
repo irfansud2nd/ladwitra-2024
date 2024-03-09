@@ -41,18 +41,21 @@ const page = () => {
           <CountFirestore
             title="Kontingen"
             apiUrl="/api/kontingens/count"
+            link="/admin/silat/kontingen"
             onComplete={(value) => dispatch(setCountKontingen(value))}
             count={kontingen}
           />
           <CountFirestore
             title="Official"
             apiUrl="/api/officials/count"
+            link="/admin/silat/official"
             onComplete={(value) => dispatch(setCountOfficial(value))}
             count={official}
           />
           <CountFirestore
             title="Atlet"
             apiUrl="/api/atlets/count"
+            link="/admin/silat/atlet"
             onComplete={(value) => dispatch(setCountAtlet(value))}
             count={atlet}
           />
@@ -70,18 +73,21 @@ const page = () => {
           <CountFirestore
             title="Sanggar"
             apiUrl="/api/sanggars/count"
+            link="/admin/jaipong/sanggar"
             onComplete={(value) => dispatch(setCountSanggar(value))}
             count={sanggar}
           />
           <CountFirestore
             title="Koreografer"
             apiUrl="/api/koreografers/count"
+            link="/admin/jaipong/koreografer"
             onComplete={(value) => dispatch(setCountKoreografer(value))}
             count={koreografer}
           />
           <CountFirestore
             title="Penari"
             apiUrl="/api/penaris/count"
+            link="/admin/jaipong/penari"
             onComplete={(value) => dispatch(setCountPenari(value))}
             count={penari}
           />

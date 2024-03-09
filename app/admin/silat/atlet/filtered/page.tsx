@@ -45,7 +45,7 @@ const page = () => {
 
   const getData = (time: number, id?: string) => {
     const pertandingan = id ? id : idPertandingan;
-    console.log("getData", time, pertandingan);
+    // console.log("getData", time, pertandingan);
     setLoading(true);
     axios
       .get(`/api/atlets/kategori/${pertandingan}/${time}/${limit}`)
