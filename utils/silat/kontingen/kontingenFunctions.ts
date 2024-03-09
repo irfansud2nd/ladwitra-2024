@@ -25,6 +25,7 @@ export const sendKontingen = async (kontingen: KontingenState) => {
   const data: KontingenState = {
     ...kontingen,
     id,
+    waktuPendaftaran: Date.now(),
   };
   return axios
     .post("/api/kontingens", data)
@@ -49,7 +50,6 @@ export const managePersonOnKontingen = async (
   }
 ) => {
   const atlet = options?.atlet;
-  console.log("managePersonOnKontingen", tipe, personId, action);
 
   let data: KontingenState = { ...kontingen };
   if (action == "add")

@@ -29,6 +29,7 @@ export const sendSanggar = async (
   const data: SanggarState = {
     ...sanggar,
     id,
+    waktuPendaftaran: Date.now(),
   };
   return axios
     .post("/api/sanggars", data)
