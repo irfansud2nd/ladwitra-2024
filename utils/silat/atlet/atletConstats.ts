@@ -125,6 +125,7 @@ export type AtletState = {
     idPertandingan: string;
     idPembayaran: string;
   }[];
+  idPembayaran: string[];
   nomorPertandingan: number;
   idKontingen: string;
   namaKontingen: string;
@@ -156,6 +157,7 @@ export const atletInitialValue: AtletState = {
   jenisKelamin: jenisKelaminPeserta[0],
   pertandingan: [],
   pembayaran: [],
+  idPembayaran: [],
   nomorPertandingan: 0,
   idKontingen: "",
   namaKontingen: "",

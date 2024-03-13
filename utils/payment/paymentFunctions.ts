@@ -54,12 +54,14 @@ export const sendSilatPayment = (
             idPertandingan: getPertandinganId(selectedAtlet.pertandingan[0]),
           },
         ],
+        idPembayaran: [...selectedAtlet.idPembayaran, idPembayaran],
       });
     } else {
       updatedAtlets[atletIndex].pembayaran.push({
         idPembayaran,
         idPertandingan: getPertandinganId(selectedAtlet.pertandingan[0]),
       });
+      updatedAtlets[atletIndex].idPembayaran.push(idPembayaran);
     }
   });
 
@@ -176,6 +178,7 @@ export const sendJaipongPayment = (
             }),
           },
         ],
+        idPembayaran: [...selectedPenari.idPembayaran, idPembayaran],
       });
     } else {
       updatedPenaris[penariIndex].pembayaran.push({
@@ -183,6 +186,7 @@ export const sendJaipongPayment = (
         idTarian: getTarianId(selectedPenari.tarian[0]),
       });
     }
+    updatedPenaris[penariIndex].idPembayaran.push(idPembayaran);
   });
 
   const stepController = (step: number) => {

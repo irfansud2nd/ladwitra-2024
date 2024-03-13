@@ -67,6 +67,7 @@ export type PenariState = {
     idTarian: string;
     idPembayaran: string;
   }[];
+  idPembayaran: string[];
   nomorTarian: number;
   idSanggar: string;
   namaSanggar: string;
@@ -97,6 +98,7 @@ export const penariInitialValue: PenariState = {
   lagu: [],
   namaTim: [],
   pembayaran: [],
+  idPembayaran: [],
   nomorTarian: 0,
   idSanggar: "",
   namaSanggar: "",
