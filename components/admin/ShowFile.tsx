@@ -23,9 +23,10 @@ const ShowFile = ({ label, src, landscape, newTab }: Props) => {
       >
         <img
           src={src}
-          className={`transition-all
-        ${skeleton ? "opacity-0" : "opacity-100"}
-        ${landscape ? "w-fit h-full" : "w-full h-fit"}`}
+          className={`transition-all object-contain object-center
+          ${skeleton ? "opacity-0" : "opacity-100"}
+          ${landscape ? "w-[250px] h-[150px]" : "w-[150px] h-[200px]"}
+          `}
           onLoad={() => setSkeleton(false)}
         />
         {skeleton && <Skeleton className="w-full h-full absolute" />}
