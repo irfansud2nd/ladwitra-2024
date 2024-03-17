@@ -99,9 +99,10 @@ const InputFile = ({
           <>
             <img
               src={imagePreviewSrc}
-              className={`transition-all
+              className={`transition-all object-contain object-center
               ${skeleton ? "opacity-0" : "opacity-100"}
-              ${landscape ? "w-fit h-full" : "w-full h-fit"}`}
+              ${landscape ? "w-[250px] h-[150px]" : "w-[150px] h-[200px]"}
+              `}
               onLoad={() => setSkeleton(false)}
             />
             {skeleton && <Skeleton className="w-full h-full absolute" />}
