@@ -28,7 +28,6 @@ const page = () => {
     nomorTarian,
     payment,
     paymentUnconfirmed,
-    paymentConfirmed,
   } = useSelector((state: RootState) => state.count);
 
   const dispatch = useDispatch();
@@ -103,23 +102,23 @@ const page = () => {
         <CardTitle className="text-lg font-bold">Pembayaran</CardTitle>
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
-            title="Total Payment"
+            title="Total Pembayaran"
             apiUrl="/api/payments/all/count"
             count={payment}
             onComplete={(value) => dispatch(setCountPayment(value))}
             money
           />
           <CountFirestore
-            title="Confirmed Payment"
-            count={paymentConfirmed}
-            disableRefresh
-            money
-          />
-          <CountFirestore
-            title="Unconfirmed Payment"
+            title="Menunggu Konfirmasi"
             apiUrl="/api/payments/unconfirmed/count"
             count={paymentUnconfirmed}
             onComplete={(value) => dispatch(setCountPaymentUnconfirmed(value))}
+            money
+          />
+          <CountFirestore
+            title="Pembayaran Terkonfirmasi"
+            count={payment - paymentUnconfirmed}
+            disableRefresh
             money
           />
         </div>

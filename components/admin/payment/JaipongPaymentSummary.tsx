@@ -16,8 +16,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 const JaipongPaymentSummary = () => {
   const dispatch = useDispatch();
-  const { jaipongPayment, jaipongPaymentConfirmed, jaipongPaymentUnconfirmed } =
-    useSelector((state: RootState) => state.count);
+  const { jaipongPayment, jaipongPaymentUnconfirmed } = useSelector(
+    (state: RootState) => state.count
+  );
   return (
     <Dialog>
       <DialogTrigger>Summary</DialogTrigger>
@@ -42,7 +43,7 @@ const JaipongPaymentSummary = () => {
           />
           <CountFirestore
             title="Pembayaran Terkonfirmasi"
-            count={jaipongPaymentConfirmed}
+            count={jaipongPayment - jaipongPaymentUnconfirmed}
             disableRefresh
             money
           />

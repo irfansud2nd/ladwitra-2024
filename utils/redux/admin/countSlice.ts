@@ -22,15 +22,12 @@ type State = {
   categorizedPenaris: CategorizedPeserta[];
 
   payment: number;
-  paymentConfirmed: number;
   paymentUnconfirmed: number;
 
   silatPayment: number;
-  silatPaymentConfirmed: number;
   silatPaymentUnconfirmed: number;
 
   jaipongPayment: number;
-  jaipongPaymentConfirmed: number;
   jaipongPaymentUnconfirmed: number;
 };
 
@@ -50,15 +47,12 @@ const initialState: State = {
   categorizedPenaris: [],
 
   payment: 0,
-  paymentConfirmed: 0,
   paymentUnconfirmed: 0,
 
   silatPayment: 0,
-  silatPaymentConfirmed: 0,
   silatPaymentUnconfirmed: 0,
 
   jaipongPayment: 0,
-  jaipongPaymentConfirmed: 0,
   jaipongPaymentUnconfirmed: 0,
 };
 
@@ -95,14 +89,12 @@ const countSlice = createSlice({
     },
     setCountPaymentUnconfirmed: (state, action: PayloadAction<number>) => {
       state.paymentUnconfirmed = action.payload;
-      state.paymentConfirmed = state.payment - action.payload;
     },
     setCountSilatPayment: (state, action: PayloadAction<number>) => {
       state.silatPayment = action.payload;
     },
     setCountSilatPaymentUnconfirmed: (state, action: PayloadAction<number>) => {
       state.silatPaymentUnconfirmed = action.payload;
-      state.silatPaymentConfirmed = state.silatPayment - action.payload;
     },
     setCountJaipongPayment: (state, action: PayloadAction<number>) => {
       state.jaipongPayment = action.payload;
@@ -112,7 +104,6 @@ const countSlice = createSlice({
       action: PayloadAction<number>
     ) => {
       state.jaipongPaymentUnconfirmed = action.payload;
-      state.jaipongPaymentConfirmed = state.jaipongPayment - action.payload;
     },
     addCountCategorizedAtlets: (
       state,

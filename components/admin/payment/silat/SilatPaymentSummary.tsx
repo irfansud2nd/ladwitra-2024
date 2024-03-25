@@ -12,8 +12,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 const SilatPaymentSummary = () => {
   const dispatch = useDispatch();
-  const { silatPayment, silatPaymentConfirmed, silatPaymentUnconfirmed } =
-    useSelector((state: RootState) => state.count);
+  const { silatPayment, silatPaymentUnconfirmed } = useSelector(
+    (state: RootState) => state.count
+  );
   return (
     <Dialog>
       <DialogTrigger>Summary</DialogTrigger>
@@ -36,7 +37,7 @@ const SilatPaymentSummary = () => {
         />
         <CountFirestore
           title="Pembayaran Terkonfirmasi"
-          count={silatPaymentConfirmed}
+          count={silatPayment - silatPaymentUnconfirmed}
           disableRefresh
           money
         />
