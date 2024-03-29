@@ -30,8 +30,8 @@ export const selectCategoryJaipong = (tingkatan: string) => {
 };
 
 // SELECT LAGU JAIONG
-export const selectLagu = (jenis: string) => {
-  if (jenis == "Pemasalan") return laguTunggalPemasalan;
+export const selectLagu = (kelas: string) => {
+  if (kelas == "Pemasalan") return laguTunggalPemasalan;
   return laguTunggalPrestasi;
 };
 
@@ -375,6 +375,7 @@ export const deletePenari = (
         withStatus && toast.loading("Menghapus penari", { id: toastId });
         axios
           .delete(`/api/penaris/${penari.creatorEmail}/${penari.id}`)
+          // .delete(`/api/penaris?email=${penari.creatorEmail}&id=${penari.id}`)
           .then((res) => {
             withStatus &&
               toast.success("Penari berhasil dihapus", { id: toastId });
@@ -399,6 +400,7 @@ export const getBiayaPenaris = (penaris: PenariState[]) => {
 export const getTarianId = (
   tarian: {
     jenis: string;
+    kelas: string;
     tingkatan: string;
     kategori: string;
   },
@@ -413,9 +415,9 @@ export const getTarianId = (
   const useSpace = options?.useSpace;
   const fullId = options?.fullId;
 
-  let idTarian = `${tarian.jenis}-${tarian.tingkatan}-${tarian.kategori}`;
+  let idTarian = `${tarian.jenis}-${tarian.kelas}-${tarian.tingkatan}-${tarian.kategori}`;
 
-  if (fullId) idTarian += `-${fullId.namaTim}-${fullId.namaTim}`;
+  if (fullId) idTarian += `-${fullId.namaTim}-${fullId.lagu}`;
 
   if (useSpace) idTarian = idTarian.split("-").join(" - ");
   return idTarian;
