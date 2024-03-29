@@ -127,13 +127,15 @@ export const column: ColumnDef<PenariState>[] = [
           ) as PenariState;
 
           const tarian = registeredPenari.tarian[0];
-          const newTarian = [...penari.tarian].filter(
+          const tarianIndex = penari.tarian.findIndex(
             (item) =>
-              item.jenis != tarian.jenis &&
-              item.kelas != tarian.kelas &&
-              item.tingkatan != tarian.tingkatan &&
-              item.kategori != tarian.kategori
+              item.jenis == tarian.jenis &&
+              item.kelas == tarian.kelas &&
+              item.tingkatan == tarian.tingkatan &&
+              item.kategori == tarian.kategori
           );
+          let newTarian = [...penari.tarian];
+          newTarian.splice(tarianIndex, 1);
 
           const lagu = registeredPenari.lagu[0];
           const newLagu = [...penari.lagu].filter((item) => item != lagu);
