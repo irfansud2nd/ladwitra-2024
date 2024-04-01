@@ -222,8 +222,11 @@ export const deleteKoreografer = (
         // DELETE KOREOGRAFER
         withStatus && toast.loading("Menghapus koreografer", { id: toastId });
         axios
+          // .delete(
+          //   `/api/koreografers/${koreografer.creatorEmail}/${koreografer.id}`
+          // )
           .delete(
-            `/api/koreografers/${koreografer.creatorEmail}/${koreografer.id}`
+            `/api/koreografers?email=${koreografer.creatorEmail}&id=${koreografer.id}`
           )
           .then((res) => {
             withStatus &&

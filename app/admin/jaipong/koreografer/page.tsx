@@ -26,7 +26,7 @@ const page = () => {
     // console.log("getKoreografersAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
-      .get(`/api/koreografers/limit/${time}/${limit}`)
+      .get(`/api/koreografers?timestamp=${time}&limit=${limit}`)
       .then((res) => {
         dispatch(addKoreografersRedux(res.data.result));
       })

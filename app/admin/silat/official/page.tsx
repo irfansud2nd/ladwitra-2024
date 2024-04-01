@@ -26,7 +26,7 @@ const page = () => {
     // console.log("getOfficialsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
-      .get(`/api/officials/limit/${time}/${limit}`)
+      .get(`/api/officials?timestamp=${time}&limit=${limit}`)
       .then((res) => {
         dispatch(addOfficialsRedux(res.data.result));
       })

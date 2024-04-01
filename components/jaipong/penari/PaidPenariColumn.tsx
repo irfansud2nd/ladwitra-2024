@@ -11,7 +11,11 @@ import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
-import { getPenariPaymentId } from "@/utils/jaipong/penari/penariFunctions";
+import {
+  getPenariLagu,
+  getPenariNamaTim,
+  getPenariPaymentId,
+} from "@/utils/jaipong/penari/penariFunctions";
 
 export const PaidPenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -42,6 +46,22 @@ export const PaidPenariColumn: ColumnDef<PenariState>[] = [
     cell: ({ row }) => {
       const penari = row.original;
       return <div>{penari.tarian[0].kategori}</div>;
+    },
+  },
+  {
+    accessorKey: "tarian[0].namaTim",
+    header: "Nama Tim",
+    cell: ({ row }) => {
+      const penari = row.original;
+      return <div>{getPenariNamaTim(penari) || "-"}</div>;
+    },
+  },
+  {
+    accessorKey: "tarian[0].lagu",
+    header: "Lagu",
+    cell: ({ row }) => {
+      const penari = row.original;
+      return <div>{getPenariLagu(penari) || "-"}</div>;
     },
   },
   {

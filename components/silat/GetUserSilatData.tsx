@@ -27,7 +27,8 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getKontingen");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/kontingens/${email}`)
+      // .get(`/api/kontingens/${email}`)
+      .get(`/api/kontingens?email=${email}`)
       .then((res) => {
         dispatch(setKontingenRedux(res.data.result[0]));
         setLoading((prev) => prev + 1);
@@ -39,7 +40,8 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getOfficials");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/officials/${email}`)
+      // .get(`/api/officials/${email}`)
+      .get(`/api/officials?email=${email}`)
       .then((res) => {
         dispatch(setOfficialsRedux(res.data.result));
         setLoading((prev) => prev + 1);
@@ -51,7 +53,8 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getAtlets");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/atlets/${email}`)
+      // .get(`/api/atlets/${email}`)
+      .get(`/api/atlets?email=${email}`)
       .then((res) => {
         dispatch(setAtletsRedux(res.data.result));
         setLoading((prev) => prev + 1);
@@ -63,7 +66,8 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/payments/all/silat/${email}`)
+      // .get(`/api/payments/all/silat/${email}`)
+      .get(`/api/payments?source=silat&email=${email}`)
       .then((res) => {
         dispatch(addPaymentsRedux(res.data.result));
         setLoading((prev) => prev + 1);

@@ -13,7 +13,10 @@ import {
   jenisPertandingan,
   tingkatanKategoriSilat,
 } from "@/utils/silat/atlet/atletConstats";
-import { getAllPertandinganUrl } from "@/utils/silat/atlet/atletFunctions";
+import {
+  getAllPertandinganUrl,
+  splitPertandinganId,
+} from "@/utils/silat/atlet/atletFunctions";
 import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,11 +29,15 @@ const page = () => {
     const ids = getAllPertandinganUrl();
     ids.map((id) => {
       if (!data.find((item) => item.id == id)) {
+        const { jenisPertandingan, tingkatan, kategori, jenisKelamin } =
+          splitPertandinganId(id);
         axios
-          .get(`/api/atlets/kategori/count/${id}`)
-          .then((res) =>
-            dispatch(addCountCategorizedAtlets({ id, count: res.data.result }))
-          );
+          .get(
+            `/api/atlets/kategori?jenis=${jenisPertandingan}&tingkatan=${tingkatan}&kategori=${kategori}&jenisKelamin=${jenisKelamin}&count=true`
+          )
+          .then((res) => {
+            dispatch(addCountCategorizedAtlets({ id, count: res.data.result }));
+          });
       }
     });
   };

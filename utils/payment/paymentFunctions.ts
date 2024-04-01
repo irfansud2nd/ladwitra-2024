@@ -8,17 +8,22 @@ import { ResetForm, SetSubmitting } from "../form/FormConstants";
 import { sendFile, updatePersons } from "../form/FormFunctions";
 import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
-import { PaymentState } from "./paymentConstants";
+import { PaymentState, paymentInitialValue } from "./paymentConstants";
 import { formatToRupiah, toastFirebaseError } from "../functions";
 import {
   addPaymentRedux,
+  setPaymentToConfirmRedux,
   updatePaymentRedux,
 } from "../redux/silat/paymentsSlice";
 import { PenariState } from "../jaipong/penari/penariConstants";
 import { SanggarState } from "../jaipong/sanggar/sanggarConstants";
 import { updateSanggar } from "../jaipong/sanggar/sanggarFunctions";
 import { getPertandinganId, updateAtlet } from "../silat/atlet/atletFunctions";
-import { getTarianId } from "../jaipong/penari/penariFunctions";
+import {
+  getPenariLagu,
+  getPenariNamaTim,
+  getTarianId,
+} from "../jaipong/penari/penariFunctions";
 
 export const sendSilatPayment = (
   payment: PaymentState,
@@ -61,7 +66,6 @@ export const sendSilatPayment = (
         idPembayaran,
         idPertandingan: getPertandinganId(selectedAtlet.pertandingan[0]),
       });
-      updatedAtlets[atletIndex].idPembayaran.push(idPembayaran);
     }
   });
 
@@ -149,7 +153,7 @@ export const sendJaipongPayment = (
   setSubmitting: SetSubmitting
 ) => {
   const idPembayaran = doc(collection(firestore, "penaris")).id;
-  const toastId = toast.success("Menyimpan pembayaran");
+  const toastId = toast.loading("Menyimpan pembayaran");
   const buktiUrl = `payments/${idPembayaran}`;
   let downloadBuktiUrl = "";
 
@@ -159,34 +163,38 @@ export const sendJaipongPayment = (
     const penariIndex = updatedPenaris.findIndex(
       (updatedPenari) => updatedPenari.id == selectedPenari.id
     );
+
+    const idTarian = getTarianId(selectedPenari.tarian[0], {
+      fullId: {
+        namaTim: getPenariNamaTim(selectedPenari),
+        lagu: getPenariLagu(selectedPenari),
+      },
+    });
+
     if (penariIndex < 0) {
-      const allTarian = allPenaris.find(
+      const originalPenari = allPenaris.find(
         (penari) => penari.id == selectedPenari.id
-      )?.tarian as [];
+      ) as PenariState;
       updatedPenaris.push({
         ...selectedPenari,
-        tarian: allTarian,
+        tarian: originalPenari.tarian,
         pembayaran: [
           ...selectedPenari.pembayaran,
           {
             idPembayaran,
-            idTarian: getTarianId(selectedPenari.tarian[0], {
-              fullId: {
-                namaTim: selectedPenari.namaTim[0].namaTim,
-                lagu: selectedPenari.lagu[0].lagu,
-              },
-            }),
+            idTarian,
           },
         ],
         idPembayaran: [...selectedPenari.idPembayaran, idPembayaran],
+        namaTim: originalPenari.namaTim,
+        lagu: originalPenari.lagu,
       });
     } else {
       updatedPenaris[penariIndex].pembayaran.push({
         idPembayaran,
-        idTarian: getTarianId(selectedPenari.tarian[0]),
+        idTarian,
       });
     }
-    updatedPenaris[penariIndex].idPembayaran.push(idPembayaran);
   });
 
   const stepController = (step: number) => {
@@ -266,22 +274,26 @@ export const sendJaipongPayment = (
 export const confirmPayment = (
   payment: PaymentState,
   email: string,
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
+  unconfirm: boolean = false
 ) => {
   if (!email) {
     toast.error("Session email not found");
     return;
   }
-  const toastId = toast.loading("Mengkonfirmasi pembayaran");
+  const toastId = toast.loading(
+    unconfirm ? "Membatalkan konfirmasi" : "Mengkonfirmasi pembayaran"
+  );
   const newPayment: PaymentState = {
     ...payment,
-    confirmed: true,
-    confirmedBy: email,
+    confirmed: !unconfirm,
+    confirmedBy: unconfirm ? "" : email,
   };
   return axios
     .patch("/api/payments", newPayment)
     .then(() => {
       dispatch(updatePaymentRedux(newPayment));
+      dispatch(setPaymentToConfirmRedux(paymentInitialValue));
       toast.success("Pembayaran berhasil dikonfirmasi", { id: toastId });
     })
     .catch((error) => toastFirebaseError(error, toastId));

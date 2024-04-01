@@ -27,14 +27,16 @@ const JaipongPaymentSummary = () => {
         <div className="flex gap-2 max-sm:flex-col items-center w-fit">
           <CountFirestore
             title="Total Pembayaran"
-            apiUrl="/api/payments/all/jaipong/count"
+            // apiUrl="/api/payments/all/jaipong/count"
+            apiUrl="/api/payments?count=true&source=jaipong"
             onComplete={(result) => dispatch(setCountJaipongPayment(result))}
             count={jaipongPayment}
             money
           />
           <CountFirestore
             title="Menunggu Konfirmasi"
-            apiUrl="/api/payments/unconfirmed/jaipong/count"
+            // apiUrl="/api/payments/unconfirmed/jaipong/count"
+            apiUrl="/api/payments?count=true&source=jaipong&status=unconfirmed"
             onComplete={(result) =>
               dispatch(setCountJaipongPaymentUnconfirmed(result))
             }

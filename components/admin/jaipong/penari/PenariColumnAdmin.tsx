@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +14,11 @@ import { formatDate } from "@/utils/functions";
 import useShowFileDialog from "@/hooks/UseShowFileDialog";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
 import {
+  getPenariLagu,
   getPenariNamaTim,
   getTarianId,
 } from "@/utils/jaipong/penari/penariFunctions";
+import TarianCell from "./TarianCell";
 
 export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
   {
@@ -67,16 +69,7 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
     id: "Tarian",
     header: "Tarian",
     accessorKey: "tarian",
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        {row.original.tarian.map((tarian, i) => (
-          <span key={i}>
-            {getTarianId(tarian, { useSpace: true })} -{" "}
-            {getPenariNamaTim(row.original, i)}
-          </span>
-        ))}
-      </div>
-    ),
+    cell: ({ row }) => <TarianCell penari={row.original} />,
   },
   {
     id: "Pembayaran",
@@ -184,6 +177,18 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
   },
 ];
 
-export const FilteredPenariColumnAdmin = PenariColumnAdmin.filter(
-  (item) => item.id != "tarian"
-);
+// export const FilteredPenariColumnAdmin = PenariColumnAdmin.filter(
+//   (item) => item.id != "tarian"
+// );
+
+export const FilteredPenariColumnAdmin = (idTarian: string) => {
+  let column = PenariColumnAdmin;
+  const index = column.findIndex((item) => item.id == "Tarian");
+  column.splice(index, 1, {
+    ...column[index],
+    cell: ({ row }: { row: Row<PenariState> }) => (
+      <TarianCell penari={row.original} idTarian={idTarian} />
+    ),
+  });
+  return column;
+};

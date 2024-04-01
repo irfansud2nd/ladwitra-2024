@@ -200,7 +200,10 @@ export const deleteKontingen = (
         // DELETE KONTINGEN
         toast.loading("Menghapus kontingen", { id: toastId });
         axios
-          .delete(`/api/kontingens/${kontingen.creatorEmail}/${kontingen.id}`)
+          // .delete(`/api/kontingens/${kontingen.creatorEmail}/${kontingen.id}`)
+          .delete(
+            `/api/kontingens?email=${kontingen.creatorEmail}&id=${kontingen.id}`
+          )
           .then((res) => {
             toast.success("Kontingen berhasil dihapus", { id: toastId });
             dispatch(deleteKontingenRedux());

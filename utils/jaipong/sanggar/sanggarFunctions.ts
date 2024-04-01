@@ -207,7 +207,10 @@ export const deleteSanggar = (
         // DELETE SANGGAR
         toast.loading("Menghapus sanggar", { id: toastId });
         axios
-          .delete(`/api/sanggars/${sanggar.creatorEmail}/${sanggar.id}`)
+          // .delete(`/api/sanggars/${sanggar.creatorEmail}/${sanggar.id}`)
+          .delete(
+            `/api/sanggars?email=${sanggar.creatorEmail}&id=${sanggar.id}`
+          )
           .then((res) => {
             toast.success("Sanggar berhasil dihapus", { id: toastId });
             dispatch(deleteSanggarRedux());

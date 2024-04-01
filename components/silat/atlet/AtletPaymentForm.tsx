@@ -111,7 +111,7 @@ const AtletPaymentForm = ({
                     <CopyButton text="6281394706019" />
                     <Button type="button" variant={"ghost"} size={"icon"}>
                       <Link
-                        href={"https://wa.me/6281394706019"}
+                        href={`https://wa.me/6281394706019`}
                         target="_blank"
                       >
                         <FaWhatsapp className="size-4" />

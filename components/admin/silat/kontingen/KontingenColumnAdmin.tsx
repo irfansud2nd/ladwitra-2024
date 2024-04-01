@@ -10,9 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
-import { formatDate } from "@/utils/functions";
-import { useSelector } from "react-redux";
-import { RootState } from "@/utils/redux/store";
+import { formatDate, formatToRupiah } from "@/utils/functions";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import Link from "next/link";
 
@@ -48,9 +46,9 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
     cell: ({ row }) => <div>{row.original.officials.length}</div>,
   },
   {
-    id: "Pembayaran",
+    id: "Status",
     accessorKey: "totalPembayaran",
-    header: "Pembayaran",
+    header: "Status",
     cell: ({ row }) => {
       const { totalPembayaran, tagihan } = row.original;
       if (totalPembayaran == 0 && tagihan > 0)
@@ -61,6 +59,20 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
         return <div className="text-green-500">Lunas</div>;
       }
     },
+  },
+  {
+    id: "Tagihan",
+    header: "Tagihan",
+    accessorKey: "tagihan",
+    cell: ({ row }) => <div>{formatToRupiah(row.original.tagihan)}</div>,
+  },
+  {
+    id: "Pembayaran",
+    header: "Pembayaran",
+    accessorKey: "totalPembayaran",
+    cell: ({ row }) => (
+      <div>{formatToRupiah(row.original.totalPembayaran)}</div>
+    ),
   },
   {
     id: "Email Pendaftar",
@@ -91,7 +103,10 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
-                <Link href={`/admin/silat/kontingen/${kontingen.id}`}>
+                <Link
+                  href={`/admin/silat/kontingen/${kontingen.id}`}
+                  className="w-full"
+                >
                   Detail
                 </Link>
               </DropdownMenuItem>
@@ -102,3 +117,7 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
     },
   },
 ];
+
+export const DetailKontingenColumnAdmin = KontingenColumnAdmin.filter(
+  (item) => item.id != "No" && item.id != "Nama" && item.id != "Aksi"
+);

@@ -77,9 +77,12 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
     header: "Pertandingan",
     accessorKey: "pertandingan",
     cell: ({ row }) => (
-      <div className="flex flex-col">
+      <div>
         {row.original.pertandingan.map((pertandingan, i) => (
-          <span key={i}>{getPertandinganId(pertandingan, true)}</span>
+          <p key={i}>
+            <span>{getPertandinganId(pertandingan, true)}</span>
+            <br />
+          </p>
         ))}
       </div>
     ),
@@ -195,6 +198,12 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
   },
 ];
 
-export const FilteredAtletColumnAdmin = AtletColumnAdmin.filter(
-  (item) => item.id != "Pertandingan"
-);
+export const FilteredAtletColumnAdmin = (idPertandingan: string) => {
+  let column = AtletColumnAdmin;
+  const index = column.findIndex((item) => item.id == "Pertandingan");
+  column.splice(index, 1, {
+    ...column[index],
+    cell: () => <div>{idPertandingan.split("/").slice(0, -1).join(" - ")}</div>,
+  });
+  return column;
+};

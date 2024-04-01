@@ -15,9 +15,13 @@ import {
 } from "@/utils/silat/atlet/atletConstats";
 import SelectComponent from "@/components/inputs/SelectComponent";
 import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
-import { selectCategorySilat } from "@/utils/silat/atlet/atletFunctions";
+import {
+  selectCategorySilat,
+  splitPertandinganId,
+} from "@/utils/silat/atlet/atletFunctions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import FullLoading from "@/components/loadings/FullLoading";
 
 const page = () => {
   const [page, setPage] = useState(1);
@@ -33,22 +37,38 @@ const page = () => {
   const [idPertandingan, setIdPertandingan] = useState("");
 
   const dispatch = useDispatch();
-  const allData = useSelector((state: RootState) => state.atlets.filtered);
+  const allData = useSelector((state: RootState) => state.atlets.all);
 
   const getDataById = (id: string) => {
-    return (
-      allData
-        .find((item) => item.idPertandingan == id)
-        ?.atlets.slice((page - 1) * limit, page * limit) || []
-    );
+    const { jenisPertandingan, tingkatan, kategori, jenisKelamin } =
+      splitPertandinganId(id);
+    const result = allData
+      .filter(
+        (atlet) =>
+          atlet.pertandingan.find(
+            (pertandingan) =>
+              pertandingan.jenis == jenisPertandingan &&
+              pertandingan.tingkatan == tingkatan &&
+              pertandingan.kategori == kategori
+          ) && atlet.jenisKelamin == jenisKelamin
+      )
+      .slice((page - 1) * limit, page * limit);
+    return result;
   };
 
   const getData = (time: number, id?: string) => {
     const pertandingan = id ? id : idPertandingan;
-    // console.log("getData", time, pertandingan);
+
+    const { jenisPertandingan, tingkatan, kategori, jenisKelamin } =
+      splitPertandinganId(pertandingan);
+
+    let url = `/api/atlets/kategori?jenis=${jenisPertandingan}&tingkatan=${tingkatan}&kategori=${kategori}&jenisKelamin=${jenisKelamin}&timestamp=${time}&limit=${limit}`;
+
+    // url = `/api/atlets/kategori/${pertandingan}/${time}/${limit}`
+
     setLoading(true);
     axios
-      .get(`/api/atlets/kategori/${pertandingan}/${time}/${limit}`)
+      .get(url)
       .then((res) => {
         dispatch(addAtletsRedux(res.data.result));
       })
@@ -70,9 +90,12 @@ const page = () => {
 
     if (idPertandingan != currentId) {
       setIdPertandingan(currentId);
-      if (!getDataById(currentId).length) {
+      if (getDataById(currentId).length < limit) {
         getData(Date.now(), currentId);
+        return;
       }
+      setLoading(true);
+      setTimeout(() => setLoading(false), 100);
     }
   };
 
@@ -153,19 +176,25 @@ const page = () => {
         <Button onClick={handleClick}>Search</Button>
       </div>
 
-      <AdminTable
-        columns={FilteredAtletColumnAdmin}
-        data={data}
-        title={`Tabel Atlet - ${idPertandingan}`}
-        page={page}
-        nextPage={() => setPage((prev) => prev + 1)}
-        prevPage={() => setPage((prev) => prev - 1)}
-        disablePrevPage={page == 1}
-        disableNextPage={data.length < limit || idPertandingan == ""}
-        loading={loading}
-        showAll={() => setLimit(1000)}
-        downloadable
-      />
+      {idPertandingan &&
+        (loading ? (
+          <FullLoading />
+        ) : (
+          <AdminTable
+            columns={FilteredAtletColumnAdmin(idPertandingan)}
+            data={data}
+            title={`Tabel Atlet - ${idPertandingan}`}
+            page={page}
+            nextPage={() => setPage((prev) => prev + 1)}
+            prevPage={() => setPage((prev) => prev - 1)}
+            disablePrevPage={page == 1}
+            disableNextPage={data.length < limit || idPertandingan == ""}
+            loading={loading}
+            showAll={() => setLimit(1000)}
+            downloadable
+            customFileName={`Tabel Atlet - ${idPertandingan}`}
+          />
+        ))}
     </div>
   );
 };

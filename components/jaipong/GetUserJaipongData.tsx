@@ -28,7 +28,8 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getSanggar");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/sanggars/${email}`)
+      // .get(`/api/sanggars/${email}`)
+      .get(`/api/sanggars?email=${email}`)
       .then((res) => {
         dispatch(setSanggarRedux(res.data.result[0]));
         setLoading((prev) => prev + 1);
@@ -40,7 +41,8 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getKoreografers");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/koreografers/${email}`)
+      // .get(`/api/koreografers/${email}`)
+      .get(`/api/koreografers?email=${email}`)
       .then((res) => {
         dispatch(setKoreografersRedux(res.data.result));
         setLoading((prev) => prev + 1);
@@ -52,7 +54,8 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getPenaris");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/penaris/${email}`)
+      // .get(`/api/penaris/${email}`)
+      .get(`/api/penaris?email=${email}`)
       .then((res) => {
         dispatch(setPenarisRedux(res.data.result));
         setLoading((prev) => prev + 1);
@@ -64,7 +67,8 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
     // console.log("getPayments");
     const email = session.data?.user?.email as string;
     axios
-      .get(`/api/payments/all/jaipong/${email}`)
+      // .get(`/api/payments/all/jaipong/${email}`)
+      .get(`/api/payments?source=jaipong&email=${email}`)
       .then((res) => {
         dispatch(addPaymentsRedux(res.data.result));
         setLoading((prev) => prev + 1);

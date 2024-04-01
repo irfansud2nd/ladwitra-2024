@@ -9,12 +9,12 @@ import Link from "next/link";
 const PesertaPaymentMenu = ({
   label,
   prefixPeserta,
-  prefixPayment,
+  paymentSource,
   summary,
 }: {
   label: string;
   prefixPeserta: string;
-  prefixPayment: string;
+  paymentSource: string;
   summary: JSX.Element;
 }) => {
   return (
@@ -34,12 +34,12 @@ const PesertaPaymentMenu = ({
       <AccordionItem value={`${label}-pembayaran`} className="border-none">
         <AccordionTrigger className="pb-4 pt-0">Pembayaran</AccordionTrigger>
         <AccordionContent className="ml-2">
-          <Link href={`${prefixPayment}/payment/unconfirmed`}>
+          <Link href={`/admin/payment/${paymentSource}/unconfirmed`}>
             Menunggu Konfirmasi
           </Link>
         </AccordionContent>
         <AccordionContent className="ml-2">
-          <Link href={`${prefixPayment}/payment/confirmed`}>
+          <Link href={`/admin/payment/${paymentSource}/confirmed`}>
             Sudah Dikonfirmasi
           </Link>
         </AccordionContent>

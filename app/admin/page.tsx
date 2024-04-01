@@ -103,14 +103,16 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Total Pembayaran"
-            apiUrl="/api/payments/all/count"
+            // apiUrl="/api/payments/all/count"
+            apiUrl="/api/payments?count=true"
             count={payment}
             onComplete={(value) => dispatch(setCountPayment(value))}
             money
           />
           <CountFirestore
             title="Menunggu Konfirmasi"
-            apiUrl="/api/payments/unconfirmed/count"
+            // apiUrl="/api/payments/unconfirmed/count"
+            apiUrl="/api/payments?count=true&status=unconfirmed"
             count={paymentUnconfirmed}
             onComplete={(value) => dispatch(setCountPaymentUnconfirmed(value))}
             money

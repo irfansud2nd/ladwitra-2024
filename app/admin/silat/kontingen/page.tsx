@@ -26,7 +26,7 @@ const page = () => {
     // console.log("getKontingensAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
-      .get(`/api/kontingens/limit/${time}/${limit}`)
+      .get(`/api/kontingens?timestamp=${time}&limit=${limit}`)
       .then((res) => {
         dispatch(addKontingensRedux(res.data.result));
       })

@@ -26,7 +26,7 @@ const page = () => {
     // console.log("getSanggarsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
     axios
-      .get(`/api/sanggars/limit/${time}/${limit}`)
+      .get(`/api/sanggars?timestamp=${time}&limit=${limit}`)
       .then((res) => {
         dispatch(addSanggarsRedux(res.data.result));
       })

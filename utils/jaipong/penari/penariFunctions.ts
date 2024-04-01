@@ -374,8 +374,8 @@ export const deletePenari = (
         // DELETE PENARI
         withStatus && toast.loading("Menghapus penari", { id: toastId });
         axios
-          .delete(`/api/penaris/${penari.creatorEmail}/${penari.id}`)
-          // .delete(`/api/penaris?email=${penari.creatorEmail}&id=${penari.id}`)
+          // .delete(`/api/penaris/${penari.creatorEmail}/${penari.id}`)
+          .delete(`/api/penaris?email=${penari.creatorEmail}&id=${penari.id}`)
           .then((res) => {
             withStatus &&
               toast.success("Penari berhasil dihapus", { id: toastId });
@@ -423,6 +423,17 @@ export const getTarianId = (
   return idTarian;
 };
 
+export const splitTarianId = (idTarian: string) => {
+  const tarianArray = idTarian.split("/");
+  const jenisTarian = tarianArray[0];
+  const kelas = tarianArray[1];
+  const tingkatan = tarianArray[2];
+  const kategori = tarianArray[3];
+  const jenisKelamin = tarianArray[4];
+  const lagu = tarianArray[5];
+  return { jenisTarian, kelas, tingkatan, kategori, jenisKelamin, lagu };
+};
+
 export const isPenariPaid = (
   penari: PenariState,
   registeredPenari: boolean = false
@@ -438,8 +449,8 @@ export const isPenariPaid = (
             item.idTarian ==
             getTarianId(penari.tarian[0], {
               fullId: {
-                namaTim: penari.namaTim[0].namaTim,
-                lagu: penari.lagu[0].lagu,
+                namaTim: getPenariNamaTim(penari),
+                lagu: getPenariLagu(penari),
               },
             })
         )
@@ -458,8 +469,8 @@ export const isPenariPaid = (
 export const getPenariPaymentId = (penari: PenariState) => {
   const idTarian = getTarianId(penari.tarian[0], {
     fullId: {
-      namaTim: penari.namaTim[0].namaTim,
-      lagu: penari.lagu[0].lagu,
+      namaTim: getPenariNamaTim(penari),
+      lagu: getPenariLagu(penari),
     },
   });
   const idPembayaran = penari.pembayaran.find(
@@ -468,18 +479,32 @@ export const getPenariPaymentId = (penari: PenariState) => {
   return idPembayaran as string;
 };
 
-export const getPenariNamaTim = (penari: PenariState, indexTarian?: number) => {
-  const index = indexTarian || 0;
-  return penari.namaTim.find(
-    (namaTim) => namaTim.idTarian == getTarianId(penari.tarian[index])
-  )?.namaTim as string;
+export const getPenariNamaTim = (
+  penari: PenariState,
+  indexTarian?: number,
+  indexNamaTim?: number
+) => {
+  const iTarian = indexTarian || 0;
+  const iNamaTim = indexNamaTim || 0;
+  const namaTims = penari.namaTim.filter(
+    (namaTim) => namaTim.idTarian == getTarianId(penari.tarian[iTarian])
+  );
+  if (!namaTims[iNamaTim]) return "";
+  return namaTims[iNamaTim].namaTim;
 };
 
-export const getPenariLagu = (penari: PenariState, indexTarian?: number) => {
-  const index = indexTarian || 0;
-  return penari.lagu.find(
-    (lagu) => lagu.idTarian == getTarianId(penari.tarian[index])
-  )?.lagu as string;
+export const getPenariLagu = (
+  penari: PenariState,
+  indexTarian?: number,
+  indexLagu?: number
+) => {
+  const iTarian = indexTarian || 0;
+  const iLagu = indexLagu || 0;
+  const lagus = penari.lagu.filter(
+    (lagu) => lagu.idTarian == getTarianId(penari.tarian[iTarian])
+  );
+  if (!lagus[iLagu]) return "";
+  return lagus[iLagu].lagu;
 };
 
 export const getBiayaPenari = (penari: PenariState) => {
@@ -498,10 +523,14 @@ export const getAllTarianUrl = () => {
   let tarianIds: string[] = [];
   jenisTarian.map((jenis) => {
     kelasTarian.map((kelas) => {
-      tingkatanKategoriJaipong.map((tingkatan) => {
-        tingkatan.kategori.map((kategori) => {
-          tarianIds.push(`${jenis}/${kelas}/${tingkatan}/${kategori}/Putra`);
-          tarianIds.push(`${jenis}/${kelas}/${tingkatan}/${kategori}/Putri`);
+      tingkatanKategoriJaipong.map((tingkatanKategori) => {
+        tingkatanKategori.kategori.map((kategori) => {
+          tarianIds.push(
+            `${jenis}/${kelas}/${tingkatanKategori.tingkatan}/${kategori}/Putra`
+          );
+          tarianIds.push(
+            `${jenis}/${kelas}/${tingkatanKategori.tingkatan}/${kategori}/Putri`
+          );
         });
       });
     });

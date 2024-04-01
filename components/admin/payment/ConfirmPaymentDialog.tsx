@@ -1,16 +1,11 @@
 "use client";
-import {
-  PaymentState,
-  paymentInitialValue,
-} from "@/utils/payment/paymentConstants";
+import { paymentInitialValue } from "@/utils/payment/paymentConstants";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ConfirmPaymentForm from "./ConfirmPaymentForm";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { setPaymentToConfirmRedux } from "@/utils/redux/silat/paymentsSlice";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import { Button } from "@/components/ui/button";
 
 const ConfirmPaymentDialog = () => {
   const [open, setOpen] = useState(false);

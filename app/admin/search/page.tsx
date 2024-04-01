@@ -27,7 +27,10 @@ const page = () => {
   const getData = () => {
     setLoading(true);
     setPrevQuery(query);
-    const url = `/api/${targetCollection}s/search/${query}`;
+    const queryArr = query.split("/");
+    const property = queryArr[0];
+    const keyword = queryArr[1];
+    const url = `/api/${targetCollection}s/search?property=${property}&keyword=${keyword}`;
     axios
       .get(url)
       .then((res) => setData(res.data.result))
@@ -39,44 +42,30 @@ const page = () => {
     if (query != prevQuery) getData();
   }, [query]);
 
-  const getTableProp = () => {
-    const result: {
-      column: any;
-      array: any[];
-    } = {
-      column: KontingenColumnAdmin,
-      array: data as KontingenState[],
-    };
+  const getColumn = () => {
+    let column: any = KontingenColumnAdmin;
     switch (targetCollection) {
       case "kontingen":
-        result.column = KontingenColumnAdmin;
-        result.array = data as KontingenState[];
+        column = KontingenColumnAdmin;
         break;
       case "official":
-        result.column = OfficialColumnAdmin;
-        result.array = data as OfficialState[];
+        column = OfficialColumnAdmin;
         break;
       case "atlet":
-        result.column = AtletColumnAdmin;
-        result.array = data as AtletState[];
+        column = AtletColumnAdmin;
         break;
       case "sanggar":
-        result.column = SanggarColumnAdmin;
-        result.array = data as SanggarState[];
+        column = SanggarColumnAdmin;
         break;
       case "penari":
-        result.column = PenariColumnAdmin;
-        result.array = data as PenariState[];
+        column = PenariColumnAdmin;
         break;
       case "koreografer":
-        result.column = KoreograferColumnAdmin;
-        result.array = data as KoreograferState[];
+        column = KoreograferColumnAdmin;
         break;
     }
-    return result;
+    return column;
   };
-
-  const { column, array } = getTableProp();
 
   return (
     <div className="grid grid-rows-[auto_1fr] w-full h-full">
@@ -87,8 +76,8 @@ const page = () => {
       />
       {prevQuery && (
         <AdminTable
-          columns={column}
-          data={array}
+          columns={getColumn()}
+          data={data}
           title={`Hasil Pencarian ${targetCollection}`}
           loading={loading}
         />

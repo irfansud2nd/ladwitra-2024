@@ -13,6 +13,8 @@ import ShowFile from "../ShowFile";
 import { useSession } from "next-auth/react";
 import { confirmPayment } from "@/utils/payment/paymentFunctions";
 import { useDispatch } from "react-redux";
+import Link from "next/link";
+import useConfirmationDialog from "@/hooks/UseAlertDialog";
 
 type Props = {
   payment: PaymentState;
@@ -37,40 +39,47 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
       setFieldValue("confirmedBy", session.data?.user?.email);
   };
 
-  const handleSubmit = (values: ConfirmPaymentState) => {
-    if (payment.confirmed) return;
-    confirmPayment(payment, values.confirmedBy, dispatch);
+  const { confirm, ConfirmationDialog } = useConfirmationDialog();
+
+  const handleSubmit = async (values: ConfirmPaymentState) => {
+    const { confirmed } = payment;
+    const title = confirmed ? "Batalkan Konfrimasi" : "Konfirmasi Pembayaran";
+    const result = await confirm(title, "Apakah anda yakin?");
+
+    result && confirmPayment(payment, values.confirmedBy, dispatch, confirmed);
   };
 
   return (
-    <Formik
-      onSubmit={(values) => handleSubmit(values)}
-      initialValues={confirmPaymentInitialValue}
-      // validationSchema={confirmPaymentValidationSchema}
-    >
-      {(props: FormikProps<ConfirmPaymentState>) => {
-        setForm(props.setFieldValue, props.values);
-        return (
-          <Form className="grid grid-rows-[1fr_auto] gap-2">
-            <div className="flex gap-1 flex-col sm:flex-row">
-              <ShowFile
-                label="Bukti Pembayararan"
-                src={payment.downloadBuktiUrl}
-              />
-              <div className="input_group justify-normal">
-                <InputText
-                  label="Total Pembayaran"
-                  name="totalPembayaran"
-                  formik={props}
-                  forceDisabled
+    <>
+      <ConfirmationDialog />
+      <Formik
+        onSubmit={(values) => handleSubmit(values)}
+        initialValues={confirmPaymentInitialValue}
+        // validationSchema={confirmPaymentValidationSchema}
+      >
+        {(props: FormikProps<ConfirmPaymentState>) => {
+          setForm(props.setFieldValue, props.values);
+          return (
+            <Form className="grid grid-rows-[1fr_auto] gap-2">
+              <div className="flex gap-1 flex-col sm:flex-row">
+                <ShowFile
+                  label="Bukti Pembayararan"
+                  src={payment.downloadBuktiUrl}
                 />
-                {/* <div className="relative">
+                <div className="input_group justify-normal">
+                  <InputText
+                    label="Total Pembayaran"
+                    name="totalPembayaran"
+                    formik={props}
+                    forceDisabled
+                  />
+                  {/* <div className="relative">
                   <InputText
                     label="Total Pembayaran Dikonfirmasi"
                     name="confirmedTotalPembayaran"
                     formik={props}
-                  />
-                  <Button
+                    />
+                    <Button
                     type="button"
                     size={"sm"}
                     className="absolute right-0.5 top-5 scale-105"
@@ -78,26 +87,39 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
                       props.setFieldValue(
                         "confirmedTotalPembayaran",
                         payment.totalPembayaran
-                      )
-                    }
-                  >
-                    All
-                  </Button>
-                </div> */}
-                <InputText
-                  label="Confirmed By"
-                  name="confirmedBy"
-                  formik={props}
-                  forceDisabled
-                />
+                        )
+                      }
+                      >
+                      All
+                      </Button>
+                    </div> */}
+                  <InputText
+                    label="Confirmed By"
+                    name="confirmedBy"
+                    formik={props}
+                    forceDisabled
+                  />
+                </div>
               </div>
-            </div>
+              <div className="flex gap-2 max-sm:flex-col justify-center">
+                <Button
+                  type="submit"
+                  variant={payment.confirmed ? "destructive" : "default"}
+                >
+                  {payment.confirmed ? "Batalkan Konfimasi" : "Konfirmasi"}
+                </Button>
 
-            {!payment.confirmed && <Button type="submit">Konfirmasi</Button>}
-          </Form>
-        );
-      }}
-    </Formik>
+                <Button asChild variant={"destructive"}>
+                  <Link href={`/admin/payment/${payment.source}/${payment.id}`}>
+                    Batalkan Pembayaran
+                  </Link>
+                </Button>
+              </div>
+            </Form>
+          );
+        }}
+      </Formik>
+    </>
   );
 };
 export default ConfirmPaymentForm;

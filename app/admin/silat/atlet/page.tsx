@@ -12,6 +12,7 @@ import { AtletState } from "@/utils/silat/atlet/atletConstats";
 
 const page = () => {
   const [page, setPage] = useState(1);
+  const [highestPage, setHighestPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [timestamp, setTimestamp] = useState(0);
   const [limit, setLimit] = useState(itemPerPage);
@@ -26,12 +27,15 @@ const page = () => {
   const getData = (time: number, exception?: AtletState[]) => {
     // console.log("getAtletsAdmin", page, (page - 1) * limit, page * limit);
     setLoading(true);
-    let url = `/api/atlets/limit/${time}/${limit}`;
+
+    let url = `/api/atlets?timestamp=${time}&limit=${limit}`;
     if (exception?.length)
-      url += `/${exception.map((item) => item.waktuPendaftaran)}`;
+      url += `&exception=${exception.map((item) => item.waktuPendaftaran)}`;
+
     axios
       .get(url)
       .then((res) => {
+        console.log("RESULT", res.data.result);
         dispatch(addAtletsRedux(res.data.result));
       })
       .catch((error) => {
@@ -47,8 +51,9 @@ const page = () => {
   }, []);
 
   useEffect(() => {
-    if (page > 1) {
+    if (page > highestPage) {
       data.length ? getData(timestamp, data) : getData(timestamp);
+      setHighestPage(page);
     }
   }, [page]);
 
@@ -57,7 +62,7 @@ const page = () => {
   }, [data]);
 
   useEffect(() => {
-    if (limit > itemPerPage) getData(timestamp, data);
+    if (limit > itemPerPage) getData(timestamp);
   }, [limit]);
 
   return (

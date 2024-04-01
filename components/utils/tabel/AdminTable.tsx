@@ -47,6 +47,8 @@ interface AdminTableProps<TData, TValue> {
   showAll?: () => void;
   downloadable?: boolean;
   customFileName?: string;
+  hFit?: boolean;
+  refresh?: () => void;
 }
 
 export function AdminTable<TData, TValue>({
@@ -62,6 +64,8 @@ export function AdminTable<TData, TValue>({
   showAll,
   downloadable,
   customFileName,
+  hFit,
+  refresh,
 }: AdminTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -91,7 +95,10 @@ export function AdminTable<TData, TValue>({
   });
 
   return (
-    <div className="relative h-full w-full max-w-full grid grid-rows-[auto_1fr] overflow-auto max-h-full">
+    <div
+      className={`relative w-full max-w-full grid grid-rows-[auto_1fr] overflow-auto max-h-full
+      ${hFit ? "h-fit" : "h-full"}`}
+    >
       <div className="flex flex-wrap2 items-center w-full py-1 gap-1 max-w-[calc(100vw-18px)] sm:max-w-[calc(100vw-194px)] sticky left-0">
         <h1 className="capitalize text-lg font-semibold">{title}</h1>
         {/* COLUMN VISIBILITY */}
@@ -121,7 +128,7 @@ export function AdminTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        {/* MOBILE DOWNLOAD AND SHOW ALL BUTTONS */}
+        {/* MOBILE BUTTONS */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="sm:hidden" size={"sm"}>
@@ -132,9 +139,16 @@ export function AdminTable<TData, TValue>({
             <DropdownMenuItem onClick={showAll} disabled={loading}>
               Show All
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onDownload} disabled={loading}>
-              Download
-            </DropdownMenuItem>
+            {downloadable && (
+              <DropdownMenuItem onClick={onDownload} disabled={loading}>
+                Download
+              </DropdownMenuItem>
+            )}
+            {refresh && (
+              <DropdownMenuItem onClick={refresh} disabled={loading}>
+                refresh
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
         {/* SHOW ALL BUTTON */}
@@ -157,6 +171,17 @@ export function AdminTable<TData, TValue>({
             className="max-sm:hidden"
           >
             Download
+          </Button>
+        )}
+        {/* REFRESH BUTTON */}
+        {refresh && (
+          <Button
+            size="sm"
+            onClick={refresh}
+            disabled={loading}
+            className="max-sm:hidden"
+          >
+            Refresh
           </Button>
         )}
         {/* PAGINATION */}

@@ -1,4 +1,5 @@
 import { reduceData } from "@/utils/admin/adminFunctions";
+import { compare } from "@/utils/functions";
 import {
   PaymentState,
   paymentInitialValue,
@@ -39,7 +40,7 @@ const paymentsSlice = createSlice({
         ...state.all,
         ...action.payload,
       ]) as PaymentState[];
-      state.all = newPayments;
+      state.all = newPayments.sort(compare("waktuPembayaran", "desc"));
       getConfirmed(state, newPayments);
     },
     // ADD PAYMENT
@@ -55,7 +56,7 @@ const paymentsSlice = createSlice({
         (payment) => payment.id != action.payload.id
       );
       newPayments.push(action.payload);
-      state.all = newPayments;
+      state.all = newPayments.sort(compare("waktuPembayaran", "desc"));
       getConfirmed(state, newPayments);
     },
     // SET PAYMENT TO CONFIRM

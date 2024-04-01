@@ -21,14 +21,16 @@ const SilatPaymentSummary = () => {
       <DialogContent className="flex gap-2 max-sm:flex-col items-center max-w-[90vw] w-fit">
         <CountFirestore
           title="Total Pembayaran"
-          apiUrl="/api/payments/all/silat/count"
+          // apiUrl="/api/payments/all/silat/count"
+          apiUrl="/api/payments?count=true&source=silat"
           onComplete={(result) => dispatch(setCountSilatPayment(result))}
           count={silatPayment}
           money
         />
         <CountFirestore
           title="Menunggu Konfirmasi"
-          apiUrl="/api/payments/unconfirmed/silat/count"
+          // apiUrl="/api/payments/unconfirmed/silat/count"
+          apiUrl="/api/payments?count=true&source=silat&status=unconfirmed"
           onComplete={(result) =>
             dispatch(setCountSilatPaymentUnconfirmed(result))
           }

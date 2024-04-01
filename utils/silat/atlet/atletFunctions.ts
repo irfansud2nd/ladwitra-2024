@@ -382,7 +382,8 @@ export const deleteAtlet = (
         // DELETE ATLET
         withStatus && toast.loading("Menghapus atlet", { id: toastId });
         axios
-          .delete(`/api/atlets/${atlet.creatorEmail}/${atlet.id}`)
+          // .delete(`/api/atlets/${atlet.creatorEmail}/${atlet.id}`)
+          .delete(`/api/atlets?email=${atlet.creatorEmail}&id=${atlet.id}`)
           .then((res) => {
             withStatus &&
               toast.success("Atlet berhasil dihapus", { id: toastId });
@@ -407,6 +408,21 @@ export const getPertandinganId = (
   let idPertandingan = `${pertandingan.jenis}-${pertandingan.tingkatan}-${pertandingan.kategori}`;
   if (useSpace) idPertandingan = idPertandingan.split("-").join(" - ");
   return idPertandingan;
+};
+
+export const splitPertandinganId = (
+  idPertandingan: string,
+  useStripe: boolean = false
+) => {
+  const splitCharacter = useStripe ? "-" : "/";
+  const pertandinganArray = idPertandingan.split(splitCharacter);
+  const jenisPertandingan = pertandinganArray[0];
+  const tingkatan = pertandinganArray[1];
+  const kategori = useStripe
+    ? pertandinganArray.slice(2).join("")
+    : pertandinganArray[2];
+  const jenisKelamin = pertandinganArray[3];
+  return { jenisPertandingan, tingkatan, kategori, jenisKelamin };
 };
 
 export const isAtletPaid = (atlet: AtletState) => {

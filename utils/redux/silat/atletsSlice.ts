@@ -79,7 +79,7 @@ const atletSlice = createSlice({
         compare("waktuPendaftaran", "desc")
       ) as AtletState[];
       state.all = newAtlets;
-      getFiltered(state, newAtlets);
+      // getFiltered(state, newAtlets);
     },
     // UPDATE ATLET
     updateAtletRedux: (state, action: PayloadAction<AtletState>) => {

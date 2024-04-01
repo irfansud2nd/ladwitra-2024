@@ -3,21 +3,19 @@ import { firestore } from "@/lib/firebase";
 import { isAdmin } from "@/utils/admin/adminFunctions";
 import {
   FirestoreError,
-  and,
   collection,
   getDocs,
   limit,
-  or,
   orderBy,
   query,
   where,
 } from "firebase/firestore";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
-  req: Request,
-  { params }: { params: { slug: string[] } }
+  req: NextRequest,
+  { params }: { params: { targetCollection: string } }
 ) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
@@ -28,34 +26,17 @@ export const GET = async (
   if (!admin)
     return NextResponse.json({ message: "Not authorized" }, { status: 401 });
 
-  const { slug } = params;
-  const jenis = slug[0];
-  const kelas = slug[1];
-  const tingkatan = slug[2];
-  const kategori = slug[3];
-  const jenisKelamin = slug[4] ? [slug[4], slug[4]] : ["Putra", "Putri"];
-  const timestamp = slug[5];
-  const item = slug[6];
+  const { targetCollection } = params;
+  const searchParams = req.nextUrl.searchParams;
+
+  const property = searchParams.get("property") as string;
+  const keyword = searchParams.get("keyword") as string;
 
   let result: any = [];
   return getDocs(
     query(
-      collection(firestore, "penaris"),
-      and(
-        where("pertandingan", "array-contains", {
-          jenis,
-          kelas,
-          tingkatan,
-          kategori,
-        }),
-        where("waktuPendaftaran", "<", Number(timestamp)),
-        or(
-          where("jenisKelamin", "==", jenisKelamin[0]),
-          where("jenisKelamin", "==", jenisKelamin[1])
-        )
-      ),
-      orderBy("waktuPendaftaran", "desc"),
-      limit(Number(item))
+      collection(firestore, targetCollection),
+      where(property, "==", keyword)
     )
   )
     .then((docSnapshot) => {

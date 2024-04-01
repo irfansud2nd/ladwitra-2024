@@ -153,6 +153,9 @@ export const column: ColumnDef<PenariState>[] = [
             nomorTarian: penari.nomorTarian - 1,
           };
 
+          console.log({ newPenari });
+          return;
+
           updatePenari(newPenari, dispatch, {
             setSubmitting: setLoading,
             onComplete: () => {

@@ -6,9 +6,6 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import SilatPaymentSummary from "./payment/silat/SilatPaymentSummary";
-import AdminMenu from "./AdminMenuAccordion";
-import PesertaSideMenu from "./sideMenu/PesertaPaymentMenu";
-import PaymentSideMenu from "./sideMenu/PesertaPaymentMenu";
 import PesertaPaymentMenu from "./sideMenu/PesertaPaymentMenu";
 import JaipongPaymentSummary from "./payment/JaipongPaymentSummary";
 
@@ -42,7 +39,7 @@ const AdminSideMenu = () => {
             <PesertaPaymentMenu
               label="Atlet"
               prefixPeserta="/admin/silat/atlet"
-              prefixPayment="/admin/silat"
+              paymentSource="silat"
               summary={<SilatPaymentSummary />}
             />
           </AccordionContent>
@@ -59,7 +56,7 @@ const AdminSideMenu = () => {
             <PesertaPaymentMenu
               label="Penari"
               prefixPeserta="/admin/jaipong/penari"
-              prefixPayment="/admin/jaipong"
+              paymentSource="jaipong"
               summary={<JaipongPaymentSummary />}
             />
           </AccordionContent>

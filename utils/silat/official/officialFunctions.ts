@@ -217,7 +217,10 @@ export const deleteOfficial = (
         // DELETE OFFICIAL
         withStatus && toast.loading("Menghapus official", { id: toastId });
         axios
-          .delete(`/api/officials/${official.creatorEmail}/${official.id}`)
+          // .delete(`/api/officials/${official.creatorEmail}/${official.id}`)
+          .delete(
+            `/api/officials?email=${official.creatorEmail}&id=${official.id}`
+          )
           .then((res) => {
             withStatus &&
               toast.success("Official berhasil dihapus", { id: toastId });
