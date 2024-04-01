@@ -8,7 +8,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
   const session = await getServerSession(authOptions);
@@ -37,4 +37,25 @@ export const POST = async (req: Request) => {
         { status: 500 }
       );
     });
+};
+
+export const DELETE = async (req: NextRequest) => {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email)
+    return NextResponse.json({ message: "Not logged in" }, { status: 401 });
+
+  const searchParams = req.nextUrl.searchParams;
+
+  const directory = searchParams.get("directory") as string;
+
+  return deleteObject(ref(storage, directory))
+    .then(() =>
+      NextResponse.json({ message: "Successfully Deleted" }, { status: 200 })
+    )
+    .catch((error: StorageError) =>
+      NextResponse.json(
+        { message: error.message, code: error.code },
+        { status: 500 }
+      )
+    );
 };

@@ -78,7 +78,7 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
 
   const getLimit = () => {
     // console.log("getLimit Silat");
-    axios.get("/api/penaris/count/registered").then((res) => {
+    axios.get("/api/penaris?count=true&registered=true").then((res) => {
       dispatch(setJaipongLimit(res.data.result));
       setLoading((prev) => prev + 1);
     });

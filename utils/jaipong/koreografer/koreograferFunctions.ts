@@ -125,7 +125,7 @@ export const updateKoreografer = (
         !withoutStatus &&
           toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
-          .delete(`/api/file/${koreografer.fotoUrl}`)
+          .delete(`/api/file?directory=${koreografer.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -212,7 +212,7 @@ export const deleteKoreografer = (
         withStatus &&
           toast.loading("Menghapus pas foto koreografer", { id: toastId });
         axios
-          .delete(`/api/file/${koreografer.fotoUrl}`)
+          .delete(`/api/file?directory=${koreografer.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             toastFirebaseError(error, toastId);

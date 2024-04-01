@@ -39,28 +39,32 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Kontingen"
-            apiUrl="/api/kontingens/count"
+            // apiUrl="/api/kontingens/count"
+            apiUrl="/api/kontingens?count=true"
             link="/admin/silat/kontingen"
             onComplete={(value) => dispatch(setCountKontingen(value))}
             count={kontingen}
           />
           <CountFirestore
             title="Official"
-            apiUrl="/api/officials/count"
+            // apiUrl="/api/officials/count"
+            apiUrl="/api/officials?count=true"
             link="/admin/silat/official"
             onComplete={(value) => dispatch(setCountOfficial(value))}
             count={official}
           />
           <CountFirestore
             title="Atlet"
-            apiUrl="/api/atlets/count"
+            // apiUrl="/api/atlets/count"
+            apiUrl="/api/atlets?count=true"
             link="/admin/silat/atlet"
             onComplete={(value) => dispatch(setCountAtlet(value))}
             count={atlet}
           />
           <CountFirestore
             title="Nomor Pertandingan"
-            apiUrl="/api/atlets/count/registered"
+            // apiUrl="/api/atlets/count/registered"
+            apiUrl="/api/atlets?count=true&registered=true"
             count={nomorPertandingan}
             onComplete={(value) => dispatch(setCountNomorPertandingan(value))}
           />
@@ -71,28 +75,32 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Sanggar"
-            apiUrl="/api/sanggars/count"
+            // apiUrl="/api/sanggars/count"
+            apiUrl="/api/sanggars?count=true"
             link="/admin/jaipong/sanggar"
             onComplete={(value) => dispatch(setCountSanggar(value))}
             count={sanggar}
           />
           <CountFirestore
             title="Koreografer"
-            apiUrl="/api/koreografers/count"
+            // apiUrl="/api/koreografers/count"
+            apiUrl="/api/koreografers?count=true"
             link="/admin/jaipong/koreografer"
             onComplete={(value) => dispatch(setCountKoreografer(value))}
             count={koreografer}
           />
           <CountFirestore
             title="Penari"
-            apiUrl="/api/penaris/count"
+            // apiUrl="/api/penaris/count"
+            apiUrl="/api/penaris?count=true"
             link="/admin/jaipong/penari"
             onComplete={(value) => dispatch(setCountPenari(value))}
             count={penari}
           />
           <CountFirestore
             title="Nomor Tarian"
-            apiUrl="/api/penaris/count/registered"
+            // apiUrl="/api/penaris/count/registered"
+            apiUrl="/api/penaris?count=true&registered=true"
             count={nomorTarian}
             onComplete={(value) => dispatch(setCountNomorTarian(value))}
           />

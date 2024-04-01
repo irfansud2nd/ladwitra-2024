@@ -192,7 +192,7 @@ export const updatePenari = (
         !withoutStatus &&
           toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
-          .delete(`/api/file/${penari.fotoUrl}`)
+          .delete(`/api/file?directory=${penari.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -226,7 +226,7 @@ export const updatePenari = (
       //   // DELETE OLD KTP
       //   !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
       //   axios
-      //     .delete(`/api/file/${penari.ktpUrl}`)
+      //     .delete(`/api/file?directory=${penari.ktpUrl}`)
       //     .then(() => stepController(6))
       //     .catch((error) => {
       //       setSubmitting && setSubmitting(false);
@@ -259,7 +259,7 @@ export const updatePenari = (
       //   // DELETE OLD KK
       //   !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
       //   axios
-      //     .delete(`/api/file/${penari.kkUrl}`)
+      //     .delete(`/api/file?directory=${penari.kkUrl}`)
       //     .then(() => stepController(9))
       //     .catch((error) => {
       //       setSubmitting && setSubmitting(false);
@@ -344,7 +344,7 @@ export const deletePenari = (
         withStatus &&
           toast.loading("Menghapus pas foto penari", { id: toastId });
         axios
-          .delete(`/api/file/${penari.fotoUrl}`)
+          .delete(`/api/file?directory=${penari.fotoUrl}`)
           .then(() => stepController(5))
           .catch((error) => {
             toastFirebaseError(error, toastId);
@@ -354,7 +354,7 @@ export const deletePenari = (
       //   // DELETE KTP
       //   withStatus && toast.loading("Menghapus KTP penari", { id: toastId });
       //   axios
-      //     .delete(`/api/file/${penari.ktpUrl}`)
+      //     .delete(`/api/file?directory=${penari.ktpUrl}`)
       //     .then(() => stepController(4))
       //     .catch((error) => {
       //       toastFirebaseError(error, toastId);
@@ -364,7 +364,7 @@ export const deletePenari = (
       //   // DELETE KK
       //   withStatus && toast.loading("Menghapus kk penari", { id: toastId });
       //   axios
-      //     .delete(`/api/file/${penari.kkUrl}`)
+      //     .delete(`/api/file?directory=${penari.kkUrl}`)
       //     .then(() => stepController(5))
       //     .catch((error) => {
       //       toastFirebaseError(error, toastId);

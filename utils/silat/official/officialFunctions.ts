@@ -124,7 +124,7 @@ export const updateOfficial = (
         !withoutStatus &&
           toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
-          .delete(`/api/file/${official.fotoUrl}`)
+          .delete(`/api/file?directory=${official.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -207,7 +207,7 @@ export const deleteOfficial = (
         withStatus &&
           toast.loading("Menghapus pas foto official", { id: toastId });
         axios
-          .delete(`/api/file/${official.fotoUrl}`)
+          .delete(`/api/file?directory=${official.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             toastFirebaseError(error, toastId);

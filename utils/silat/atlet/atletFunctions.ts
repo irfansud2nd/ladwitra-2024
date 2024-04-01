@@ -198,7 +198,7 @@ export const updateAtlet = (
         !withoutStatus &&
           toast.loading("Menghapus pas foto lama", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.fotoUrl}`)
+          .delete(`/api/file?directory=${atlet.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -232,7 +232,7 @@ export const updateAtlet = (
         // DELETE OLD KTP
         !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.ktpUrl}`)
+          .delete(`/api/file?directory=${atlet.ktpUrl}`)
           .then(() => stepController(6))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -265,7 +265,7 @@ export const updateAtlet = (
         // DELETE OLD KK
         !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.kkUrl}`)
+          .delete(`/api/file?directory=${atlet.kkUrl}`)
           .then(() => stepController(9))
           .catch((error) => {
             setSubmitting && setSubmitting(false);
@@ -352,7 +352,7 @@ export const deleteAtlet = (
         withStatus &&
           toast.loading("Menghapus pas foto atlet", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.fotoUrl}`)
+          .delete(`/api/file?directory=${atlet.fotoUrl}`)
           .then(() => stepController(3))
           .catch((error) => {
             toastFirebaseError(error, toastId);
@@ -362,7 +362,7 @@ export const deleteAtlet = (
         // DELETE KTP
         withStatus && toast.loading("Menghapus KTP atlet", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.ktpUrl}`)
+          .delete(`/api/file?directory=${atlet.ktpUrl}`)
           .then(() => stepController(4))
           .catch((error) => {
             toastFirebaseError(error, toastId);
@@ -372,7 +372,7 @@ export const deleteAtlet = (
         // DELETE KK
         withStatus && toast.loading("Menghapus kk atlet", { id: toastId });
         axios
-          .delete(`/api/file/${atlet.kkUrl}`)
+          .delete(`/api/file?directory=${atlet.kkUrl}`)
           .then(() => stepController(5))
           .catch((error) => {
             toastFirebaseError(error, toastId);

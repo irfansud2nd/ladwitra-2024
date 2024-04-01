@@ -77,7 +77,7 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
 
   const getLimit = () => {
     // console.log("getLimit Silat");
-    axios.get("/api/atlets/count/registered").then((res) => {
+    axios.get("/api/atlets?count=true&registered=true").then((res) => {
       dispatch(setSilatLimit(res.data.result));
       setLoading((prev) => prev + 1);
     });

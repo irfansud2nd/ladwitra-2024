@@ -4,11 +4,14 @@ import {
   collection,
   deleteDoc,
   doc,
+  getAggregateFromServer,
+  getCountFromServer,
   getDocs,
   limit,
   orderBy,
   query,
   setDoc,
+  sum,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -116,6 +119,9 @@ export const GET = async (
     exception = [0];
   }
 
+  const count = searchParams.get("count");
+  const registered = searchParams.get("registered");
+
   let result: any = [];
 
   let searchQuery: any = and(
@@ -143,6 +149,28 @@ export const GET = async (
     const admin = await isAdmin(userEmail);
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
+  }
+
+  if (count) {
+    const property =
+      targetCollection == "atlets" ? "nomorPertandingan" : "nomorTarian";
+    let getCount = registered
+      ? getAggregateFromServer(collection(firestore, targetCollection), {
+          sum: sum(property),
+        })
+      : getCountFromServer(collection(firestore, targetCollection));
+
+    return getCount
+      .then((snapshot) => {
+        const data: any = snapshot.data();
+        return NextResponse.json(
+          { result: registered ? data.sum : data.count },
+          { status: 200 }
+        );
+      })
+      .catch(({ message, code }: FirestoreError) => {
+        return NextResponse.json({ message, code }, { status: 500 });
+      });
   }
 
   let getData = noLimit
