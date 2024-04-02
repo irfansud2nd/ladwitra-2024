@@ -12,6 +12,7 @@ import { PaymentState, paymentInitialValue } from "./paymentConstants";
 import { formatToRupiah, toastFirebaseError } from "../functions";
 import {
   addPaymentRedux,
+  deletePaymentRedux,
   setPaymentToConfirmRedux,
   updatePaymentRedux,
 } from "../redux/silat/paymentsSlice";
@@ -83,7 +84,6 @@ export const sendSilatPayment = (
         updateKontingen(newKontingen, kontingen, dispatch, {
           setSubmitting,
           onComplete: () => stepController(2),
-          atlets: updatedAtlets,
           prevToastId: toastId,
         });
         break;
@@ -211,7 +211,6 @@ export const sendJaipongPayment = (
         updateSanggar(newSanggar, sanggar, dispatch, {
           setSubmitting,
           onComplete: () => stepController(2),
-          penaris: updatedPenaris,
           prevToastId: toastId,
         });
         break;
@@ -269,6 +268,108 @@ export const sendJaipongPayment = (
     }
   };
   stepController(1);
+};
+
+export const deletePayment = (
+  source: "silat" | "jaipong",
+  group: KontingenState | SanggarState,
+  pesertas: AtletState[] | PenariState[],
+  payment: PaymentState,
+  setSubmitting: SetSubmitting,
+  dispatch: Dispatch<UnknownAction>
+) => {
+  const toastId = toast.loading("Menghapus Pembayaran");
+
+  let newGroup = { ...group };
+  newGroup.idPembayaran = newGroup.idPembayaran.filter(
+    (idPembayaran) => idPembayaran != payment.id
+  );
+  newGroup.totalPembayaran = newGroup.totalPembayaran - payment.totalPembayaran;
+
+  let newPesertas: AtletState[] = [...pesertas] as AtletState[];
+
+  newPesertas = newPesertas.map((newPeserta) => ({
+    ...newPeserta,
+    idPembayaran: newPeserta.idPembayaran.filter(
+      (idPembayaran) => idPembayaran != payment.id
+    ),
+    pembayaran: newPeserta.pembayaran.filter(
+      (pembayaran) => pembayaran.idPembayaran != payment.id
+    ),
+  }));
+
+  const stepController = (step: number) => {
+    switch (step) {
+      case 1:
+        // UPDATE KONTINGEN
+        updateKontingen(
+          newGroup as KontingenState,
+          group as KontingenState,
+          dispatch,
+          {
+            setSubmitting,
+            onComplete: () => stepController(3),
+            prevToastId: toastId,
+          }
+        );
+        break;
+      case 2:
+        // UPDATE SANGGAR
+        updateSanggar(
+          newGroup as SanggarState,
+          group as SanggarState,
+          dispatch,
+          {
+            setSubmitting,
+            onComplete: () => stepController(4),
+            prevToastId: toastId,
+          }
+        );
+        break;
+      case 3:
+        // UPDATE ATLETS
+        updatePersons(newPesertas, "atlet", (data) => data, dispatch, {
+          setSubmitting,
+          onComplete: () => stepController(5),
+          toastId,
+        });
+        break;
+      case 4:
+        // UPDATE PENARIS
+        updatePersons(newPesertas, "penari", (data) => data, dispatch, {
+          setSubmitting,
+          onComplete: () => stepController(5),
+          toastId,
+        });
+        break;
+      case 5:
+        // DELETE FILE BUKTI
+        toast.loading("Menghapus bukti pembayaran", { id: toastId });
+        axios
+          .delete(`/api/file?directory=${payment.buktiUrl}`)
+          .then(() => stepController(6))
+          .catch((error) => {
+            setSubmitting(false);
+            toastFirebaseError(error, toastId);
+          });
+      case 6:
+        // DELETE PAYMENT
+        // DISPATCH DELETE PAYMENT
+        toast.loading("Menghapus pembayaran", { id: toastId });
+        axios
+          .delete(
+            `/api/payments?id=${payment.id}&email=${payment.creatorEmail}`
+          )
+          .then(() => {
+            dispatch(deletePaymentRedux(payment));
+            toast.success("Pembayaran berhasil dihapus", { id: toastId });
+          })
+          .catch((error) => toastFirebaseError(error, toastId))
+          .finally(() => setSubmitting(false));
+        break;
+    }
+  };
+  stepController(source == "silat" ? 1 : 2);
 };
 
 export const confirmPayment = (

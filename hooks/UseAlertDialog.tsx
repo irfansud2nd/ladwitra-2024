@@ -26,12 +26,12 @@ const useConfirmationDialog = () => {
 
   const confirm = (
     title: string,
-    message: string,
+    message?: string,
     options?: { cancelLabel?: string; cancelOnly?: boolean }
   ) => {
     setContent({
       title,
-      message,
+      message: message ?? "Apakah anda yakin?",
     });
     SetOptions({
       cancelLabel: options?.cancelLabel || "",

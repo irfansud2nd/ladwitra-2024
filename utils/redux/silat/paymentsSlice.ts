@@ -63,6 +63,14 @@ const paymentsSlice = createSlice({
     setPaymentToConfirmRedux: (state, action: PayloadAction<PaymentState>) => {
       state.toConfirm = action.payload;
     },
+    // DELETE PAYMENT
+    deletePaymentRedux: (state, action: PayloadAction<PaymentState>) => {
+      const newPayments = [...state.all].filter(
+        (payment) => payment.id != action.payload.id
+      );
+      state.all = newPayments;
+      getConfirmed(state, newPayments);
+    },
   },
 });
 
@@ -72,5 +80,6 @@ export const {
   addPaymentRedux,
   updatePaymentRedux,
   setPaymentToConfirmRedux,
+  deletePaymentRedux,
 } = paymentsSlice.actions;
 export default paymentsSlice.reducer;

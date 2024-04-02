@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AdminTable } from "@/components/utils/tabel/AdminTable";
+import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import useShowFileDialog from "@/hooks/UseShowFileDialog";
 import {
   formatDate,
@@ -29,6 +30,7 @@ import {
 } from "@/utils/jaipong/penari/penariFunctions";
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
 import { paymentInitialValue } from "@/utils/payment/paymentConstants";
+import { deletePayment } from "@/utils/payment/paymentFunctions";
 import { setPaymentToConfirmRedux } from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
 import { AtletState } from "@/utils/silat/atlet/atletConstats";
@@ -41,16 +43,21 @@ import { useDispatch, useSelector } from "react-redux";
 const page = ({
   params,
 }: {
-  params: { source: string; idPembayaran: string };
+  params: { source: "silat" | "jaipong"; idPembayaran: string };
 }) => {
-  return <UnderDevelopment />;
   const { source, idPembayaran } = params;
 
   const { showFile, ShowFileDialog } = useShowFileDialog();
 
   const [payment, setPayment] = useState(paymentInitialValue);
+  const [invalidId, setInvalidId] = useState(false);
   const [group, setGroup] = useState<KontingenState | SanggarState>();
   const [pesertas, setPesertas] = useState<AtletState[] | PenariState[]>([]);
+  const [pesertasToMap, setPesertasToMap] = useState<
+    AtletState[] | PenariState[]
+  >([]);
+
+  const [disable, setDisable] = useState(false);
 
   const paymentToConfirm = useSelector(
     (state: RootState) => state.payments.toConfirm
@@ -58,18 +65,16 @@ const page = ({
   const dispatch = useDispatch();
 
   const getPayment = () => {
-    console.log("getPayment");
     axios
       .get(`/api/payments?source=${source}&id=${idPembayaran}`)
       .then((res) => {
-        if (!res.data.result.length) return <h1>Pembayaran tidak ditemukan</h1>;
+        if (!res.data.result.length) return setInvalidId(true);
         setPayment(res.data.result[0]);
       })
       .catch((error) => toastFirebaseError(error));
   };
 
   const getGroup = () => {
-    console.log("getGroup");
     const targetCollection = source == "silat" ? "kontingens" : "sanggars";
     axios
       .get(`/api/${targetCollection}?idPembayaran=${idPembayaran}`)
@@ -78,7 +83,6 @@ const page = ({
   };
 
   const getPesertas = () => {
-    console.log("getPesertas");
     const targetCollection = source == "silat" ? "atlets" : "penaris";
     axios
       .get(`/api/${targetCollection}?idPembayaran=${idPembayaran}`)
@@ -112,7 +116,8 @@ const page = ({
             result.push({ ...penari, tarian: newTarian });
           });
         }
-        setPesertas(result);
+        setPesertas(pesertas);
+        setPesertasToMap(result);
       })
       .catch((error) => toastFirebaseError(error));
   };
@@ -123,20 +128,47 @@ const page = ({
     } else {
       getPayment();
     }
-    if (!group?.id) getGroup();
-    if (!pesertas.length) getPesertas();
+    // if (!group?.id) getGroup();
+    // if (!pesertas.length) getPesertas();
   }, []);
 
   useEffect(() => {
-    if (payment.id) dispatch(setPaymentToConfirmRedux(paymentInitialValue));
+    if (payment.id) {
+      getGroup();
+      getPesertas();
+      dispatch(setPaymentToConfirmRedux(paymentInitialValue));
+    }
   }, [payment]);
 
   const columns: any = source == "silat" ? AtletColumnAdmin : PenariColumnAdmin;
+
+  const { confirm, ConfirmationDialog } = useConfirmationDialog();
+
+  const handleDelete = async () => {
+    if (!group?.id || !pesertasToMap.length) return;
+
+    const result = await confirm("Batalkan Pembayaran");
+    if (result) {
+      setDisable(true);
+      deletePayment(
+        source,
+        group,
+        pesertas,
+        payment,
+        () => setDisable(false),
+        dispatch
+      );
+    }
+  };
+
+  if (invalidId)
+    return <h1 className="text-xl font-semibold">ID pembayaran tidak valid</h1>;
 
   if (!payment.id) return <FullLoading />;
 
   return (
     <>
+      <ConfirmationDialog />
       <ShowFileDialog />
       <div className="relative h-fit w-full max-w-full overflow-auto">
         <Table className="whitespace-nowrap">
@@ -185,10 +217,19 @@ const page = ({
       <AdminTable
         title="Pesertas"
         columns={columns}
-        data={pesertas as any}
-        loading={pesertas.length == 0}
+        data={pesertasToMap as any}
+        loading={pesertasToMap.length == 0}
         hFit
       />
+      <div className="w-full h-fit flex justify-end mt-1">
+        <Button
+          variant={"destructive"}
+          onClick={handleDelete}
+          disabled={disable || !group?.id || !pesertasToMap.length}
+        >
+          Batalkan Pembayaran
+        </Button>
+      </div>
     </>
   );
 };

@@ -6,6 +6,7 @@ import {
   FirestoreError,
   and,
   collection,
+  deleteDoc,
   doc,
   getAggregateFromServer,
   getDocs,
@@ -180,6 +181,45 @@ export const PATCH = async (req: Request) => {
       return NextResponse.json(
         {
           message: `${capitalize("payments", true)} berhasil diperbaharui`,
+        },
+        { status: 200 }
+      );
+    })
+    .catch(({ message, code }: FirestoreError) => {
+      return NextResponse.json({ message, code }, { status: 500 });
+    });
+};
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: { targetCollection: string } }
+) => {
+  const { targetCollection } = params;
+
+  const searchParams = req.nextUrl.searchParams;
+
+  const targetEmail = searchParams.get("email") as string;
+  const documentId = searchParams.get("id") as string;
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email)
+    return NextResponse.json({ message: "Not logged in" }, { status: 401 });
+
+  const userEmail = session.user.email;
+
+  if (userEmail != targetEmail) {
+    const admin = await isAdmin(userEmail);
+    if (!admin)
+      return NextResponse.json({ message: "Not authorized" }, { status: 401 });
+  }
+  return deleteDoc(doc(firestore, targetCollection, documentId))
+    .then((res) => {
+      return NextResponse.json(
+        {
+          message: `${
+            targetCollection.charAt(0).toUpperCase() +
+            targetCollection.slice(1, targetCollection.length - 1)
+          } baru berhasil didaftarkan`,
         },
         { status: 200 }
       );
