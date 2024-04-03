@@ -190,12 +190,7 @@ export const PATCH = async (req: Request) => {
     });
 };
 
-export const DELETE = async (
-  req: NextRequest,
-  { params }: { params: { targetCollection: string } }
-) => {
-  const { targetCollection } = params;
-
+export const DELETE = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
 
   const targetEmail = searchParams.get("email") as string;
@@ -212,14 +207,13 @@ export const DELETE = async (
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
-  return deleteDoc(doc(firestore, targetCollection, documentId))
+
+  console.log({ documentId, targetEmail });
+  return deleteDoc(doc(firestore, "payments", documentId))
     .then((res) => {
       return NextResponse.json(
         {
-          message: `${
-            targetCollection.charAt(0).toUpperCase() +
-            targetCollection.slice(1, targetCollection.length - 1)
-          } baru berhasil didaftarkan`,
+          message: `Pembayaran baru berhasil dihapus`,
         },
         { status: 200 }
       );

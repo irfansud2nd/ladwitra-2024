@@ -123,12 +123,12 @@ export const column: ColumnDef<AtletState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
                 onClick={() => dispatch(setPertandinganToEditRedux(atlet))}
                 disabled={loading}
               >
                 Edit
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(atlet)}
                 className={`text-destructive ${hideDelete && "hidden"}`}

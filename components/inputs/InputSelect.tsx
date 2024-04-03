@@ -22,6 +22,7 @@ type InputSelectProps = {
   forceDisabled?: boolean;
   forceValue?: string;
   showOnEditOnly?: boolean;
+  onEdit?: boolean;
 };
 
 const InputSelect = ({
@@ -35,12 +36,14 @@ const InputSelect = ({
   forceDisabled,
   forceValue,
   showOnEditOnly,
+  onEdit,
 }: InputSelectProps) => {
   const { setFieldValue, values, isSubmitting } = formik;
   const value = values[name];
 
   useEffect(() => {
     if (options.length && dynamicOptions) {
+      if (onEdit && options.includes(value)) return;
       setFieldValue(name, options[0]);
     }
   }, [options]);

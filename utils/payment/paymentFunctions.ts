@@ -276,7 +276,8 @@ export const deletePayment = (
   pesertas: AtletState[] | PenariState[],
   payment: PaymentState,
   setSubmitting: SetSubmitting,
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
+  onComplete: () => void
 ) => {
   const toastId = toast.loading("Menghapus Pembayaran");
 

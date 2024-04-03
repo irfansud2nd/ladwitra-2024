@@ -56,6 +56,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
       setSubmitting(false);
       return;
     }
+
     const pertandingan = {
       jenis: values.jenisPertandingan,
       tingkatan: values.tingkatanPertandingan,
@@ -74,7 +75,12 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
           atlet.kategori == pertandingan.kategori
       )
     ) {
-      toast.error("Atlet tidak dapat mengikuti kategori yang sama");
+      if (pertandinganToEdit.id) {
+        dispatch(setPertandinganToEditRedux(atletInitialValue));
+        setOpen(false);
+      } else {
+        toast.error("Atlet tidak dapat mengikuti kategori yang sama");
+      }
       setSubmitting(false);
       return;
     }
@@ -85,8 +91,8 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
         pertandinganToEdit.pertandingan[0]
       );
 
-      let pembayaran = newAtlet.pembayaran;
-      const paid = pertandinganToEdit.pembayaran.find(
+      let pembayaran = [...newAtlet.pembayaran];
+      const paid = pembayaran.find(
         (item) => item.idPertandingan == oldPertandinganId
       );
 
@@ -107,6 +113,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
           (item) => item != pertandinganToEdit.pertandingan[0]
         ),
         pembayaran,
+        nomorPertandingan: newAtlet.nomorPertandingan - 1,
       };
     }
 
@@ -114,6 +121,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
       setSubmitting,
       onComplete: () => {
         if (pertandinganToEdit.id) {
+          setOpen(false);
           resetForm();
           return;
         }
@@ -150,7 +158,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
     if (pertandinganToEdit.id && values.atletId != pertandinganToEdit.id) {
       const { jenis, tingkatan, kategori } = pertandinganToEdit.pertandingan[0];
       setFieldValue("atletId", pertandinganToEdit.id);
-      setAtlet(pertandinganToEdit);
+      setAtlet(getAtletById(pertandinganToEdit.id));
       setFieldValue("jenisPertandingan", jenis);
       setFieldValue("tingkatanPertandingan", tingkatan);
       setFieldValue("kategoriPertandingan", kategori);
@@ -233,6 +241,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
                     atlet.jenisKelamin
                   )}
                   formik={props}
+                  onEdit={pertandinganToEdit.id != ""}
                   dynamicOptions
                   showOnEditOnly
                 />

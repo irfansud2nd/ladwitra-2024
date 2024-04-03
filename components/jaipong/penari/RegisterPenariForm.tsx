@@ -19,6 +19,7 @@ import {
   unregisteredPenariValue,
 } from "@/utils/jaipong/penari/penariConstants";
 import {
+  getPenariLagu,
   // getPenariLagu,
   getPenariNamaTim,
   getTarianId,
@@ -33,6 +34,7 @@ import { RootState } from "@/utils/redux/store";
 
 import { Form, Formik, FormikProps } from "formik";
 import { useState } from "react";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -71,6 +73,9 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       kategori: values.kategoriTarian,
     };
 
+    // ID TARIAN
+    const tarianId = getTarianId(tarian);
+
     // NEW PENARI
     let newPenari: PenariState = {
       ...penari,
@@ -85,7 +90,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
         namaTim: [
           ...newPenari.namaTim,
           {
-            idTarian: getTarianId(tarian),
+            idTarian: tarianId,
             namaTim: values.namaTim,
           },
         ],
@@ -99,7 +104,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
         lagu: [
           ...newPenari.lagu,
           {
-            idTarian: getTarianId(tarian),
+            idTarian: tarianId,
             lagu: values.lagu,
           },
         ],
@@ -107,13 +112,24 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
     }
 
     // CHECK IF ALREADY REGISTERED
-    const sameTim =
-      penari.namaTim.find((item) => item.idTarian == getTarianId(tarian))
-        ?.namaTim == values.namaTim || jenis == "Tunggal";
+    let sameTim = false;
+    let sameLagu = false;
 
-    const sameLagu =
-      penari.lagu.find((item) => item.idTarian == getTarianId(tarian))?.lagu ==
-        values.lagu || jenis == "Rampak";
+    const lagusTaken = penari.lagu
+      .filter((lagu) => lagu.idTarian == tarianId)
+      .map((lagu) => lagu.lagu);
+
+    const namaTimsTaken = penari.namaTim
+      .filter((namaTim) => namaTim.idTarian == tarianId)
+      .map((namaTim) => namaTim.namaTim);
+
+    if (namaTimsTaken.includes(values.namaTim) || jenis == "Tunggal") {
+      sameTim = true;
+    }
+
+    if (lagusTaken.includes(values.lagu) || jenis == "Rampak") {
+      sameLagu = true;
+    }
 
     if (
       penari.tarian.some(
@@ -126,31 +142,31 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       sameLagu &&
       sameTim
     ) {
-      toast.error("Penari tidak dapat mengikuti kategori yang sama");
+      if (tarianToEdit.id) {
+        dispatch(setTarianToEditRedux(penariInitialValue));
+        setOpen(false);
+      } else {
+        toast.error("Penari tidak dapat mengikuti kategori yang sama");
+      }
       setSubmitting(false);
       return;
     }
 
     if (tarianToEdit.id) {
-      const newTarianId = getTarianId(tarian);
+      const oldTarianFullId = getTarianId(tarianToEdit.tarian[0], {
+        fullId: {
+          namaTim: getPenariNamaTim(tarianToEdit),
+          lagu: getPenariLagu(tarianToEdit),
+        },
+      });
 
-      const paid = tarianToEdit.pembayaran.find(
-        (item) =>
-          item.idTarian ==
-          getTarianId(tarianToEdit.tarian[0], {
-            fullId: {
-              namaTim: tarianToEdit.namaTim[0].namaTim,
-              lagu: tarianToEdit.lagu[0].lagu,
-            },
-          })
-      );
-      let pembayaran = newPenari.pembayaran;
+      let pembayaran = [...newPenari.pembayaran];
+      const paid = pembayaran.find((item) => item.idTarian == oldTarianFullId);
 
-      const rampak = tarianToEdit.namaTim[0];
-      let namaTim = newPenari.namaTim;
-
-      const tunggal = tarianToEdit.lagu[0];
-      let lagu = newPenari.lagu;
+      let namaTim = [...newPenari.namaTim];
+      let lagu = [...newPenari.lagu];
+      let oldNamaTim = jenis == "Rampak" ? tarianToEdit.namaTim[0] : undefined;
+      let oldLagu = jenis == "Tunggal" ? tarianToEdit.lagu[0] : undefined;
 
       if (paid) {
         pembayaran = pembayaran.filter((item) => item != paid);
@@ -166,12 +182,12 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
         });
       }
 
-      if (rampak) {
-        namaTim = namaTim.filter((item) => item != rampak);
+      if (oldNamaTim) {
+        namaTim = namaTim.filter((item) => item != oldNamaTim);
       }
 
-      if (tunggal) {
-        lagu = lagu.filter((item) => item != tunggal);
+      if (oldLagu) {
+        lagu = lagu.filter((item) => item != oldLagu);
       }
 
       newPenari = {
@@ -182,6 +198,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
         pembayaran,
         namaTim,
         lagu,
+        nomorTarian: newPenari.nomorTarian - 1,
       };
     }
 
@@ -189,6 +206,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       setSubmitting,
       onComplete: () => {
         if (tarianToEdit.id) {
+          setOpen(false);
           resetForm();
           return;
         }
@@ -224,17 +242,15 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
   ) => {
     if (tarianToEdit.id && values.penariId != tarianToEdit.id) {
       const { jenis, kelas, tingkatan, kategori } = tarianToEdit.tarian[0];
-      const namaTim = tarianToEdit.namaTim[0].namaTim;
-      const lagu = tarianToEdit.lagu[0].lagu;
-      // console.log(lagu);
       setFieldValue("penariId", tarianToEdit.id);
-      setPenari(tarianToEdit);
+      setPenari(getPenariById(tarianToEdit.id));
       setFieldValue("jenisTarian", jenis);
       setFieldValue("kelasTarian", kelas);
       setFieldValue("tingkatanTarian", tingkatan);
       setFieldValue("kategoriTarian", kategori);
-      setFieldValue("namaTim", namaTim);
-      setFieldValue("lagu", lagu);
+      jenis == "Rampak"
+        ? setFieldValue("namaTim", getPenariNamaTim(tarianToEdit))
+        : setFieldValue("lagu", getPenariLagu(tarianToEdit));
     }
   };
 
@@ -298,6 +314,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
                   formik={props}
                   dynamicOptions
                   showOnEditOnly
+                  onEdit={tarianToEdit.id != ""}
                 />
                 {jenis == "Tunggal" && (
                   <InputSelect
@@ -307,6 +324,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
                     formik={props}
                     dynamicOptions
                     showOnEditOnly
+                    onEdit={tarianToEdit.id != ""}
                   />
                 )}
                 {jenis == "Rampak" && (

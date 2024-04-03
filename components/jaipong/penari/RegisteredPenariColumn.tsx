@@ -110,10 +110,10 @@ export const column: ColumnDef<PenariState>[] = [
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async () => {
-        const message = isPenariPaid(registeredPenari)
+        const message = isPenariPaid(registeredPenari, true)
           ? "Penari yang sudah dibayar tidak dapat dihapus."
           : "Apakah anda yakin?";
-        const options = isPenariPaid(registeredPenari)
+        const options = isPenariPaid(registeredPenari, true)
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm(
@@ -153,9 +153,6 @@ export const column: ColumnDef<PenariState>[] = [
             nomorTarian: penari.nomorTarian - 1,
           };
 
-          console.log({ newPenari });
-          return;
-
           updatePenari(newPenari, dispatch, {
             setSubmitting: setLoading,
             onComplete: () => {
@@ -189,7 +186,7 @@ export const column: ColumnDef<PenariState>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {/* <DropdownMenuItem
-                onClick={() => dispatch(setTarianToEditRedux(penari))}
+                onClick={() => dispatch(setTarianToEditRedux(registeredPenari))}
                 disabled={loading}
               >
                 Edit

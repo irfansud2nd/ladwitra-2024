@@ -155,14 +155,21 @@ const page = ({
         group,
         pesertas,
         payment,
-        () => setDisable(false),
-        dispatch
+        setDisable,
+        dispatch,
+        () => setInvalidId(true)
       );
     }
   };
 
   if (invalidId)
-    return <h1 className="text-xl font-semibold">ID pembayaran tidak valid</h1>;
+    return (
+      <h1 className="text-xl font-semibold">
+        {payment.id
+          ? "Pembayaran telah dibatalkan"
+          : "ID pembayaran tidak valid"}
+      </h1>
+    );
 
   if (!payment.id) return <FullLoading />;
 
