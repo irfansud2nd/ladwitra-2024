@@ -7,7 +7,9 @@ import { PenariState } from "@/utils/jaipong/penari/penariConstants";
 import {
   getPenariLagu,
   getPenariNamaTim,
+  getPenariPaymentId,
 } from "@/utils/jaipong/penari/penariFunctions";
+import PaidPesertaButton from "@/components/utils/PaidPesertaButton";
 
 export const UnpaidPenariColumn: ColumnDef<PenariState>[] = [
   {
@@ -89,5 +91,18 @@ export const UnpaidPenariColumn: ColumnDef<PenariState>[] = [
         </div>
       );
     },
+  },
+];
+
+export const PaidPenariColumn = [
+  ...UnpaidPenariColumn.filter(
+    (item) => item.id != "select" && item.id != "biaya"
+  ),
+  {
+    header: "Aksi",
+    id: "actions",
+    cell: ({ row }: { row: any }) => (
+      <PaidPesertaButton idPembayaran={getPenariPaymentId(row.original)} />
+    ),
   },
 ];

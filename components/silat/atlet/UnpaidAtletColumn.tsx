@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { AtletState } from "@/utils/silat/atlet/atletConstats";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { getAtletPaymentId } from "@/utils/silat/atlet/atletFunctions";
+import PaidPesertaButton from "@/components/utils/PaidPesertaButton";
 
 export const UnpaidAtletColumn: ColumnDef<AtletState>[] = [
   {
@@ -62,5 +64,18 @@ export const UnpaidAtletColumn: ColumnDef<AtletState>[] = [
     header: "Biaya",
     id: "biaya",
     cell: () => <div>Rp. 300.000</div>,
+  },
+];
+
+export const PaidAtletColumn = [
+  ...UnpaidAtletColumn.filter(
+    (item) => item.id != "select" && item.id != "biaya"
+  ),
+  {
+    header: "Aksi",
+    id: "actions",
+    cell: ({ row }: { row: any }) => (
+      <PaidPesertaButton idPembayaran={getAtletPaymentId(row.original)} />
+    ),
   },
 ];

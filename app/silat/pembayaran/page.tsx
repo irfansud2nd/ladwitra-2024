@@ -8,8 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UnpaidAtlet from "@/components/silat/atlet/UnpaidAtlet";
-import UnconfirmedAtletTable from "@/components/silat/atlet/UnconfirmedAtletTable";
-import ConfirmedAtletTable from "@/components/silat/atlet/ConfirmedAtletTable";
+import PaidAtletTable from "@/components/silat/atlet/PaidAtletTable";
 
 const page = () => {
   return (
@@ -53,10 +52,10 @@ const page = () => {
           <UnpaidAtlet />
         </TabsContent>
         <TabsContent value="unconfirmed">
-          <UnconfirmedAtletTable />
+          <PaidAtletTable />
         </TabsContent>
         <TabsContent value="confirmed">
-          <ConfirmedAtletTable />
+          <PaidAtletTable confirmed />
         </TabsContent>
       </div>
     </Tabs>

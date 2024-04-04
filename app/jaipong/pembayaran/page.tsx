@@ -8,8 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UnpaidPenari from "@/components/jaipong/penari/UnpaidPenari";
-import ConfirmedPenariTable from "@/components/jaipong/penari/ConfimedPenariTable";
-import UnconfirmedPenariTable from "@/components/jaipong/penari/UnconfirmedPenariTable";
+import PaidPenariTable from "@/components/jaipong/penari/PaidPenariTable";
 
 const page = () => {
   return (
@@ -53,10 +52,10 @@ const page = () => {
           <UnpaidPenari />
         </TabsContent>
         <TabsContent value="unconfirmed">
-          <UnconfirmedPenariTable />
+          <PaidPenariTable />
         </TabsContent>
         <TabsContent value="confirmed">
-          <ConfirmedPenariTable />
+          <PaidPenariTable confirmed />
         </TabsContent>
       </div>
     </Tabs>
