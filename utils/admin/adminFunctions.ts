@@ -6,10 +6,13 @@ import { decode } from "jsonwebtoken";
 import { getServerSession } from "next-auth";
 
 // IS ADMIN
-export const isAdmin = async (email: string, clientSide: boolean = false) => {
-  if (clientSide) {
+export const isAdmin = async (
+  email: string,
+  options?: { clientSide?: boolean; ignoreJwt?: boolean }
+) => {
+  if (options?.clientSide) {
     return axios
-      .get(`/api/admin?email=${email}`)
+      .get(`/api/admin?email=${email}&ignoreJwt=${options?.ignoreJwt}`)
       .then((res) => {
         return res.data.result as boolean;
       })
@@ -20,7 +23,7 @@ export const isAdmin = async (email: string, clientSide: boolean = false) => {
 
   const session: any = await getServerSession(authOptions);
   const token = session?.user?.adminToken;
-  if (token) {
+  if (token && !options?.ignoreJwt) {
     const data: any = decode(token);
     return data.isAdmin;
   }

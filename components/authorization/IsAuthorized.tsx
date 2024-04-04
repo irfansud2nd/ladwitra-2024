@@ -6,7 +6,6 @@ import NotAuthorized from "./NotAuthorized";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import FullLoading from "../loadings/FullLoading";
-import { sign } from "jsonwebtoken";
 
 const IsAuthorized = ({ children }: { children: React.ReactNode }) => {
   const [authorized, setAuthorized] = useState(false);
@@ -26,7 +25,7 @@ const IsAuthorized = ({ children }: { children: React.ReactNode }) => {
     if (!email) return;
     const updatedSession: any = session;
     if (!updatedSession?.user?.isAdmin) {
-      const admin = await isAdmin(email, true);
+      const admin = await isAdmin(email, { clientSide: true, ignoreJwt: true });
       if (admin) {
         setAuthorized(true);
         const token = await signAdminToken(email);
