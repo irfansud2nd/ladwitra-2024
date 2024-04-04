@@ -7,12 +7,7 @@ export const axiosFileConfig = {
 
 export const itemPerPage = 10;
 
-export const editOnly = false;
-
 export const checkLimit = false;
-
-export const tutupPendaftaran = false;
-
-export const silatLimit = 700;
-
-export const jaipongLimit = 100;
+export const editOnly = false;
+export const closePayment = false;
+export const closePendaftaran = false;

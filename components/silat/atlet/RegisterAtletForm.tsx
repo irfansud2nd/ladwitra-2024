@@ -6,6 +6,7 @@ import {
   SetSubmitting,
   SetFieldValue,
 } from "@/utils/form/FormConstants";
+import { setCountNomorPertandinganClient } from "@/utils/redux/admin/countSlice";
 import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
 import { RootState } from "@/utils/redux/store";
 import {
@@ -37,13 +38,13 @@ type Props = {
 const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
   const [atlet, setAtlet] = useState(atletInitialValue);
 
-  const allAtlets = useSelector((state: RootState) => state.atlets.all);
-  const pertandinganToEdit = useSelector(
-    (state: RootState) => state.atlets.pertandinganToEdit
+  const { all: allAtlets, pertandinganToEdit } = useSelector(
+    (state: RootState) => state.atlets
   );
   const kontingen = useSelector(
     (state: RootState) => state.kontingen.registered
   );
+
   const dispatch = useDispatch();
 
   const handleSubmit = (
@@ -123,18 +124,19 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
         if (pertandinganToEdit.id) {
           setOpen(false);
           resetForm();
-          return;
+        } else {
+          dispatch(setCountNomorPertandinganClient(1));
+          setSubmitting(true);
+          const newKontingen: KontingenState = {
+            ...kontingen,
+            tagihan: kontingen.tagihan + biayaAtlet,
+            nomorPertandingan: kontingen.nomorPertandingan + 1,
+          };
+          updateKontingen(newKontingen, kontingen, dispatch, {
+            setSubmitting: setSubmitting,
+            onComplete: resetForm,
+          });
         }
-        setSubmitting(true);
-        const newKontingen: KontingenState = {
-          ...kontingen,
-          tagihan: kontingen.tagihan + biayaAtlet,
-          nomorPertandingan: kontingen.nomorPertandingan + 1,
-        };
-        updateKontingen(newKontingen, kontingen, dispatch, {
-          setSubmitting: setSubmitting,
-          onComplete: resetForm,
-        });
       },
     });
   };

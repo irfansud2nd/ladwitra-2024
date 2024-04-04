@@ -36,10 +36,17 @@ export const koreograferInitialValue: KoreograferState = {
   downloadFotoUrl: "",
 };
 
-// KOREOGRAFER VALIDATION SCHEMA WITH SANGgAR
+// KOREOGRAFER VALIDATION SCHEMA
 export const koreograferValidationSchema = Yup.object({
   nama: Yup.string().required("Tolong lengkapi nama lengkap"),
   fotoFile: Yup.string().required("Tolong lengkapi file Pas Foto"),
+  namaSanggar: Yup.string().required(
+    "Tolong daftarkan sanggar terlebih dahulu"
+  ),
+});
+// KOREOGRAFER VALIDATION SCHEMA WITHOUT FILE
+export const koreograferValidationSchemaWithoutFile = Yup.object({
+  nama: Yup.string().required("Tolong lengkapi nama lengkap"),
   namaSanggar: Yup.string().required(
     "Tolong daftarkan sanggar terlebih dahulu"
   ),

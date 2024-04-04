@@ -14,8 +14,8 @@ import { setKoreografersRedux } from "@/utils/redux/jaipong/koreografersSlice";
 import { setSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import { setPenarisRedux } from "@/utils/redux/jaipong/penarisSlice";
 import SanggarNotFound from "./sanggar/SanggarNotFound";
-import { setJaipongLimit } from "@/utils/redux/pendaftaran/pendaftaranSlice";
 import { checkLimit } from "@/utils/constants";
+import { setCountNomorTarian } from "@/utils/redux/admin/countSlice";
 
 const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(0);
@@ -77,9 +77,9 @@ const GetUserJaipongData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getLimit = () => {
-    // console.log("getLimit Silat");
+    console.log("getLimit Silat");
     axios.get("/api/penaris?count=true&registered=true").then((res) => {
-      dispatch(setJaipongLimit(res.data.result));
+      dispatch(setCountNomorTarian(res.data.result));
       setLoading((prev) => prev + 1);
     });
   };

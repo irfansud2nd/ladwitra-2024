@@ -20,9 +20,9 @@ import {
   deletePenari,
   isPenariPaid,
 } from "@/utils/jaipong/penari/penariFunctions";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
-export const PenariColumn: ColumnDef<PenariState>[] = [
+let columns: ColumnDef<PenariState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -46,7 +46,7 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
   },
   {
     header: "Aksi",
-    id: "actions",
+    id: "Aksi",
     cell: ({ row }) => {
       const penari = row.original;
       const dispatch = useDispatch();
@@ -84,12 +84,14 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(penari)}
-                className={`text-destructive ${editOnly && "hidden"}`}
-              >
-                Hapus
-              </DropdownMenuItem>
+              {!editOnly && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete(penari)}
+                  className={`text-destructive ${editOnly && "hidden"}`}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -97,3 +99,9 @@ export const PenariColumn: ColumnDef<PenariState>[] = [
     },
   },
 ];
+
+if (closePendaftaran) {
+  columns = columns.filter((item) => item.id !== "Aksi");
+}
+
+export const PenariColumn = columns;

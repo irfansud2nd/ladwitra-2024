@@ -5,7 +5,6 @@ import officialsReducer from "@/utils/redux/silat/officialsSlice";
 import koreografersReducer from "@/utils/redux/jaipong/koreografersSlice";
 import atletsReducer from "@/utils/redux/silat/atletsSlice";
 import penarisReducer from "@/utils/redux/jaipong/penarisSlice";
-import pendaftaranReducer from "@/utils/redux/pendaftaran/pendaftaranSlice";
 import sideMenuReducer from "@/utils/redux/pendaftaran/sideMenuSlice";
 import paymentsReducer from "@/utils/redux/silat/paymentsSlice";
 import countReducer from "@/utils/redux/admin/countSlice";
@@ -18,7 +17,6 @@ export const store = configureStore({
     koreografers: koreografersReducer,
     atlets: atletsReducer,
     penaris: penarisReducer,
-    pendaftaran: pendaftaranReducer,
     sideMenu: sideMenuReducer,
     payments: paymentsReducer,
     count: countReducer,

@@ -30,11 +30,12 @@ import Link from "next/link";
 import { FaRegCopy, FaWhatsapp } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 
-const AtletPaymentForm = ({
-  selectedAtlets,
-}: {
+type Props = {
   selectedAtlets: AtletState[];
-}) => {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const AtletPaymentForm = ({ selectedAtlets, setOpen }: Props) => {
   const kontingen = useSelector(
     (state: RootState) => state.kontingen.registered
   );
@@ -54,8 +55,11 @@ const AtletPaymentForm = ({
       allAtlets,
       kontingen,
       dispatch,
-      resetForm,
-      setSubmitting
+      setSubmitting,
+      () => {
+        resetForm();
+        setOpen(false);
+      }
     );
   };
 

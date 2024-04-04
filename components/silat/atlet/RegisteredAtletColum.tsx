@@ -18,10 +18,10 @@ import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { useState } from "react";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import { updateKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
-import { editOnly, silatLimit, tutupPendaftaran } from "@/utils/constants";
+import { editOnly, closePendaftaran } from "@/utils/constants";
 import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
 
-export const column: ColumnDef<AtletState>[] = [
+let columns: ColumnDef<AtletState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -59,15 +59,11 @@ export const column: ColumnDef<AtletState>[] = [
       const [loading, setLoading] = useState(false);
       const atlet = row.original;
       const dispatch = useDispatch();
+
       const allAtlets = useSelector((state: RootState) => state.atlets.all);
-      const limit = useSelector(
-        (state: RootState) => state.pendaftaran.silatLimit
-      );
       const kontingen = useSelector(
         (state: RootState) => state.kontingen.registered
       );
-
-      const hideDelete = limit >= silatLimit || editOnly;
 
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
@@ -123,19 +119,21 @@ export const column: ColumnDef<AtletState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 onClick={() => dispatch(setPertandinganToEditRedux(atlet))}
                 disabled={loading}
               >
                 Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(atlet)}
-                className={`text-destructive ${hideDelete && "hidden"}`}
-                disabled={loading}
-              >
-                Hapus
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
+              {!editOnly && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete(atlet)}
+                  className={`text-destructive`}
+                  disabled={loading}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -144,6 +142,8 @@ export const column: ColumnDef<AtletState>[] = [
   },
 ];
 
-export const RegisteredAtletColumn = tutupPendaftaran
-  ? column.filter((item) => item.id != "Aksi")
-  : column;
+if (closePendaftaran) {
+  columns = columns.filter((item) => item.id !== "Aksi");
+}
+
+export const RegisteredAtletColumn = columns;

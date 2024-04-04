@@ -17,9 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteOfficial } from "@/utils/silat/official/officialFunctions";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
-export const OfficialColumn: ColumnDef<OfficialState>[] = [
+let columns: ColumnDef<OfficialState>[] = [
   {
     id: "No",
     header: "No",
@@ -78,17 +78,21 @@ export const OfficialColumn: ColumnDef<OfficialState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => dispatch(setOfficialToEditRedux(official))}
-              >
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(official)}
-                className={`text-destructive ${editOnly && "hidden"}`}
-              >
-                Hapus
-              </DropdownMenuItem>
+              {!closePendaftaran && (
+                <DropdownMenuItem
+                  onClick={() => dispatch(setOfficialToEditRedux(official))}
+                >
+                  Edit
+                </DropdownMenuItem>
+              )}
+              {(!editOnly || !closePendaftaran) && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete(official)}
+                  className={`text-destructive ${editOnly && "hidden"}`}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -96,3 +100,9 @@ export const OfficialColumn: ColumnDef<OfficialState>[] = [
     },
   },
 ];
+
+if (closePendaftaran) {
+  columns = columns.filter((item) => item.id !== "Aksi");
+}
+
+export const OfficialColumn = columns;

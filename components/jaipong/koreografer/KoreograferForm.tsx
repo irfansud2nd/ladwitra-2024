@@ -16,6 +16,7 @@ import {
   jenisKelaminDewasa,
   koreograferInitialValue,
   koreograferValidationSchema,
+  koreograferValidationSchemaWithoutFile,
 } from "@/utils/jaipong/koreografer/koreograferConstants";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -34,6 +35,7 @@ const KoreograferForm = ({ setOpen }: Props) => {
   const koreograferToEdit = useSelector(
     (state: RootState) => state.koreografers.toEdit
   );
+
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -47,6 +49,7 @@ const KoreograferForm = ({ setOpen }: Props) => {
         setSubmitting,
         onComplete: () => {
           resetForm();
+          setOpen(false);
           dispatch(setKoreograferToEditRedux(koreograferInitialValue));
         },
       });
@@ -83,7 +86,11 @@ const KoreograferForm = ({ setOpen }: Props) => {
       onSubmit={(values, { setSubmitting, resetForm }) =>
         handleSubmit(values, resetForm, setSubmitting)
       }
-      validationSchema={koreograferValidationSchema}
+      validationSchema={
+        koreograferToEdit.id
+          ? koreograferValidationSchemaWithoutFile
+          : koreograferValidationSchema
+      }
     >
       {(props: FormikProps<KoreograferState>) => {
         setForm(props.setFieldValue, props.values, koreograferToEdit);

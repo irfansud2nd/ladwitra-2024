@@ -12,7 +12,11 @@ import { RootState } from "@/utils/redux/store";
 import KontingenNotFound from "./kontingen/KontingenNotFound";
 import { addPaymentsRedux } from "@/utils/redux/silat/paymentsSlice";
 import { checkLimit } from "@/utils/constants";
-import { setSilatLimit } from "@/utils/redux/pendaftaran/pendaftaranSlice";
+import {
+  setCountNomorPertandingan,
+  setCountNomorPertandinganClient,
+  setCountNomorTarianClient,
+} from "@/utils/redux/admin/countSlice";
 
 const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(0);
@@ -76,9 +80,9 @@ const GetUserSilatData = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getLimit = () => {
-    // console.log("getLimit Silat");
+    console.log("getLimit Silat");
     axios.get("/api/atlets?count=true&registered=true").then((res) => {
-      dispatch(setSilatLimit(res.data.result));
+      dispatch(setCountNomorTarianClient(res.data.result));
       setLoading((prev) => prev + 1);
     });
   };

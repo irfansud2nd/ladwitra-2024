@@ -16,6 +16,7 @@ import {
   jenisKelaminDewasa,
   officialInitialValue,
   officialValidationSchema,
+  officialValidationSchemaWithoutFile,
 } from "@/utils/silat/official/officialConstants";
 import {
   sendOfficial,
@@ -36,6 +37,7 @@ const OfficialForm = ({ setOpen }: Props) => {
   const officialToEdit = useSelector(
     (state: RootState) => state.officials.toEdit
   );
+
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -49,6 +51,7 @@ const OfficialForm = ({ setOpen }: Props) => {
         setSubmitting,
         onComplete: () => {
           resetForm();
+          setOpen(false);
           dispatch(setOfficialToEditRedux(officialInitialValue));
         },
       });
@@ -85,7 +88,11 @@ const OfficialForm = ({ setOpen }: Props) => {
       onSubmit={(values, { setSubmitting, resetForm }) =>
         handleSubmit(values, resetForm, setSubmitting)
       }
-      validationSchema={officialValidationSchema}
+      validationSchema={
+        officialToEdit.id
+          ? officialValidationSchemaWithoutFile
+          : officialValidationSchema
+      }
     >
       {(props: FormikProps<OfficialState>) => {
         setForm(props.setFieldValue, props.values, officialToEdit);

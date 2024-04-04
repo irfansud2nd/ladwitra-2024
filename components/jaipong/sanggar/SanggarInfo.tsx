@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MdGroups } from "react-icons/md";
@@ -18,16 +17,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { setSanggarToEditRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import SanggarDialog from "./SanggarDialog";
 import { deleteSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
 const SanggarInfo = ({ show }: { show: boolean }) => {
-  const [open, setOpen] = useState(false);
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
-  const sanggarToEdit = useSelector((state: RootState) => state.sanggar.toEdit);
   const koreografers = useSelector(
     (state: RootState) => state.koreografers.registered
   );
@@ -42,7 +39,7 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
       message = "Sanggar yang sudah melakukan pembayaran tidak dapat dihapus.";
     } else {
       if (sanggar.penaris.length)
-        message += `${sanggar.penaris.length} Penari akan ikut terhapus. `;
+        message += `${sanggar.penaris.length} Penari, dan ${sanggar.koreografers.length} Official akan ikut terhapus. `;
       message += "Apakah anda yakin?";
     }
     const options = sanggar.idPembayaran.length
@@ -62,10 +59,7 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
       >
         {sanggar.nama}
       </p>
-      <DropdownMenu
-        open={sanggarToEdit.id ? true : open}
-        onOpenChange={setOpen}
-      >
+      <DropdownMenu>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -82,20 +76,24 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
         </TooltipProvider>
         <DropdownMenuContent>
           {!show && <DropdownMenuLabel>{sanggar.nama}</DropdownMenuLabel>}
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => {
-              dispatch(setSanggarToEditRedux(sanggar));
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer text-destructive"
-            onClick={() => handleDelete()}
-          >
-            Delete
-          </DropdownMenuItem>
+          {!closePendaftaran && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                dispatch(setSanggarToEditRedux(sanggar));
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+          )}
+          {(!closePendaftaran || !editOnly) && (
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive"
+              onClick={() => handleDelete()}
+            >
+              Delete
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

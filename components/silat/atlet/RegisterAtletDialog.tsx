@@ -9,17 +9,20 @@ import {
 } from "@/utils/silat/atlet/atletConstats";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
-import { tutupPendaftaran, silatLimit } from "@/utils/constants";
+import { closePayment, closePendaftaran, editOnly } from "@/utils/constants";
 import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
 
 const RegisterAtletDialog = ({ jenis }: { jenis: JenisPertandingan }) => {
   const [open, setOpen] = useState(false);
-  const atlets = useSelector((state: RootState) => state.atlets.all);
-  const pertandinganToEdit = useSelector(
-    (state: RootState) => state.atlets.pertandinganToEdit
+
+  const { all: atlets, pertandinganToEdit } = useSelector(
+    (state: RootState) => state.atlets
   );
-  const limit = useSelector((state: RootState) => state.pendaftaran.silatLimit);
+  const { silatLimit } = useSelector((state: RootState) => state.count);
+
   const dispatch = useDispatch();
+
+  const disableAdd = editOnly || silatLimit || closePayment || closePendaftaran;
 
   const toggleDialog = (state: boolean) => {
     setOpen(state);
@@ -31,15 +34,13 @@ const RegisterAtletDialog = ({ jenis }: { jenis: JenisPertandingan }) => {
     if (pertandinganToEdit.id) setOpen(true);
   }, [pertandinganToEdit]);
 
-  const hide = limit >= silatLimit || tutupPendaftaran;
-
   return (
     <Dialog onOpenChange={(value) => toggleDialog(value)} open={open}>
-      <DialogTrigger asChild>
-        <Button disabled={atlets.length == 0} className={`${hide && "hidden"}`}>
-          Tambah Atlet
-        </Button>
-      </DialogTrigger>
+      {!disableAdd && (
+        <DialogTrigger asChild>
+          <Button disabled={atlets.length == 0}>Tambah Atlet</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="w-fit max-w-[100vw] max-h-screen overflow-auto">
         <RegisterAtletForm setOpen={setOpen} jenis={jenis} />
       </DialogContent>

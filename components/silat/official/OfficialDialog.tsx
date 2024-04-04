@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOfficialToEditRedux } from "@/utils/redux/silat/officialsSlice";
 import { officialInitialValue } from "@/utils/silat/official/officialConstants";
 import { RootState } from "@/utils/redux/store";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
 const OfficialDialog = () => {
   const [open, setOpen] = useState(false);
@@ -15,6 +15,8 @@ const OfficialDialog = () => {
     (state: RootState) => state.officials.toEdit
   );
   const dispatch = useDispatch();
+
+  const disableAdd = editOnly || closePendaftaran;
 
   const toggleDialog = (state: boolean) => {
     setOpen(state);
@@ -28,9 +30,11 @@ const OfficialDialog = () => {
 
   return (
     <Dialog onOpenChange={(state) => toggleDialog(state)} open={open}>
-      <DialogTrigger asChild>
-        <Button className={`${editOnly && "hidden"}`}>Tambah Official</Button>
-      </DialogTrigger>
+      {!disableAdd && (
+        <DialogTrigger asChild>
+          <Button>Tambah Official</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="w-fit max-w-[100vw] max-h-screen overflow-auto">
         <OfficialForm setOpen={setOpen} />
       </DialogContent>

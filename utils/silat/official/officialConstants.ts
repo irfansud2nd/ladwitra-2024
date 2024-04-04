@@ -36,10 +36,18 @@ export const officialInitialValue: OfficialState = {
   downloadFotoUrl: "",
 };
 
-// OFFICIAL VALIDATION SCHEMA WITH KONTINGEN
+// OFFICIAL VALIDATION SCHEMA
 export const officialValidationSchema = Yup.object({
   nama: Yup.string().required("Tolong lengkapi nama lengkap"),
   fotoFile: Yup.string().required("Tolong lengkapi file Pas Foto"),
+  namaKontingen: Yup.string().required(
+    "Tolong daftarkan kontingen terlebih dahulu"
+  ),
+});
+
+// OFFICIAL VALIDATION SCHEMA WITHOUT FILE
+export const officialValidationSchemaWithoutFile = Yup.object({
+  nama: Yup.string().required("Tolong lengkapi nama lengkap"),
   namaKontingen: Yup.string().required(
     "Tolong daftarkan kontingen terlebih dahulu"
   ),

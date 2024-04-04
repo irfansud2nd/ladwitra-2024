@@ -34,6 +34,7 @@ const AtletForm = ({ setOpen }: Props) => {
     (state: RootState) => state.kontingen.registered
   );
   const atletToEdit = useSelector((state: RootState) => state.atlets.toEdit);
+
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -47,6 +48,7 @@ const AtletForm = ({ setOpen }: Props) => {
         setSubmitting,
         onComplete: () => {
           resetForm();
+          setOpen(false);
           dispatch(setAtletToEditRedux(atletInitialValue));
         },
         withoutStatus: true,

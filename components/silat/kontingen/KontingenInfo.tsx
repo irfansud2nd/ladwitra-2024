@@ -9,7 +9,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MdGroups } from "react-icons/md";
@@ -23,7 +22,7 @@ import { setKontingenToEditRedux } from "@/utils/redux/silat/kontingenSlice";
 import KontingenDialog from "./KontingenDialog";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
 const KontingenInfo = ({ show }: { show: boolean }) => {
   const kontingen = useSelector(
@@ -81,21 +80,25 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
         </TooltipProvider>
         <DropdownMenuContent>
           {!show && <DropdownMenuLabel>{kontingen.nama}</DropdownMenuLabel>}
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => {
-              dispatch(setKontingenToEditRedux(kontingen));
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className={`cursor-pointer text-destructive 
+          {!closePendaftaran && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                dispatch(setKontingenToEditRedux(kontingen));
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+          )}
+          {(!closePendaftaran || !editOnly) && (
+            <DropdownMenuItem
+              className={`cursor-pointer text-destructive 
             ${editOnly && "hidden"}`}
-            onClick={() => handleDelete()}
-          >
-            Delete
-          </DropdownMenuItem>
+              onClick={() => handleDelete()}
+            >
+              Delete
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

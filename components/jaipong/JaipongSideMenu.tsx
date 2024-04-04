@@ -22,6 +22,7 @@ const JaipongSideMenu = () => {
   const registeredPenaris = useSelector(
     (state: RootState) => state.penaris.registered
   );
+
   const show = useSelector((state: RootState) => state.sideMenu.normal);
 
   const menus = [

@@ -26,10 +26,10 @@ import {
 } from "@/utils/jaipong/penari/penariFunctions";
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
 import { updateSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
-import { editOnly, jaipongLimit, tutupPendaftaran } from "@/utils/constants";
+import { editOnly, closePendaftaran } from "@/utils/constants";
 import { setTarianToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
 
-export const column: ColumnDef<PenariState>[] = [
+let columns: ColumnDef<PenariState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -92,21 +92,18 @@ export const column: ColumnDef<PenariState>[] = [
   },
   {
     header: "Aksi",
-    id: "actions",
+    id: "Aksi",
     cell: ({ row }) => {
       const [loading, setLoading] = useState(false);
       const registeredPenari = row.original;
       const dispatch = useDispatch();
-      const allPenaris = useSelector((state: RootState) => state.penaris.all);
-      const limit = useSelector(
-        (state: RootState) => state.pendaftaran.jaipongLimit
-      );
-      const sanggar = useSelector(
-        (state: RootState) => state.sanggar.registered
-      );
 
-      const hideDelete = limit >= jaipongLimit || editOnly;
-
+      const { all: allPenaris } = useSelector(
+        (state: RootState) => state.penaris
+      );
+      const { registered: sanggar } = useSelector(
+        (state: RootState) => state.sanggar
+      );
       const { confirm, ConfirmationDialog } = useConfirmationDialog();
 
       const handleDelete = async () => {
@@ -191,13 +188,15 @@ export const column: ColumnDef<PenariState>[] = [
               >
                 Edit
               </DropdownMenuItem> */}
-              <DropdownMenuItem
-                onClick={() => handleDelete()}
-                className={`text-destructive ${hideDelete && "hidden"}`}
-                disabled={loading}
-              >
-                Hapus
-              </DropdownMenuItem>
+              {!editOnly && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete()}
+                  className={`text-destructive`}
+                  disabled={loading}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -207,10 +206,10 @@ export const column: ColumnDef<PenariState>[] = [
 ];
 
 export const RegisteredPenariColumn = (tipe: "Tunggal" | "Rampak") => {
-  let result = tutupPendaftaran
-    ? column.filter((item) => item.id != "Aksi")
-    : column;
+  let result = columns;
   if (tipe == "Tunggal") result = result.filter((item) => item.id != "namaTim");
   if (tipe == "Rampak") result = result.filter((item) => item.id != "lagu");
+  if (closePendaftaran) result = result.filter((item) => item.id !== "Aksi");
+
   return result;
 };

@@ -48,7 +48,7 @@ export const ConfirmedColumn: ColumnDef<PaymentState>[] = [
   },
   {
     header: "Aksi",
-    id: "actions",
+    id: "Aksi",
     cell: ({ row }) => {
       const payment = row.original;
       const dispatch = useDispatch();

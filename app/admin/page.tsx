@@ -39,7 +39,6 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Kontingen"
-            // apiUrl="/api/kontingens/count"
             apiUrl="/api/kontingens?count=true"
             link="/admin/silat/kontingen"
             onComplete={(value) => dispatch(setCountKontingen(value))}
@@ -47,7 +46,6 @@ const page = () => {
           />
           <CountFirestore
             title="Official"
-            // apiUrl="/api/officials/count"
             apiUrl="/api/officials?count=true"
             link="/admin/silat/official"
             onComplete={(value) => dispatch(setCountOfficial(value))}
@@ -55,7 +53,6 @@ const page = () => {
           />
           <CountFirestore
             title="Atlet"
-            // apiUrl="/api/atlets/count"
             apiUrl="/api/atlets?count=true"
             link="/admin/silat/atlet"
             onComplete={(value) => dispatch(setCountAtlet(value))}
@@ -63,7 +60,6 @@ const page = () => {
           />
           <CountFirestore
             title="Nomor Pertandingan"
-            // apiUrl="/api/atlets/count/registered"
             apiUrl="/api/atlets?count=true&registered=true"
             count={nomorPertandingan}
             onComplete={(value) => dispatch(setCountNomorPertandingan(value))}
@@ -75,7 +71,6 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Sanggar"
-            // apiUrl="/api/sanggars/count"
             apiUrl="/api/sanggars?count=true"
             link="/admin/jaipong/sanggar"
             onComplete={(value) => dispatch(setCountSanggar(value))}
@@ -83,7 +78,6 @@ const page = () => {
           />
           <CountFirestore
             title="Koreografer"
-            // apiUrl="/api/koreografers/count"
             apiUrl="/api/koreografers?count=true"
             link="/admin/jaipong/koreografer"
             onComplete={(value) => dispatch(setCountKoreografer(value))}
@@ -91,7 +85,6 @@ const page = () => {
           />
           <CountFirestore
             title="Penari"
-            // apiUrl="/api/penaris/count"
             apiUrl="/api/penaris?count=true"
             link="/admin/jaipong/penari"
             onComplete={(value) => dispatch(setCountPenari(value))}
@@ -99,7 +92,6 @@ const page = () => {
           />
           <CountFirestore
             title="Nomor Tarian"
-            // apiUrl="/api/penaris/count/registered"
             apiUrl="/api/penaris?count=true&registered=true"
             count={nomorTarian}
             onComplete={(value) => dispatch(setCountNomorTarian(value))}
@@ -111,7 +103,6 @@ const page = () => {
         <div className="flex flex-wrap justify-around gap-1">
           <CountFirestore
             title="Total Pembayaran"
-            // apiUrl="/api/payments/all/count"
             apiUrl="/api/payments?count=true"
             count={payment}
             onComplete={(value) => dispatch(setCountPayment(value))}
@@ -119,7 +110,6 @@ const page = () => {
           />
           <CountFirestore
             title="Menunggu Konfirmasi"
-            // apiUrl="/api/payments/unconfirmed/count"
             apiUrl="/api/payments?count=true&status=unconfirmed"
             count={paymentUnconfirmed}
             onComplete={(value) => dispatch(setCountPaymentUnconfirmed(value))}

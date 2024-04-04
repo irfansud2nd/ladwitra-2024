@@ -28,11 +28,12 @@ import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 
-const PenariPaymentForm = ({
-  selectedPenaris,
-}: {
+type Props = {
   selectedPenaris: PenariState[];
-}) => {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const PenariPaymentForm = ({ selectedPenaris, setOpen }: Props) => {
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
   const allPenaris = useSelector((state: RootState) => state.penaris.all);
 
@@ -50,8 +51,11 @@ const PenariPaymentForm = ({
       allPenaris,
       sanggar,
       dispatch,
-      resetForm,
-      setSubmitting
+      setSubmitting,
+      () => {
+        resetForm();
+        setOpen(false);
+      }
     );
   };
 

@@ -17,9 +17,9 @@ import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
 import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
-export const AtletColumn: ColumnDef<AtletState>[] = [
+let columns: ColumnDef<AtletState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -53,7 +53,7 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
   },
   {
     header: "Aksi",
-    id: "actions",
+    id: "Aksi",
     cell: ({ row }) => {
       const atlet = row.original;
       const dispatch = useDispatch();
@@ -91,12 +91,14 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(atlet)}
-                className={`text-destructive ${editOnly && "hidden"}`}
-              >
-                Hapus
-              </DropdownMenuItem>
+              {!editOnly && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete(atlet)}
+                  className={`text-destructive ${editOnly && "hidden"}`}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -104,3 +106,9 @@ export const AtletColumn: ColumnDef<AtletState>[] = [
     },
   },
 ];
+
+if (closePendaftaran) {
+  columns = columns.filter((item) => item.id !== "Aksi");
+}
+
+export const AtletColumn = columns;

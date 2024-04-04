@@ -32,8 +32,8 @@ export const sendSilatPayment = (
   allAtlets: AtletState[],
   kontingen: KontingenState,
   dispatch: Dispatch<UnknownAction>,
-  resetForm: ResetForm,
-  setSubmitting: SetSubmitting
+  setSubmitting: SetSubmitting,
+  onComplete: () => void
 ) => {
   const idPembayaran = doc(collection(firestore, "atlets")).id;
   const toastId = toast.success("Menyimpan pembayaran");
@@ -130,7 +130,7 @@ export const sendSilatPayment = (
               id: toastId,
             });
             dispatch(addPaymentRedux(data));
-            resetForm();
+            onComplete();
             setSubmitting(false);
           })
           .catch((error) => {
@@ -149,8 +149,8 @@ export const sendJaipongPayment = (
   allPenaris: PenariState[],
   sanggar: SanggarState,
   dispatch: Dispatch<UnknownAction>,
-  resetForm: ResetForm,
-  setSubmitting: SetSubmitting
+  setSubmitting: SetSubmitting,
+  onComplete: () => void
 ) => {
   const idPembayaran = doc(collection(firestore, "penaris")).id;
   const toastId = toast.loading("Menyimpan pembayaran");
@@ -257,7 +257,7 @@ export const sendJaipongPayment = (
               id: toastId,
             });
             dispatch(addPaymentRedux(data));
-            resetForm();
+            onComplete();
             setSubmitting(false);
           })
           .catch((error) => {

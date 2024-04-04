@@ -17,9 +17,9 @@ import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { KoreograferState } from "@/utils/jaipong/koreografer/koreograferConstants";
 import { deleteKoreografer } from "@/utils/jaipong/koreografer/koreograferFunctions";
 import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
-import { editOnly } from "@/utils/constants";
+import { closePendaftaran, editOnly } from "@/utils/constants";
 
-export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
+let columns: ColumnDef<KoreograferState>[] = [
   {
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
@@ -48,7 +48,7 @@ export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
   },
   {
     header: "Aksi",
-    id: "actions",
+    id: "Aksi",
     cell: ({ row }) => {
       const koreografer = row.original;
       const dispatch = useDispatch();
@@ -73,17 +73,23 @@ export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => dispatch(setKoreograferToEditRedux(koreografer))}
-              >
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(koreografer)}
-                className={`text-destructive ${editOnly && "hidden"}`}
-              >
-                Hapus
-              </DropdownMenuItem>
+              {!closePendaftaran && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    dispatch(setKoreograferToEditRedux(koreografer))
+                  }
+                >
+                  Edit
+                </DropdownMenuItem>
+              )}
+              {(!editOnly || !closePendaftaran) && (
+                <DropdownMenuItem
+                  onClick={() => handleDelete(koreografer)}
+                  className={`text-destructive ${editOnly && "hidden"}`}
+                >
+                  Hapus
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </>
@@ -91,3 +97,9 @@ export const KoreograferColumn: ColumnDef<KoreograferState>[] = [
     },
   },
 ];
+
+if (closePendaftaran) {
+  columns = columns.filter((item) => item.id !== "Aksi");
+}
+
+export const KoreograferColumn = columns;

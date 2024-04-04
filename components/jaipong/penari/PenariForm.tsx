@@ -48,6 +48,7 @@ const PenariForm = ({ setOpen }: Props) => {
         setSubmitting,
         onComplete: () => {
           resetForm();
+          setOpen(false);
           dispatch(setPenariToEditRedux(penariInitialValue));
         },
       });

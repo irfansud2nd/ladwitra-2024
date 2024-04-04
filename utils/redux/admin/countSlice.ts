@@ -29,6 +29,11 @@ type State = {
 
   jaipongPayment: number;
   jaipongPaymentUnconfirmed: number;
+
+  nomorPertandinganClient: number;
+  nomorTarianClient: number;
+  silatLimit: boolean;
+  jaipongLimit: boolean;
 };
 
 const initialState: State = {
@@ -54,6 +59,11 @@ const initialState: State = {
 
   jaipongPayment: 0,
   jaipongPaymentUnconfirmed: 0,
+
+  nomorPertandinganClient: 0,
+  nomorTarianClient: 0,
+  silatLimit: false,
+  jaipongLimit: false,
 };
 
 const countSlice = createSlice({
@@ -70,7 +80,20 @@ const countSlice = createSlice({
       state.atlet = action.payload;
     },
     setCountNomorPertandingan: (state, action: PayloadAction<number>) => {
-      state.nomorPertandingan = action.payload;
+      if (action.payload == 1) {
+        state.nomorPertandingan = state.nomorPertandingan + 1;
+      } else {
+        state.nomorPertandingan = action.payload;
+      }
+      state.silatLimit = state.nomorPertandingan + action.payload >= 700;
+    },
+    setCountNomorPertandinganClient: (state, action: PayloadAction<number>) => {
+      if (action.payload == 1) {
+        state.nomorPertandinganClient = state.nomorPertandinganClient + 1;
+      } else {
+        state.nomorPertandinganClient = action.payload;
+      }
+      state.silatLimit = state.nomorPertandinganClient + action.payload >= 700;
     },
     setCountSanggar: (state, action: PayloadAction<number>) => {
       state.sanggar = action.payload;
@@ -83,6 +106,14 @@ const countSlice = createSlice({
     },
     setCountNomorTarian: (state, action: PayloadAction<number>) => {
       state.nomorTarian = action.payload;
+    },
+    setCountNomorTarianClient: (state, action: PayloadAction<number>) => {
+      if (action.payload == 1) {
+        state.nomorTarianClient = state.nomorTarianClient + 1;
+      } else {
+        state.nomorTarianClient = action.payload;
+      }
+      state.silatLimit = state.nomorTarianClient + action.payload >= 100;
     },
     setCountPayment: (state, action: PayloadAction<number>) => {
       state.payment = action.payload;
@@ -151,6 +182,8 @@ export const {
   setCountJaipongPaymentUnconfirmed,
   addCountCategorizedAtlets,
   addCountCategorizedPenaris,
+  setCountNomorTarianClient,
+  setCountNomorPertandinganClient,
 } = countSlice.actions;
 
 export default countSlice.reducer;
