@@ -66,16 +66,10 @@ const generateKategoriPertandingan = (
 };
 
 // SENI TUNGGAL
-const seniTunggal = {
-  putra: ["Tunggal Putra"],
-  putri: ["Tunggal Putri"],
-};
+const seniTunggal = ["Tunggal"];
 
 // SENI LENGKAP
-const seniLengkap = {
-  putra: ["Tunggal Putra", "Ganda Putra", "Regu Putra", "Solo Putra"],
-  putri: ["Tunggal Putri", "Ganda Putri", "Regu Putri", "Solo Putri"],
-};
+const seniLengkap = ["Tunggal", "Ganda", "Regu", "Solo"];
 
 // TINGKATAN DAN KATEGORI SILAT
 export const tingkatanKategoriSilat = [

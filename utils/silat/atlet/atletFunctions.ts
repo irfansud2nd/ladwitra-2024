@@ -39,15 +39,19 @@ export const selectCategorySilat = (
       tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
     ].kategoriTanding;
   } else {
-    if (jenisKelamin == jenisKelaminPeserta[0]) {
-      return tingkatanKategoriSilat[
-        tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
-      ].kategoriSeni.putra;
-    } else {
-      return tingkatanKategoriSilat[
-        tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
-      ].kategoriSeni.putri;
-    }
+    return tingkatanKategoriSilat[
+      tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
+    ].kategoriSeni;
+
+    // if (jenisKelamin == jenisKelaminPeserta[0]) {
+    //   return tingkatanKategoriSilat[
+    //     tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
+    //   ].kategoriSeni.putra;
+    // } else {
+    //   return tingkatanKategoriSilat[
+    //     tingkatanKategoriSilat.findIndex((item) => item.tingkatan == tingkatan)
+    //   ].kategoriSeni.putri;
+    // }
   }
 };
 
@@ -461,16 +465,26 @@ export const getAllPertandinganUrl = () => {
         `Tanding/${tingkatanKategori.tingkatan}/${kategoriTanding}/Putri`
       );
     });
-    tingkatanKategori.kategoriSeni.putra.map((kategoriSeni) => {
+    tingkatanKategori.kategoriSeni.map((kategoriSeni) => {
       pertandinganIds.push(
         `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putra`
       );
     });
-    tingkatanKategori.kategoriSeni.putri.map((kategoriSeni) => {
+    tingkatanKategori.kategoriSeni.map((kategoriSeni) => {
       pertandinganIds.push(
         `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putri`
       );
     });
+    // tingkatanKategori.kategoriSeni.putra.map((kategoriSeni) => {
+    //   pertandinganIds.push(
+    //     `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putra`
+    //   );
+    // });
+    // tingkatanKategori.kategoriSeni.putri.map((kategoriSeni) => {
+    //   pertandinganIds.push(
+    //     `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}/Putri`
+    //   );
+    // });
   });
   return pertandinganIds;
 };

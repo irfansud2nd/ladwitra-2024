@@ -18,8 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React, { useState } from "react";
-import AtletPaymentDialog from "@/components/silat/atlet/AtletPaymentDialog";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
 
 interface SelectableTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

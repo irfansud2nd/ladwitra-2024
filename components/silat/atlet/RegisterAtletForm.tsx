@@ -191,7 +191,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
                   forceDisabled={pertandinganToEdit.id != ""}
                 />
                 <InputText
-                  label="Tinggi Badan"
+                  label="Jenis Kelamin"
                   name="atlet.jenisKelamin"
                   formik={props}
                   forceValue={atlet.jenisKelamin}

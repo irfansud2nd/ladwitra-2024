@@ -73,7 +73,7 @@ const page = () => {
                       <TableCell
                         rowSpan={
                           tingkatanKategori.kategoriTanding.length +
-                          tingkatanKategori.kategoriSeni.putra.length
+                          tingkatanKategori.kategoriSeni.length
                         }
                       >
                         {tingkatanKategori.tingkatan}
@@ -90,7 +90,7 @@ const page = () => {
                 );
               }
             )}
-            {tingkatanKategori.kategoriSeni.putra.map((kategori) => {
+            {tingkatanKategori.kategoriSeni.map((kategori) => {
               const kategoriSeni = kategori.split(" ").slice(0, 1).join("");
               const key = `Seni/${tingkatanKategori.tingkatan}/${kategoriSeni}`;
               return (
