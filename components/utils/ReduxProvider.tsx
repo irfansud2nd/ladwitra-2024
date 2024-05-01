@@ -1,7 +1,6 @@
 "use client";
 
 import { store } from "@/utils/redux/store";
-import { Session } from "next-auth";
 import { Provider } from "react-redux";
 
 type Props = {

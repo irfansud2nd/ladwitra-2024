@@ -88,8 +88,10 @@ export const SanggarColumnAdmin: ColumnDef<SanggarState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link href={`/admin/silat/sanggar/${sanggar.id}`}>Detail</Link>
+              <DropdownMenuItem asChild>
+                <Link href={`/admin/jaipong/sanggar/${sanggar.id}`}>
+                  Detail
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -98,3 +100,7 @@ export const SanggarColumnAdmin: ColumnDef<SanggarState>[] = [
     },
   },
 ];
+
+export const DetailSanggarColumnAdmin = SanggarColumnAdmin.filter(
+  (item) => item.id != "No" && item.id != "Nama" && item.id != "Aksi"
+);

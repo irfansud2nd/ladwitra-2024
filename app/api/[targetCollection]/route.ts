@@ -107,6 +107,7 @@ export const GET = async (
   const searchParams = req.nextUrl.searchParams;
 
   const idKontingen = searchParams.get("idKontingen");
+  const idSanggar = searchParams.get("idSanggar");
   const idPembayaran = searchParams.get("idPembayaran");
   const targetEmail = searchParams.get("email");
   const id = searchParams.get("id");
@@ -132,6 +133,7 @@ export const GET = async (
   let noLimit = false;
 
   if (idKontingen) searchQuery = where("idKontingen", "==", idKontingen);
+  if (idSanggar) searchQuery = where("idSanggar", "==", idSanggar);
 
   if (id) searchQuery = where("id", "==", id);
 

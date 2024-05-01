@@ -65,7 +65,7 @@ const SearchBar = ({
         <Button
           size={"sm"}
           onClick={() => setQuery(`${property}/${keyword}`)}
-          disabled={disable}
+          disabled={disable || !keyword}
         >
           Cari
         </Button>
