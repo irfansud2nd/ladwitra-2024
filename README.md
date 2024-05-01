@@ -2,7 +2,7 @@
 
 ## Introduction
 
-La Dwitra is an annual event orginized by [SMP Labschool UPI Cibiru](https://smplabsupicibiru.com/) and supported by event organizer owned by my close friend. Therefore, I have the opportunity to facilitate registrations for silat championsip and jaipong competition through the website that I have developed.
+La Dwitra is an annual event orginized by [SMA Labschool UPI Cibiru](https://smalabsupicibiru.sch.id/) and supported by event organizer owned by my close friend. Therefore, I have the opportunity to facilitate registrations for silat championsip and jaipong competition through the website that I have developed.
 
 This website is also my third paid and commercial project. I think this website is way more better than my last 2 similiar projects, i learned a lot of new things in the depelopment process. It was created in about two week, but I still maintain this website until the event is over.
 
