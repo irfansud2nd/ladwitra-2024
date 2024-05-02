@@ -18,7 +18,7 @@ const UnconfirmedPaymentTable = ({
 
   const data = useSelector(
     (state: RootState) => state.payments.unconfirmed
-  ).filter((payment) => payment.source == "silat");
+  ).filter((payment) => payment.source == source);
   const dispatch = useDispatch();
 
   const getData = () => {

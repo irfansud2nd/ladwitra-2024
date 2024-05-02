@@ -19,7 +19,7 @@ const ConfirmedPaymentTable = ({ source }: { source: "silat" | "jaipong" }) => {
   const [limit, setLimit] = useState(itemPerPage);
 
   const data = useSelector((state: RootState) => state.payments.confirmed)
-    .filter((payment) => payment.source == "silat")
+    .filter((payment) => payment.source == source)
     .slice((page - 1) * itemPerPage, page * itemPerPage);
   const dispatch = useDispatch();
 
