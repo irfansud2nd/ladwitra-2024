@@ -71,19 +71,22 @@ const seniTunggal = ["Tunggal"];
 // SENI LENGKAP
 const seniLengkap = ["Tunggal", "Ganda", "Regu", "Solo"];
 
+const seniSd1 = ["Tunggal Tangan Kosong", "Tunggal Bersenjata", "Tunggal Full"];
+const seniSd2 = [seniSd1[0]];
+
 // TINGKATAN DAN KATEGORI SILAT
 export const tingkatanKategoriSilat = [
   {
     tingkatan: "SD I",
     kategoriTanding: generateKategoriPertandingan("J", 18, 2),
-    kategoriSeni: seniTunggal,
+    kategoriSeni: seniSd1,
   },
   {
     tingkatan: "SD II",
     kategoriTanding: generateKategoriPertandingan("K", 24, 2, undefined, {
       namaKelas: "Bebas",
     }),
-    kategoriSeni: seniLengkap,
+    kategoriSeni: seniSd2,
   },
   {
     tingkatan: "SMP",
