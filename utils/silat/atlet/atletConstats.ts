@@ -71,8 +71,8 @@ const seniTunggal = ["Tunggal"];
 // SENI LENGKAP
 const seniLengkap = ["Tunggal", "Ganda", "Regu", "Solo"];
 
-const seniSd1 = ["Tunggal Tangan Kosong", "Tunggal Bersenjata", "Tunggal Full"];
-const seniSd2 = [seniSd1[0]];
+const seniSd2 = ["Tunggal Tangan Kosong", "Tunggal Bersenjata", "Tunggal Full"];
+const seniSd1 = [seniSd2[0]];
 
 // TINGKATAN DAN KATEGORI SILAT
 export const tingkatanKategoriSilat = [
