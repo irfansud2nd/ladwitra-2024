@@ -1,6 +1,6 @@
 import { authOptions } from "@/lib/authOptions";
 import { firestore } from "@/lib/firebase";
-import { isAdmin } from "@/utils/admin/adminFunctions";
+import { isAdmin } from "@/utils/admin/adminActions";
 import { getTarianId } from "@/utils/jaipong/penari/penariFunctions";
 import {
   FirestoreError,
@@ -77,7 +77,7 @@ export const GET = async (req: NextRequest) => {
       });
   }
 
-  const admin = await isAdmin(userEmail);
+  const { admin } = await isAdmin();
   if (!admin)
     return NextResponse.json({ message: "Not authorized" }, { status: 401 });
 

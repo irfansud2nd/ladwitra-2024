@@ -1,6 +1,6 @@
 import { authOptions } from "@/lib/authOptions";
 import { firestore } from "@/lib/firebase";
-import { isAdmin } from "@/utils/admin/adminFunctions";
+import { isAdmin } from "@/utils/admin/adminActions";
 import { capitalize } from "@/utils/functions";
 import {
   FirestoreError,
@@ -75,7 +75,7 @@ export const GET = async (req: NextRequest) => {
   }
 
   if (!targetEmail || targetEmail != userEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
@@ -171,7 +171,7 @@ export const PATCH = async (req: Request) => {
   const userEmail = session.user.email;
 
   if (userEmail != data.creatorEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
@@ -203,12 +203,11 @@ export const DELETE = async (req: NextRequest) => {
   const userEmail = session.user.email;
 
   if (userEmail != targetEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
 
-  console.log({ documentId, targetEmail });
   return deleteDoc(doc(firestore, "payments", documentId))
     .then((res) => {
       return NextResponse.json(

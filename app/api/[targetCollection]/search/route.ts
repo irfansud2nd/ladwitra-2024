@@ -1,6 +1,6 @@
 import { authOptions } from "@/lib/authOptions";
 import { firestore } from "@/lib/firebase";
-import { isAdmin } from "@/utils/admin/adminFunctions";
+import { isAdmin } from "@/utils/admin/adminActions";
 import {
   FirestoreError,
   collection,
@@ -22,7 +22,7 @@ export const GET = async (
     return NextResponse.json({ message: "Not logged in" }, { status: 401 });
 
   const userEmail = session.user.email;
-  const admin = await isAdmin(userEmail);
+  const { admin } = await isAdmin();
   if (!admin)
     return NextResponse.json({ message: "Not authorized" }, { status: 401 });
 

@@ -19,7 +19,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { firestore } from "@/lib/firebase";
 import { authOptions } from "@/lib/authOptions";
-import { isAdmin } from "@/utils/admin/adminFunctions";
+import { isAdmin } from "@/utils/admin/adminActions";
 import { capitalize } from "@/utils/functions";
 
 export const POST = async (
@@ -70,7 +70,7 @@ export const PATCH = async (
   const userEmail = session.user.email;
 
   if (userEmail != data.creatorEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
@@ -148,7 +148,7 @@ export const GET = async (
   }
 
   if (!targetEmail || targetEmail != userEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
@@ -216,7 +216,7 @@ export const DELETE = async (
   const userEmail = session.user.email;
 
   if (userEmail != targetEmail) {
-    const admin = await isAdmin(userEmail);
+    const { admin } = await isAdmin();
     if (!admin)
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
   }
