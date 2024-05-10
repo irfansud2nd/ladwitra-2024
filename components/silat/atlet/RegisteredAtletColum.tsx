@@ -119,12 +119,12 @@ let columns: ColumnDef<AtletState>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
                 onClick={() => dispatch(setPertandinganToEditRedux(atlet))}
                 disabled={loading}
               >
                 Edit
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
               {!editOnly && (
                 <DropdownMenuItem
                   onClick={() => handleDelete(atlet)}
