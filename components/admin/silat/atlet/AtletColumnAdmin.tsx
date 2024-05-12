@@ -53,7 +53,9 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
   {
     id: "Tanggal Lahir",
     header: "Tanggal Lahir",
-    cell: ({ row }) => <div>{formatDate(row.original.tanggalLahir, true)}</div>,
+    cell: ({ row }) => (
+      <div>{formatDate(row.original.lahir.tanggal, true)}</div>
+    ),
   },
   {
     id: "Alamat Lengkap",
@@ -64,13 +66,13 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
     id: "Tinggi Badan",
     header: "Tinggi Badan",
     accessorKey: "tinggiBadan",
-    cell: ({ row }) => <div>{row.original.tinggiBadan} CM</div>,
+    cell: ({ row }) => <div>{row.original.badan.tinggi} CM</div>,
   },
   {
     id: "Berat Badan",
     header: "Berat Badan",
     accessorKey: "beratBadan",
-    cell: ({ row }) => <div>{row.original.beratBadan} KG</div>,
+    cell: ({ row }) => <div>{row.original.badan.berat} KG</div>,
   },
   {
     id: "Pertandingan",
@@ -155,14 +157,14 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
         let landscape = false;
         switch (tipe) {
           case "Pas Foto":
-            url = atlet.downloadFotoUrl;
+            url = atlet.foto.downloadUrl;
             break;
           case "KK":
-            url = atlet.downloadKkUrl;
+            url = atlet.kk.downloadUrl;
             landscape = true;
             break;
           case "KTP":
-            url = atlet.downloadKtpUrl;
+            url = atlet.ktp.downloadUrl;
             landscape = true;
             break;
         }

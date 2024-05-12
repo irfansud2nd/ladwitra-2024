@@ -31,7 +31,14 @@ import {
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
 import { paymentInitialValue } from "@/utils/payment/paymentConstants";
 import { deletePayment } from "@/utils/payment/paymentFunctions";
-import { setPaymentToConfirmRedux } from "@/utils/redux/silat/paymentsSlice";
+import { updatePenariRedux } from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
+import { updateAtletRedux } from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
+import {
+  deletePaymentRedux,
+  setPaymentToConfirmRedux,
+} from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
 import { AtletState } from "@/utils/silat/atlet/atletConstats";
 import { getPertandinganId } from "@/utils/silat/atlet/atletFunctions";
@@ -150,15 +157,22 @@ const page = ({
     const result = await confirm("Batalkan Pembayaran");
     if (result) {
       setDisable(true);
-      deletePayment(
-        source,
-        group,
-        pesertas,
-        payment,
-        setDisable,
-        dispatch,
-        () => setInvalidId(true)
-      );
+      deletePayment(source, group, pesertas, payment)
+        .then(({ newGroup, newPesertas }) => {
+          dispatch(
+            source == "silat"
+              ? updateKontingenRedux(newGroup as KontingenState)
+              : updateSanggarRedux(newGroup as SanggarState)
+          );
+          newPesertas.map((peserta) => {
+            source == "silat"
+              ? dispatch(updateAtletRedux(peserta as AtletState))
+              : dispatch(updatePenariRedux(peserta as PenariState));
+          });
+          dispatch(deletePaymentRedux(payment));
+          setInvalidId(true);
+        })
+        .finally(() => setDisable(false));
     }
   };
 
@@ -197,21 +211,21 @@ const page = ({
             <TableRow>
               <TableCell>{idPembayaran}</TableCell>
               <TableCell>{group?.nama ?? <InlineLoading />}</TableCell>
-              <TableCell>{formatToRupiah(payment.totalPembayaran)}</TableCell>
+              <TableCell>{formatToRupiah(payment.pembayaran.total)}</TableCell>
               <TableCell>
                 {payment.confirmed
-                  ? `Dikonfirmasi oleh ${payment.confirmedBy}`
+                  ? `Dikonfirmasi oleh ${payment.confirmed.by}`
                   : "Menunggu Konfirmasi"}
               </TableCell>
               <TableCell>{payment.creatorEmail}</TableCell>
               <TableCell>{payment.noHp}</TableCell>
-              <TableCell>{formatDate(payment.waktuPembayaran)}</TableCell>
+              <TableCell>{formatDate(payment.pembayaran.waktu)}</TableCell>
               <TableCell>
                 <Button
                   variant={"ghost"}
                   size={"sm"}
                   onClick={() =>
-                    showFile("Bukti Pembayaran", payment.downloadBuktiUrl)
+                    showFile("Bukti Pembayaran", payment.bukti.downloadUrl)
                   }
                 >
                   Show

@@ -64,7 +64,7 @@ export const KoreograferColumnAdmin: ColumnDef<KoreograferState>[] = [
       const { showFile, ShowFileDialog } = useShowFileDialog();
 
       const handleClick = () => {
-        showFile(`Pas Foto ${koreografer.nama}`, koreografer.downloadFotoUrl);
+        showFile(`Pas Foto ${koreografer.nama}`, koreografer.foto.downloadUrl);
       };
       return (
         <>

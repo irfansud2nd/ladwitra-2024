@@ -14,11 +14,14 @@ export type KoreograferState = {
   nama: string;
   jenisKelamin: string;
   jabatan: string;
-  idSanggar: string;
-  namaSanggar: string;
-  fotoFile: File | undefined;
-  fotoUrl: string;
-  downloadFotoUrl: string;
+  sanggar: {
+    id: string;
+    nama: string;
+  };
+  foto: {
+    file?: File;
+    downloadUrl: string;
+  };
 };
 
 // KOREOGRAFER INITIAL VALUE
@@ -29,11 +32,13 @@ export const koreograferInitialValue: KoreograferState = {
   nama: "",
   jenisKelamin: jenisKelaminDewasa[0],
   jabatan: jabatanKoreografers[0],
-  idSanggar: "",
-  namaSanggar: "",
-  fotoFile: undefined,
-  fotoUrl: "",
-  downloadFotoUrl: "",
+  sanggar: {
+    nama: "",
+    id: "",
+  },
+  foto: {
+    downloadUrl: "",
+  },
 };
 
 // KOREOGRAFER VALIDATION SCHEMA

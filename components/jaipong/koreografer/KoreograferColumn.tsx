@@ -18,6 +18,7 @@ import { KoreograferState } from "@/utils/jaipong/koreografer/koreograferConstan
 import { deleteKoreografer } from "@/utils/jaipong/koreografer/koreograferFunctions";
 import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 
 let columns: ColumnDef<KoreograferState>[] = [
   {
@@ -60,7 +61,10 @@ let columns: ColumnDef<KoreograferState>[] = [
 
       const handleDelete = async (koreografer: KoreograferState) => {
         const result = await confirm("Hapus Koreografer", "Apakah anda yakin?");
-        result && deleteKoreografer(koreografer, dispatch, sanggar);
+        result &&
+          deleteKoreografer(koreografer, sanggar).then(
+            (sanggar) => sanggar && dispatch(updateSanggarRedux(sanggar))
+          );
       };
       return (
         <>

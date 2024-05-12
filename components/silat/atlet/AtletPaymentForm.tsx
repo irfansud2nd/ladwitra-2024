@@ -22,6 +22,9 @@ import {
   paymentValidationSchema,
 } from "@/utils/payment/paymentConstants";
 import { sendSilatPayment } from "@/utils/payment/paymentFunctions";
+import { updateAtletRedux } from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
+import { addPaymentRedux } from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
 import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
 import { Form, Formik, FormikProps } from "formik";
@@ -49,26 +52,23 @@ const AtletPaymentForm = ({ selectedAtlets, setOpen }: Props) => {
     resetForm: ResetForm,
     setSubmitting: SetSubmitting
   ) => {
-    sendSilatPayment(
-      payment,
-      selectedAtlets,
-      allAtlets,
-      kontingen,
-      dispatch,
-      setSubmitting,
-      () => {
+    sendSilatPayment(payment, selectedAtlets, allAtlets, kontingen)
+      .then(({ atlets, kontingen, payment }) => {
+        dispatch(addPaymentRedux(payment));
+        dispatch(updateKontingenRedux(kontingen));
+        atlets.map((atlet) => dispatch(updateAtletRedux(atlet)));
         resetForm();
         setOpen(false);
-      }
-    );
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const setForm = (setFieldValue: SetFieldValue, values: PaymentState) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
-    !values.totalPembayaran &&
+    !values.pembayaran.total &&
       setFieldValue(
-        "totalPembayaran",
+        "pembayaran.total",
         formatToRupiah(selectedAtlets.length * biayaAtlet)
       );
   };

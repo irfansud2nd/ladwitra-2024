@@ -1,10 +1,8 @@
 import axios from "axios";
 import { axiosFileConfig } from "../constants";
-import { FormikErrors } from "formik";
-import { Persons, SetSubmitting, SetFieldValue } from "./FormConstants";
+import { Person, SetFieldValue } from "./FormConstants";
 import { OfficialState } from "../silat/official/officialConstants";
 import { AtletState } from "../silat/atlet/atletConstats";
-import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { toast } from "sonner";
 import {
   deleteOfficial,
@@ -18,6 +16,7 @@ import {
   deleteKoreografer,
   updateKoreografer,
 } from "../jaipong/koreografer/koreograferFunctions";
+import { toastFirebaseError } from "../functions";
 
 // SEND FILE
 export const sendFile = async (file: File, directory: string) => {
@@ -27,7 +26,7 @@ export const sendFile = async (file: File, directory: string) => {
   return axios
     .post("/api/file", formData, axiosFileConfig)
     .then((res) => {
-      return res.data.downloadUrl;
+      return res.data.downloadUrl as string;
     })
     .catch((error) => {
       throw error;
@@ -42,108 +41,95 @@ export const setFieldValues = (setFieldValue: SetFieldValue, data: any) => {
 };
 
 // DELETE ALL PERSON
-export const deletePersons = (
-  datas: Persons[],
+export const deletePersons = async (
+  persons: Person[],
   persontType: "atlet" | "official" | "penari" | "koreografer",
-  dispatch: Dispatch<UnknownAction>,
-  onComplete: () => void,
   toastId: string | number
 ) => {
-  if (!datas || !datas.length) {
-    onComplete();
-    return;
-  }
-  const repeater = (index: number) => {
-    if (index >= datas.length) {
-      toast.success(
-        `Berhasil menghapus ${persontType} ${index}/${datas.length}`,
-        { id: toastId }
-      );
-      onComplete();
-      return;
+  try {
+    if (persons.length) {
+      for (let i = 0; i < persons.length; i++) {
+        toast.loading(`Menghapus ${persontType} ${i + 1}/${persons.length}`, {
+          id: toastId,
+        });
+        switch (persontType) {
+          case "official":
+            await deleteOfficial(persons[0] as OfficialState);
+            break;
+          case "atlet":
+            await deleteAtlet(persons[0] as AtletState);
+            break;
+          case "penari":
+            await deletePenari(persons[0] as PenariState);
+            break;
+          case "koreografer":
+            await deleteKoreografer(persons[0] as KoreograferState);
+            break;
+        }
+      }
     }
-    toast.loading(`Menghapus ${persontType} ${index + 1}/${datas.length}`, {
-      id: toastId,
-    });
-    const data = datas[index];
-    const repeat = () => repeater(index + 1);
-    persontType == "official" &&
-      deleteOfficial(data as OfficialState, dispatch, undefined, repeat, false);
-    persontType == "atlet" &&
-      deleteAtlet(data as AtletState, dispatch, undefined, repeat, false);
-    persontType == "penari" &&
-      deletePenari(data as PenariState, dispatch, undefined, repeat, false);
-    persontType == "koreografer" &&
-      deleteKoreografer(
-        data as KoreograferState,
-        dispatch,
-        undefined,
-        repeat,
-        false
-      );
-  };
-  repeater(0);
+    toast.success(
+      `Berhasil menghapus ${persontType} ${persons.length}/${persons.length}`,
+      { id: toastId }
+    );
+  } catch (error) {
+    toastFirebaseError(error, toastId);
+    throw error;
+  }
 };
 
-// DELETE ALL PERSON
-export const updatePersons = (
-  datas: Persons[],
+export const updatePersons = async (
+  persons: Person[],
   persontType: "atlet" | "official" | "penari" | "koreografer",
-  changeData: (data: Persons) => Persons,
-  dispatch: Dispatch<UnknownAction>,
-  options?: {
-    onComplete?: () => void;
-    setSubmitting?: SetSubmitting;
-    toastId?: string | number;
-  }
+  changeData: (data: Person) => Person,
+  toastId?: string | number
 ) => {
-  const onComplete = options?.onComplete;
-  const setSubmitting = options?.setSubmitting;
-  const toastId = options?.toastId;
-
-  if (!datas || !datas.length) {
-    onComplete && onComplete();
-    return;
-  }
-  const repeater = (index: number) => {
-    if (index >= datas.length) {
-      onComplete && onComplete();
-      toast.success(
-        `Berhasil memperbaharui ${persontType} ${index}/${datas.length}`,
-        { id: toastId }
-      );
-      return;
+  let newPersons: Person[] = [];
+  try {
+    if (persons.length) {
+      newPersons = persons.map((person) => changeData(person));
+      for (let i = 0; i < persons.length; i++) {
+        toast.loading(
+          `Mengperbaharui ${persontType} ${i + 1}/${persons.length}`,
+          {
+            id: toastId,
+          }
+        );
+        switch (persontType) {
+          case "official":
+            await updateOfficial(newPersons[i] as OfficialState, false);
+            break;
+          case "atlet":
+            await updateAtlet(newPersons[i] as AtletState, false);
+            break;
+          case "penari":
+            await updatePenari(newPersons[i] as PenariState);
+            break;
+          case "koreografer":
+            await updateKoreografer(newPersons[i] as KoreograferState);
+            break;
+        }
+      }
     }
-    toast.loading(`Memperbaharui ${persontType} ${index + 1}/${datas.length}`, {
-      id: toastId,
-    });
-    const oldData = datas[index];
-    const newData = changeData(oldData);
-    const repeat = () => repeater(index + 1);
-    persontType == "official" &&
-      updateOfficial(newData as OfficialState, dispatch, {
-        setSubmitting,
-        onComplete: repeat,
-        withoutStatus: true,
-      });
-    persontType == "atlet" &&
-      updateAtlet(newData as AtletState, dispatch, {
-        setSubmitting,
-        onComplete: repeat,
-        withoutStatus: true,
-      });
-    persontType == "penari" &&
-      updatePenari(newData as PenariState, dispatch, {
-        setSubmitting,
-        onComplete: repeat,
-        withoutStatus: true,
-      });
-    persontType == "koreografer" &&
-      updateKoreografer(newData as KoreograferState, dispatch, {
-        setSubmitting,
-        onComplete: repeat,
-        withoutStatus: true,
-      });
+    toast.success(
+      `Berhasil mengperbaharui ${persontType} ${persons.length}/${persons.length}`,
+      { id: toastId }
+    );
+    return newPersons;
+  } catch (error) {
+    toastFirebaseError(error, toastId);
+    throw error;
+  }
+};
+
+export const getFileUrl = (
+  type: "atlet" | "penari" | "official" | "koreografer" | "payment",
+  id: string
+) => {
+  return {
+    fotoUrl: `${type}s/foto/${id}`,
+    kkUrl: `${type}s/kk/${id}`,
+    ktpUrl: `${type}s/ktp/${id}`,
+    buktiUrl: `payments/${id}`,
   };
-  repeater(0);
 };

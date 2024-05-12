@@ -15,6 +15,7 @@ import { confirmPayment } from "@/utils/payment/paymentFunctions";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
+import { updatePaymentRedux } from "@/utils/redux/silat/paymentsSlice";
 
 type Props = {
   payment: PaymentState;
@@ -29,12 +30,12 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
     values: ConfirmPaymentState
   ) => {
     if (payment.confirmed) {
-      !values.confirmedBy && setFieldValue("confirmedBy", payment.confirmedBy);
+      !values.confirmedBy && setFieldValue("confirmedBy", payment.confirmed.by);
       return;
     }
     !values.totalPembayaran &&
-      payment.totalPembayaran &&
-      setFieldValue("totalPembayaran", payment.totalPembayaran);
+      payment.pembayaran.total &&
+      setFieldValue("totalPembayaran", payment.pembayaran.total);
     !values.confirmedBy &&
       setFieldValue("confirmedBy", session.data?.user?.email);
   };
@@ -46,7 +47,10 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
     const title = confirmed ? "Batalkan Konfrimasi" : "Konfirmasi Pembayaran";
     const result = await confirm(title, "Apakah anda yakin?");
 
-    result && confirmPayment(payment, values.confirmedBy, dispatch, confirmed);
+    result &&
+      confirmPayment(payment, values.confirmedBy, confirmed.state).then(
+        (payment) => dispatch(updatePaymentRedux(payment))
+      );
   };
 
   return (
@@ -64,7 +68,7 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
               <div className="flex gap-1 flex-col sm:flex-row">
                 <ShowFile
                   label="Bukti Pembayararan"
-                  src={payment.downloadBuktiUrl}
+                  src={payment.bukti.downloadUrl}
                 />
                 <div className="input_group justify-normal">
                   <InputText
@@ -86,7 +90,7 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
                     onClick={() =>
                       props.setFieldValue(
                         "confirmedTotalPembayaran",
-                        payment.totalPembayaran
+                        payment.pembayaran.total
                         )
                       }
                       >

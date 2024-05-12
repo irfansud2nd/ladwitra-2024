@@ -12,7 +12,12 @@ import {
   SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
-import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  addAtletRedux,
+  setAtletToEditRedux,
+  updateAtletRedux,
+} from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 import { RootState } from "@/utils/redux/store";
 import {
   AtletState,
@@ -44,17 +49,22 @@ const AtletForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (atletToEdit.id) {
-      updateAtlet(atlet, dispatch, {
-        setSubmitting,
-        onComplete: () => {
+      updateAtlet(atlet)
+        .then((atlet) => {
+          dispatch(updateAtletRedux(atlet));
+          dispatch(setAtletToEditRedux(atletInitialValue));
           resetForm();
           setOpen(false);
-          dispatch(setAtletToEditRedux(atletInitialValue));
-        },
-        withoutStatus: true,
-      });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendAtlet(atlet, kontingen, dispatch, setSubmitting, resetForm);
+      sendAtlet(atlet, kontingen)
+        .then(({ atlet, kontingen }) => {
+          dispatch(addAtletRedux(atlet));
+          dispatch(updateKontingenRedux(kontingen));
+          resetForm();
+        })
+        .finally(() => setSubmitting(false));
     }
   };
 
@@ -72,8 +82,8 @@ const AtletForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (kontingen) {
-      !values.idKontingen && setFieldValue("idKontingen", kontingen.id);
-      !values.namaKontingen && setFieldValue("namaKontingen", kontingen.nama);
+      !values.kontingen.id && setFieldValue("kontingen.id", kontingen.id);
+      !values.kontingen.nama && setFieldValue("kontingen.nama", kontingen.nama);
     }
     if (atletToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, atletToEdit);

@@ -58,7 +58,9 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
   {
     id: "Tanggal Lahir",
     header: "Tanggal Lahir",
-    cell: ({ row }) => <div>{formatDate(row.original.tanggalLahir, true)}</div>,
+    cell: ({ row }) => (
+      <div>{formatDate(row.original.lahir.tanggal, true)}</div>
+    ),
   },
   {
     id: "Alamat Lengkap",
@@ -134,7 +136,7 @@ export const PenariColumnAdmin: ColumnDef<PenariState>[] = [
         let landscape = false;
         switch (tipe) {
           case "Pas Foto":
-            url = penari.downloadFotoUrl;
+            url = penari.foto.downloadUrl;
             break;
           // case "KK":
           //   url = penari.downloadKkUrl;

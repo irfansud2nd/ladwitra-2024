@@ -21,11 +21,14 @@ import {
 import {
   setSanggarRedux,
   setSanggarToEditRedux,
+  updateSanggarRedux,
 } from "@/utils/redux/jaipong/sanggarSlice";
 import {
   sendSanggar,
   updateSanggar,
 } from "@/utils/jaipong/sanggar/sanggarFunctions";
+import { addKoreografersRedux } from "@/utils/redux/jaipong/koreografersSlice";
+import { addPenarisRedux } from "@/utils/redux/jaipong/penarisSlice";
 
 type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,16 +50,26 @@ const SanggarForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (sanggarToEdit.id) {
-      updateSanggar(values, sanggarToEdit, dispatch, {
-        koreografers,
-        penaris,
-        setSubmitting,
-        onComplete: resetForm,
-      });
+      updateSanggar(values, sanggarToEdit, { koreografers, penaris })
+        .then(({ penaris, koreografers, sanggar }) => {
+          dispatch(updateSanggarRedux(sanggar));
+          dispatch(addKoreografersRedux(koreografers));
+          dispatch(addPenarisRedux(penaris));
+          dispatch(setSanggarToEditRedux(sanggarInitialValue));
+          resetForm();
+          setOpen(false);
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendSanggar(values, dispatch, resetForm, setSubmitting).then(() =>
-        setOpen(false)
-      );
+      sendSanggar(values)
+        .then((sanggar) => {
+          dispatch(setSanggarRedux(sanggar));
+          setOpen(false);
+        })
+        .finally(() => {
+          resetForm();
+          setSubmitting(false);
+        });
     }
   };
 

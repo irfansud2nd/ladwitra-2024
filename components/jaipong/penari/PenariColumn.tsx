@@ -21,6 +21,7 @@ import {
   isPenariPaid,
 } from "@/utils/jaipong/penari/penariFunctions";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 
 let columns: ColumnDef<PenariState>[] = [
   {
@@ -65,7 +66,10 @@ let columns: ColumnDef<PenariState>[] = [
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Penari", message, options);
-        result && deletePenari(penari, dispatch, sanggar);
+        result &&
+          deletePenari(penari, sanggar).then(
+            (sanggar) => sanggar && dispatch(updateSanggarRedux(sanggar))
+          );
       };
 
       return (

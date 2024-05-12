@@ -18,6 +18,7 @@ import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 
 let columns: ColumnDef<AtletState>[] = [
   {
@@ -37,12 +38,12 @@ let columns: ColumnDef<AtletState>[] = [
   {
     accessorKey: "tinggiBadan",
     header: "Tinggi Badan",
-    cell: ({ row }) => <div>{row.original.tinggiBadan} CM</div>,
+    cell: ({ row }) => <div>{row.original.badan.tinggi} CM</div>,
   },
   {
     accessorKey: "beratBadan",
     header: "Berat Badan",
-    cell: ({ row }) => <div>{row.original.beratBadan} KG</div>,
+    cell: ({ row }) => <div>{row.original.badan.berat} KG</div>,
   },
   {
     accessorKey: "waktuPendaftaran",
@@ -72,7 +73,11 @@ let columns: ColumnDef<AtletState>[] = [
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Atlet", message, options);
-        result && deleteAtlet(atlet, dispatch, kontingen);
+        result &&
+          deleteAtlet(atlet, kontingen).then(
+            (kontingen) =>
+              kontingen && dispatch(updateKontingenRedux(kontingen))
+          );
       };
 
       return (

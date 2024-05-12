@@ -7,7 +7,12 @@ import {
   SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setCountNomorPertandinganClient } from "@/utils/redux/admin/countSlice";
-import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  setAtletToEditRedux,
+  setPertandinganToEditRedux,
+  updateAtletRedux,
+} from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 import { RootState } from "@/utils/redux/store";
 import {
   AtletState,
@@ -47,7 +52,7 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: UnregisteredAtletState,
     resetForm: ResetForm,
     setSubmitting: SetSubmitting
@@ -118,27 +123,28 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
       };
     }
 
-    updateAtlet(newAtlet, dispatch, {
-      setSubmitting,
-      onComplete: () => {
-        if (pertandinganToEdit.id) {
-          setOpen(false);
-          resetForm();
-        } else {
-          dispatch(setCountNomorPertandinganClient(1));
-          setSubmitting(true);
-          const newKontingen: KontingenState = {
-            ...kontingen,
-            tagihan: kontingen.tagihan + biayaAtlet,
-            nomorPertandingan: kontingen.nomorPertandingan + 1,
-          };
-          updateKontingen(newKontingen, kontingen, dispatch, {
-            setSubmitting: setSubmitting,
-            onComplete: resetForm,
-          });
-        }
-      },
-    });
+    try {
+      const updatedAtlet = await updateAtlet(newAtlet);
+      dispatch(updateAtletRedux(updatedAtlet));
+      if (pertandinganToEdit.id) {
+        setSubmitting(false);
+        setOpen(false);
+        resetForm();
+      } else {
+        dispatch(setCountNomorPertandinganClient(1));
+        let newKontingen: KontingenState = kontingen;
+        newKontingen.pembayaran.tagihan += biayaAtlet;
+        newKontingen.nomorPertandingan += 1;
+        const { kontingen: updatedKontingen } = await updateKontingen(
+          newKontingen,
+          kontingen
+        );
+        dispatch(updateKontingenRedux(updatedKontingen));
+      }
+    } finally {
+      setSubmitting(false);
+      dispatch(setAtletToEditRedux(atletInitialValue));
+    }
   };
 
   const handleCancel = (resetForm: ResetForm) => {
@@ -200,19 +206,19 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
                 />
                 <InputText
                   label="Tinggi Badan"
-                  name="atlet.tinggiBadan"
+                  name="atlet.badan.tinggi"
                   helperText="(CM)"
                   formik={props}
-                  forceValue={atlet.tinggiBadan}
+                  forceValue={atlet.badan.tinggi}
                   forceDisabled
                   showOnEditOnly
                 />
                 <InputText
                   label="Berat Badan"
-                  name="atlet.beratBadan"
+                  name="atlet.badan.berat"
                   helperText="(KG)"
                   formik={props}
-                  forceValue={atlet.beratBadan}
+                  forceValue={atlet.badan.berat}
                   forceDisabled
                   showOnEditOnly
                 />

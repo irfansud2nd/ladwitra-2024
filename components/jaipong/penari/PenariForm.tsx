@@ -22,7 +22,12 @@ import {
   sendPenari,
   updatePenari,
 } from "@/utils/jaipong/penari/penariFunctions";
-import { setPenariToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
+import {
+  addPenariRedux,
+  setPenariToEditRedux,
+  updatePenariRedux,
+} from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import { RootState } from "@/utils/redux/store";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -44,16 +49,22 @@ const PenariForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (penariToEdit.id) {
-      updatePenari(penari, dispatch, {
-        setSubmitting,
-        onComplete: () => {
+      updatePenari(penari)
+        .then((penari) => {
+          dispatch(setPenariToEditRedux(penariInitialValue));
+          dispatch(updatePenariRedux(penari));
           resetForm();
           setOpen(false);
-          dispatch(setPenariToEditRedux(penariInitialValue));
-        },
-      });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendPenari(penari, sanggar, dispatch, setSubmitting, resetForm);
+      sendPenari(penari, sanggar)
+        .then(({ penari, sanggar }) => {
+          dispatch(addPenariRedux(penari));
+          dispatch(updateSanggarRedux(sanggar));
+          resetForm();
+        })
+        .finally(() => setSubmitting(false));
     }
   };
 
@@ -71,8 +82,8 @@ const PenariForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (sanggar) {
-      !values.idSanggar && setFieldValue("idSanggar", sanggar.id);
-      !values.namaSanggar && setFieldValue("namaSanggar", sanggar.nama);
+      !values.sanggar.id && setFieldValue("sanggar.id", sanggar.id);
+      !values.sanggar.nama && setFieldValue("sanggar.nama", sanggar.nama);
     }
     if (penariToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, penariToEdit);

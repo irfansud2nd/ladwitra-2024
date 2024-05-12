@@ -30,7 +30,7 @@ export const UnconfirmedColumn: ColumnDef<PaymentState>[] = [
     accessorKey: "totalPembayaran",
     header: "Jumlah Transaksi",
     cell: ({ row }) => (
-      <div>{formatToRupiah(row.original.totalPembayaran)}</div>
+      <div>{formatToRupiah(row.original.pembayaran.total)}</div>
     ),
   },
   {
@@ -47,7 +47,7 @@ export const UnconfirmedColumn: ColumnDef<PaymentState>[] = [
     id: "Waktu Pembayaran",
     header: "Waktu Pembayaran",
     accessorKey: "waktuPembayaran",
-    cell: ({ row }) => <div>{formatDate(row.original.waktuPembayaran)}</div>,
+    cell: ({ row }) => <div>{formatDate(row.original.pembayaran.waktu)}</div>,
   },
   {
     id: "Aksi",

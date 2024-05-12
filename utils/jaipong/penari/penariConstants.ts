@@ -43,17 +43,19 @@ export type PenariState = {
   waktuPendaftaran: number;
   creatorEmail: string;
   nama: string;
-  // NIK: string;
-  tempatLahir: string;
-  tanggalLahir: string;
   alamatLengkap: string;
   jenisKelamin: string;
+  email: string;
+  noHp: string;
+  lahir: {
+    tempat: string;
+    tanggal: string;
+  };
   tarian: {
     jenis: string;
     kelas: string;
     tingkatan: string;
     kategori: string;
-    // lagu: string;
   }[];
   lagu: {
     idTarian: string;
@@ -69,19 +71,14 @@ export type PenariState = {
   }[];
   idPembayaran: string[];
   nomorTarian: number;
-  idSanggar: string;
-  namaSanggar: string;
-  fotoFile: File | undefined;
-  downloadFotoUrl: string;
-  fotoUrl: string;
-  // kkFile: File | undefined;
-  // kkUrl: string;
-  // downloadKkUrl: string;
-  // ktpFile: File | undefined;
-  // ktpUrl: string;
-  // downloadKtpUrl: string;
-  email: string;
-  noHp: string;
+  sanggar: {
+    id: string;
+    nama: string;
+  };
+  foto: {
+    file?: File;
+    downloadUrl: string;
+  };
 };
 
 export const penariInitialValue: PenariState = {
@@ -89,9 +86,10 @@ export const penariInitialValue: PenariState = {
   creatorEmail: "",
   waktuPendaftaran: 0,
   nama: "",
-  // NIK: "",
-  tempatLahir: "",
-  tanggalLahir: "",
+  lahir: {
+    tempat: "",
+    tanggal: "",
+  },
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   tarian: [],
@@ -100,17 +98,13 @@ export const penariInitialValue: PenariState = {
   pembayaran: [],
   idPembayaran: [],
   nomorTarian: 0,
-  idSanggar: "",
-  namaSanggar: "",
-  fotoFile: undefined,
-  fotoUrl: "",
-  downloadFotoUrl: "",
-  // kkFile: undefined,
-  // kkUrl: "",
-  // downloadKkUrl: "",
-  // ktpFile: undefined,
-  // ktpUrl: "",
-  // downloadKtpUrl: "",
+  sanggar: {
+    id: "",
+    nama: "",
+  },
+  foto: {
+    downloadUrl: "",
+  },
   email: "",
   noHp: "",
 };

@@ -8,7 +8,11 @@ import {
   SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
-import { setKoreograferToEditRedux } from "@/utils/redux/jaipong/koreografersSlice";
+import {
+  addKoreograferRedux,
+  setKoreograferToEditRedux,
+  updateKoreograferRedux,
+} from "@/utils/redux/jaipong/koreografersSlice";
 import { RootState } from "@/utils/redux/store";
 import {
   KoreograferState,
@@ -25,6 +29,7 @@ import {
   sendKoreografer,
   updateKoreografer,
 } from "@/utils/jaipong/koreografer/koreograferFunctions";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 
 type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,16 +50,21 @@ const KoreograferForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (koreograferToEdit.id) {
-      updateKoreografer(koreografer, dispatch, {
-        setSubmitting,
-        onComplete: () => {
+      updateKoreografer(koreografer)
+        .then((koreografer) => {
+          dispatch(updateKoreograferRedux(koreografer));
           resetForm();
           setOpen(false);
-          dispatch(setKoreograferToEditRedux(koreograferInitialValue));
-        },
-      });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendKoreografer(koreografer, sanggar, dispatch, setSubmitting, resetForm);
+      sendKoreografer(koreografer, sanggar)
+        .then(({ koreografer, sanggar }) => {
+          dispatch(addKoreograferRedux(koreografer));
+          dispatch(updateSanggarRedux(sanggar));
+          resetForm();
+        })
+        .finally(() => setSubmitting(false));
     }
   };
 
@@ -72,8 +82,8 @@ const KoreograferForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (sanggar) {
-      !values.idSanggar && setFieldValue("idSanggar", sanggar.id);
-      !values.namaSanggar && setFieldValue("namaSanggar", sanggar.nama);
+      !values.sanggar.id && setFieldValue("sanggar.id", sanggar.id);
+      !values.sanggar.nama && setFieldValue("sanggar.nama", sanggar.nama);
     }
     if (koreograferToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, koreograferToEdit);

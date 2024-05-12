@@ -22,7 +22,7 @@ export type SetSubmitting = (isSubmitting: boolean) => void;
 // JENIS KELAMIN PESERTA
 export const jenisKelaminPeserta = ["Putra", "Putri"];
 
-export type Persons =
+export type Person =
   | OfficialState
   | AtletState
   | PenariState

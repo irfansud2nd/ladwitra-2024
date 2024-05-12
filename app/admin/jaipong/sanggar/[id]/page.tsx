@@ -29,11 +29,11 @@ const page = ({ params }: { params: { id: string } }) => {
 
   const fetchedKoreografers = useSelector(
     (state: RootState) => state.koreografers.all
-  ).filter((koreografer) => koreografer.idSanggar == idSanggar);
+  ).filter((koreografer) => koreografer.sanggar.id == idSanggar);
   const [koreografers, setKoreografers] = useState(fetchedKoreografers);
 
   const penaris = useSelector((state: RootState) => state.penaris.all).filter(
-    (penari) => penari.idSanggar == idSanggar
+    (penari) => penari.sanggar.id == idSanggar
   );
 
   const dispatch = useDispatch();

@@ -42,7 +42,7 @@ const InputText = ({
 
   let umur;
   if (under17) {
-    umur = calculateAge(values.tanggalLahir);
+    umur = calculateAge(values.lahir.tanggal);
   }
   return (
     <div

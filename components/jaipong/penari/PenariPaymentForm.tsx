@@ -17,10 +17,10 @@ import {
   paymentInitialValue,
   paymentValidationSchema,
 } from "@/utils/payment/paymentConstants";
-import {
-  sendJaipongPayment,
-  sendSilatPayment,
-} from "@/utils/payment/paymentFunctions";
+import { sendJaipongPayment } from "@/utils/payment/paymentFunctions";
+import { updatePenariRedux } from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
+import { addPaymentRedux } from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -45,26 +45,23 @@ const PenariPaymentForm = ({ selectedPenaris, setOpen }: Props) => {
     resetForm: ResetForm,
     setSubmitting: SetSubmitting
   ) => {
-    sendJaipongPayment(
-      payment,
-      selectedPenaris,
-      allPenaris,
-      sanggar,
-      dispatch,
-      setSubmitting,
-      () => {
+    sendJaipongPayment(payment, selectedPenaris, allPenaris, sanggar)
+      .then(({ penaris, sanggar, payment }) => {
+        dispatch(updateSanggarRedux(sanggar));
+        dispatch(addPaymentRedux(payment));
+        penaris.map((penari) => dispatch(updatePenariRedux(penari)));
         resetForm();
         setOpen(false);
-      }
-    );
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const setForm = (setFieldValue: SetFieldValue, values: PaymentState) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
-    !values.totalPembayaran &&
+    !values.pembayaran.total &&
       setFieldValue(
-        "totalPembayaran",
+        "pembayaran.total",
         formatToRupiah(getBiayaPenaris(selectedPenaris))
       );
   };

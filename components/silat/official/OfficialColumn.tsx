@@ -18,6 +18,7 @@ import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteOfficial } from "@/utils/silat/official/officialFunctions";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 
 let columns: ColumnDef<OfficialState>[] = [
   {
@@ -65,7 +66,11 @@ let columns: ColumnDef<OfficialState>[] = [
 
       const handleDelete = async (official: OfficialState) => {
         const result = await confirm("Hapus Official", "Apakah anda yakin?");
-        result && deleteOfficial(official, dispatch, kontingen);
+        result &&
+          deleteOfficial(official, kontingen).then(
+            (kontingen) =>
+              kontingen && dispatch(updateKontingenRedux(kontingen))
+          );
       };
       return (
         <>

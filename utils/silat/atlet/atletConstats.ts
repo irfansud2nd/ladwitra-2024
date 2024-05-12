@@ -1,34 +1,13 @@
 import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
 import * as Yup from "yup";
 
-// KATEGORI GENERATOR
-const alphabet = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "X",
-  "Y",
-  "Z",
-];
+const numberToAlphabet = (index: number) => {
+  return String.fromCharCode(index + "A".charCodeAt(0));
+};
+
+const alphabetToNumber = (letter: string) => {
+  return letter.toUpperCase().charCodeAt(0) - "A".charCodeAt(0);
+};
 
 const generateKategoriPertandingan = (
   endAlphabet: string,
@@ -37,7 +16,7 @@ const generateKategoriPertandingan = (
   bebasBawah?: { namaKelas: string; batasKelas?: number },
   bebasAtas?: { namaKelas: string; batasKelas?: number }
 ) => {
-  const repeatValue = alphabet.indexOf(endAlphabet);
+  const repeatValue = alphabetToNumber(endAlphabet);
   let kategoriArr: string[] = [];
   let startKategori: number = 0;
 
@@ -51,7 +30,9 @@ const generateKategoriPertandingan = (
   startKategori = start;
   for (let i = 0; i <= repeatValue; i++) {
     kategoriArr.push(
-      `Kelas ${alphabet[i]} (${startKategori}-${startKategori + step} KG)`
+      `Kelas ${numberToAlphabet(i)} (${startKategori}-${
+        startKategori + step
+      } KG)`
     );
     startKategori += step;
   }
@@ -107,12 +88,20 @@ export type AtletState = {
   creatorEmail: string;
   nama: string;
   NIK: string;
-  tempatLahir: string;
-  tanggalLahir: string;
-  beratBadan: string;
-  tinggiBadan: string;
+  idPembayaran: string[];
+  nomorPertandingan: number;
   alamatLengkap: string;
   jenisKelamin: string;
+  email: string;
+  noHp: string;
+  lahir: {
+    tempat: string;
+    tanggal: string;
+  };
+  badan: {
+    tinggi: string;
+    berat: string;
+  };
   pertandingan: {
     jenis: string;
     tingkatan: string;
@@ -122,21 +111,22 @@ export type AtletState = {
     idPertandingan: string;
     idPembayaran: string;
   }[];
-  idPembayaran: string[];
-  nomorPertandingan: number;
-  idKontingen: string;
-  namaKontingen: string;
-  fotoFile: File | undefined;
-  downloadFotoUrl: string;
-  fotoUrl: string;
-  kkFile: File | undefined;
-  kkUrl: string;
-  downloadKkUrl: string;
-  ktpFile: File | undefined;
-  ktpUrl: string;
-  downloadKtpUrl: string;
-  email: string;
-  noHp: string;
+  kontingen: {
+    id: string;
+    nama: string;
+  };
+  foto: {
+    file?: File;
+    downloadUrl: string;
+  };
+  kk: {
+    file?: File;
+    downloadUrl: string;
+  };
+  ktp: {
+    file?: File;
+    downloadUrl: string;
+  };
 };
 
 // ATLET INITIAL VALUE
@@ -146,27 +136,33 @@ export const atletInitialValue: AtletState = {
   waktuPendaftaran: 0,
   nama: "",
   NIK: "",
-  tempatLahir: "",
-  tanggalLahir: "",
-  beratBadan: "",
-  tinggiBadan: "",
+  lahir: {
+    tempat: "",
+    tanggal: "",
+  },
+  badan: {
+    berat: "",
+    tinggi: "",
+  },
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   pertandingan: [],
   pembayaran: [],
   idPembayaran: [],
   nomorPertandingan: 0,
-  idKontingen: "",
-  namaKontingen: "",
-  fotoFile: undefined,
-  fotoUrl: "",
-  downloadFotoUrl: "",
-  kkFile: undefined,
-  kkUrl: "",
-  downloadKkUrl: "",
-  ktpFile: undefined,
-  ktpUrl: "",
-  downloadKtpUrl: "",
+  kontingen: {
+    id: "",
+    nama: "",
+  },
+  foto: {
+    downloadUrl: "",
+  },
+  kk: {
+    downloadUrl: "",
+  },
+  ktp: {
+    downloadUrl: "",
+  },
   email: "",
   noHp: "",
 };
