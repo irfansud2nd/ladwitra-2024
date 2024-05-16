@@ -41,7 +41,7 @@ export const KoreograferColumnAdmin: ColumnDef<KoreograferState>[] = [
   {
     id: "Nama sanggar",
     header: "Nama sanggar",
-    accessorKey: "namasanggar",
+    accessorKey: "namaSanggar",
   },
   {
     id: "Email Pendaftar",

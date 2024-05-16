@@ -40,17 +40,23 @@ const TarianCell = ({ penari, idTarian }: Props) => {
         }
         if (tarian.jenis == "Tunggal") {
           return (
-            <span key={i}>
-              {getTarianId(tarian, { useSpace: true })} -{" "}
-              {getPenariLagu(penari, i, index)}
-            </span>
+            <>
+              <span key={i}>
+                {getTarianId(tarian, { useSpace: true })} -{" "}
+                {getPenariLagu(penari, i, index)}
+              </span>
+              {i < penari.tarian.length && <br />}
+            </>
           );
         } else {
           return (
-            <span key={i}>
-              {getTarianId(tarian, { useSpace: true })} -{" "}
-              {getPenariNamaTim(penari, i, index)}
-            </span>
+            <>
+              <span key={i}>
+                {getTarianId(tarian, { useSpace: true })} -{" "}
+                {getPenariNamaTim(penari, i, index)}
+              </span>
+              {i < penari.tarian.length && <br />}
+            </>
           );
         }
       })}
