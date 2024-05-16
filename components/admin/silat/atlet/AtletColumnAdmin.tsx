@@ -79,10 +79,10 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
     cell: ({ row }) => (
       <div>
         {row.original.pertandingan.map((pertandingan, i) => (
-          <p key={i}>
+          <>
             <span>{getPertandinganId(pertandingan, true)}</span>
-            <br />
-          </p>
+            {i < row.original.pertandingan.length && <br />}
+          </>
         ))}
       </div>
     ),
