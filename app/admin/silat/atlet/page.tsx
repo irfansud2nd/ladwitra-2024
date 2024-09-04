@@ -8,7 +8,7 @@ import axios from "axios";
 import { toastFirebaseError } from "@/utils/functions";
 import { addAtletsRedux } from "@/utils/redux/silat/atletsSlice";
 import { AtletColumnAdmin } from "@/components/admin/silat/atlet/AtletColumnAdmin";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 
 const page = () => {
   const [page, setPage] = useState(1);

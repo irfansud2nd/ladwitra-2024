@@ -8,7 +8,12 @@ import {
   SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
-import { setOfficialToEditRedux } from "@/utils/redux/silat/officialsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
+import {
+  addOfficialRedux,
+  setOfficialToEditRedux,
+  updateOfficialRedux,
+} from "@/utils/redux/silat/officialsSlice";
 import { RootState } from "@/utils/redux/store";
 import {
   OfficialState,
@@ -47,16 +52,21 @@ const OfficialForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (officialToEdit.id) {
-      updateOfficial(official, dispatch, {
-        setSubmitting,
-        onComplete: () => {
+      updateOfficial(official)
+        .then((official) => {
+          dispatch(updateOfficialRedux(official));
           resetForm();
           setOpen(false);
-          dispatch(setOfficialToEditRedux(officialInitialValue));
-        },
-      });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendOfficial(official, kontingen, dispatch, setSubmitting, resetForm);
+      sendOfficial(official, kontingen)
+        .then(({ official, kontingen }) => {
+          dispatch(addOfficialRedux(official));
+          dispatch(updateKontingenRedux(kontingen));
+          resetForm();
+        })
+        .finally(() => setSubmitting(false));
     }
   };
 

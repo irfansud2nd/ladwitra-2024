@@ -3,7 +3,7 @@ import { DataTable } from "@/components/utils/tabel/DataTable";
 import { useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { RegisteredAtletColumn } from "./RegisteredAtletColum";
-import { JenisPertandingan } from "@/utils/silat/atlet/atletConstats";
+import { JenisPertandingan } from "@/utils/silat/atlet/atletConstants";
 
 const RegisteredAtletTable = ({ jenis }: { jenis: JenisPertandingan }) => {
   const registeredAtlets = useSelector(

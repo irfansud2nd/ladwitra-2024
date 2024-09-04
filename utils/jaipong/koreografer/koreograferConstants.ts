@@ -17,8 +17,8 @@ export type KoreograferState = {
   idSanggar: string;
   namaSanggar: string;
   fotoFile: File | undefined;
-  fotoUrl: string;
   downloadFotoUrl: string;
+  fotoUrl: string;
 };
 
 // KOREOGRAFER INITIAL VALUE
@@ -32,8 +32,8 @@ export const koreograferInitialValue: KoreograferState = {
   idSanggar: "",
   namaSanggar: "",
   fotoFile: undefined,
-  fotoUrl: "",
   downloadFotoUrl: "",
+  fotoUrl: "",
 };
 
 // KOREOGRAFER VALIDATION SCHEMA

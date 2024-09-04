@@ -18,11 +18,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { setKontingenToEditRedux } from "@/utils/redux/silat/kontingenSlice";
+import {
+  deleteKontingenRedux,
+  setKontingenToEditRedux,
+} from "@/utils/redux/silat/kontingenSlice";
 import KontingenDialog from "./KontingenDialog";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { deleteKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { setAtletsRedux } from "@/utils/redux/silat/atletsSlice";
+import { setOfficialsRedux } from "@/utils/redux/silat/officialsSlice";
 
 const KontingenInfo = ({ show }: { show: boolean }) => {
   const kontingen = useSelector(
@@ -50,7 +55,11 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
       ? { cancelLabel: "Baik", cancelOnly: true }
       : undefined;
     const result = await confirm("Hapus Kontingen", message, options);
-    result && deleteKontingen(kontingen, officials, atlets, dispatch);
+    if (!result) return;
+    await deleteKontingen(kontingen, officials, atlets);
+    dispatch(deleteKontingenRedux());
+    dispatch(setAtletsRedux([]));
+    dispatch(setOfficialsRedux([]));
   };
 
   return (

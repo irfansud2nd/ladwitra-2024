@@ -18,10 +18,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
-import { setSanggarToEditRedux } from "@/utils/redux/jaipong/sanggarSlice";
+import {
+  deleteSanggarRedux,
+  setSanggarToEditRedux,
+} from "@/utils/redux/jaipong/sanggarSlice";
 import SanggarDialog from "./SanggarDialog";
 import { deleteSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { setAtletsRedux } from "@/utils/redux/silat/atletsSlice";
+import { setOfficialsRedux } from "@/utils/redux/silat/officialsSlice";
 
 const SanggarInfo = ({ show }: { show: boolean }) => {
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
@@ -46,7 +51,12 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
       ? { cancelLabel: "Baik", cancelOnly: true }
       : undefined;
     const result = await confirm("Hapus Sanggar", message, options);
-    result && deleteSanggar(sanggar, koreografers, penaris, dispatch);
+    result &&
+      deleteSanggar(sanggar, koreografers, penaris).then(() => {
+        dispatch(deleteSanggarRedux());
+        dispatch(setAtletsRedux([]));
+        dispatch(setOfficialsRedux([]));
+      });
   };
 
   return (

@@ -1,4 +1,3 @@
-import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { SanggarState } from "../sanggar/sanggarConstants";
 import {
   PenariState,
@@ -9,384 +8,135 @@ import {
   laguTunggalPrestasi,
   tingkatanKategoriJaipong,
 } from "./penariConstants";
-import { SetSubmitting } from "@/utils/form/FormConstants";
 import { toast } from "sonner";
 import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
-import { sendFile } from "@/utils/form/FormFunctions";
+import { getFileUrl, sendFile } from "@/utils/form/FormFunctions";
 import { toastFirebaseError } from "@/utils/functions";
 import { managePersonOnSanggar } from "../sanggar/sanggarFunctions";
 import axios from "axios";
-import {
-  addPenariRedux,
-  deletePenariRedux,
-  updatePenariRedux,
-} from "@/utils/redux/jaipong/penarisSlice";
 
-// SELECT DEFAULT CATEGORY
 export const selectCategoryJaipong = (tingkatan: string) => {
   return tingkatanKategoriJaipong.find((item) => item.tingkatan == tingkatan)
     ?.kategori as string[];
 };
 
-// SELECT LAGU JAIONG
 export const selectLagu = (kelas: string) => {
   if (kelas == "Pemasalan") return laguTunggalPemasalan;
   return laguTunggalPrestasi;
 };
 
-// SEND PENARI
-export const sendPenari = (
-  penari: PenariState,
-  sanggar: SanggarState,
-  dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  resetForm: () => void
+export const sendPenari = async (
+  dataPenari: PenariState,
+  dataSanggar: SanggarState
 ) => {
-  if (!penari.creatorEmail) {
-    toast.error("Creator Email not found !");
-    setSubmitting(false);
-    return;
-  }
+  const toastId = toast.loading("Mendaftarkan Penari");
   const newDocRef = doc(collection(firestore, "penaris"));
   const id = newDocRef.id;
-  const fotoUrl = `penaris/pasFoto/${id}`;
-  const kkUrl = `penaris/kk/${id}`;
-  const ktpUrl = `penaris/ktp/${id}`;
-  let downloadFotoUrl = "";
-  let downloadKtpUrl = "";
-  let downloadKkUrl = "";
-  const toastId = toast.loading("Mendaftarkan penari");
 
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // SEND FOTO
-        toast.loading("Mengunggah pas foto penari", { id: toastId });
-        if (!penari.fotoFile) {
-          stepController(2);
-          return;
-        }
-        sendFile(penari.fotoFile, fotoUrl)
-          .then((url) => {
-            downloadFotoUrl = url;
-            stepController(4);
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      // case 2:
-      //   // SEND KTP
-      //   toast.loading("Mengunggah KTP penari", { id: toastId });
-      //   if (!penari.ktpFile) {
-      //     stepController(3);
-      //     return;
-      //   }
-      //   sendFile(penari.ktpFile, ktpUrl)
-      //     .then((url) => {
-      //       downloadKtpUrl = url;
-      //       stepController(3);
-      //     })
-      //     .catch((error) => {
-      //       setSubmitting(false);
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      // case 3:
-      //   // SEND KK
-      //   toast.loading("Mengunggah KK penari", { id: toastId });
-      //   if (!penari.kkFile) {
-      //     stepController(4);
-      //     return;
-      //   }
-      //   sendFile(penari.kkFile, kkUrl)
-      //     .then((url) => {
-      //       downloadKkUrl = url;
-      //       stepController(4);
-      //     })
-      //     .catch((error) => {
-      //       setSubmitting(false);
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      case 4:
-        // ADD PENARI TO SANGGAR
-        toast.loading("Menambahkan penari ke sanggar", { id: toastId });
-        managePersonOnSanggar(sanggar, "penaris", id, "add", dispatch)
-          .then(() => {
-            stepController(5);
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 5:
-        // SEND PENARI
-        toast.loading("Mendaftarkan penari", { id: toastId });
-        delete penari.fotoFile;
-        // delete penari.kkFile;
-        // delete penari.ktpFile;
-        const dataPenari: PenariState = {
-          ...penari,
-          id,
-          fotoUrl,
-          downloadFotoUrl,
-          // ktpUrl,
-          // downloadKtpUrl,
-          // kkUrl,
-          // downloadKkUrl,
-          waktuPendaftaran: Date.now(),
-        };
+  let penari: PenariState = { ...dataPenari, id, waktuPendaftaran: Date.now() };
+  let sanggar: SanggarState = dataSanggar;
 
-        axios
-          .post("/api/penaris", dataPenari)
-          .then((res) => {
-            toast.success("Penari berhasil didaftarkan", { id: toastId });
-            dispatch(addPenariRedux(dataPenari));
-            setSubmitting(false);
-            resetForm();
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
+  const { fotoUrl } = getFileUrl("penari", id);
+
+  try {
+    if (!penari.creatorEmail) {
+      throw { message: "Email pendaftar tidak ditemukan" };
     }
-  };
-  stepController(1);
-};
+    if (!penari.fotoFile) throw { message: "Pas foto tidak ditemukan" };
 
-// UPDATE PENARI
-export const updatePenari = (
-  penari: PenariState,
-  dispatch: Dispatch<UnknownAction>,
-  options?: {
-    setSubmitting?: SetSubmitting;
-    onComplete?: () => void;
-    withoutStatus?: boolean;
+    // SEND FOTO
+    toast.loading("Mengunggah pas foto penari", { id: toastId });
+    penari.downloadFotoUrl = await sendFile(penari.fotoFile, fotoUrl);
+    delete penari.fotoFile;
+
+    // ADD PENARI TO SANGGAR
+    toast.loading("Menambahkan penari ke sanggar", { id: toastId });
+    sanggar = await managePersonOnSanggar(sanggar, penari, "add");
+
+    // SEND PENARI
+    toast.loading("Mendaftarkan penari", { id: toastId });
+    await axios.post("/api/penaris", penari);
+    toast.success("Penari berhasil didaftarkan", { id: toastId });
+    return { sanggar, penari };
+  } catch (error) {
+    toastFirebaseError(error, toastId);
+    throw error;
   }
-) => {
-  const setSubmitting = options?.setSubmitting;
-  const onComplete = options?.onComplete;
-  const withoutStatus = options?.withoutStatus || false;
-
-  const toastId = withoutStatus
-    ? undefined
-    : toast.loading("Memperbaharui data penari");
-
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // CHECK IF PAS FOTO CHANGED
-        if (penari.fotoFile) {
-          stepController(2);
-        } else {
-          stepController(10);
-        }
-        break;
-      case 2:
-        // DELETE OLD PAS FOTO
-        !withoutStatus &&
-          toast.loading("Menghapus pas foto lama", { id: toastId });
-        axios
-          .delete(`/api/file?directory=${penari.fotoUrl}`)
-          .then(() => stepController(3))
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // UPLOAD NEW PAS FOTO
-        !withoutStatus &&
-          toast.loading("Mengunggah pas foto baru", { id: toastId });
-        penari.fotoFile &&
-          sendFile(penari.fotoFile, penari.fotoUrl)
-            .then((url) => {
-              penari.downloadFotoUrl = url;
-              stepController(10);
-            })
-            .catch((error) => {
-              setSubmitting && setSubmitting(false);
-              toastFirebaseError(error, toastId);
-            });
-        break;
-      // case 4:
-      //   // CHECK IF KTP CHANGED
-      //   if (penari.ktpFile) {
-      //     stepController(5);
-      //   } else {
-      //     stepController(7);
-      //   }
-      //   break;
-      // case 5:
-      //   // DELETE OLD KTP
-      //   !withoutStatus && toast.loading("Menghapus KTP lama", { id: toastId });
-      //   axios
-      //     .delete(`/api/file?directory=${penari.ktpUrl}`)
-      //     .then(() => stepController(6))
-      //     .catch((error) => {
-      //       setSubmitting && setSubmitting(false);
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      // case 6:
-      //   // UPLOAD NEW KTP
-      //   !withoutStatus && toast.loading("Mengunggah KTP baru", { id: toastId });
-      //   penari.ktpFile &&
-      //     sendFile(penari.ktpFile, penari.ktpUrl)
-      //       .then((url) => {
-      //         penari.downloadKtpUrl = url;
-      //         stepController(7);
-      //       })
-      //       .catch((error) => {
-      //         setSubmitting && setSubmitting(false);
-      //         toastFirebaseError(error, toastId);
-      //       });
-      //   break;
-      // case 7:
-      //   // CHECK IF KK CHANGED
-      //   if (penari.kkFile) {
-      //     stepController(8);
-      //   } else {
-      //     stepController(10);
-      //   }
-      //   break;
-      // case 8:
-      //   // DELETE OLD KK
-      //   !withoutStatus && toast.loading("Menghapus KK lama", { id: toastId });
-      //   axios
-      //     .delete(`/api/file?directory=${penari.kkUrl}`)
-      //     .then(() => stepController(9))
-      //     .catch((error) => {
-      //       setSubmitting && setSubmitting(false);
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      // case 9:
-      //   // UPLOAD NEW KK
-      //   !withoutStatus && toast.loading("Mengunggah KK baru", { id: toastId });
-      //   penari.kkFile &&
-      //     sendFile(penari.kkFile, penari.kkUrl)
-      //       .then((url) => {
-      //         penari.downloadKkUrl = url;
-      //         stepController(7);
-      //       })
-      //       .catch((error) => {
-      //         setSubmitting && setSubmitting(false);
-      //         toastFirebaseError(error, toastId);
-      //       });
-      //   break;
-      case 10:
-        // UPDATE PENARI
-        !withoutStatus &&
-          toast.loading("Memperbaharui data penari", { id: toastId });
-        penari.fotoFile && delete penari.fotoFile;
-        // penari.ktpFile && delete penari.ktpFile;
-        // penari.kkFile && delete penari.kkFile;
-
-        axios
-          .patch("/api/penaris", penari)
-          .then((res) => {
-            dispatch(updatePenariRedux(penari));
-            !withoutStatus &&
-              toast.success("Penari berhasil diperbaharui", { id: toastId });
-            onComplete && onComplete();
-            setSubmitting && setSubmitting(false);
-          })
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-    }
-  };
-  stepController(1);
 };
 
-// DELETE PENARI
-export const deletePenari = (
-  penari: PenariState,
-  dispatch: Dispatch<UnknownAction>,
-  sanggar?: SanggarState,
-  onComplete?: () => void,
+export const updatePenari = async (
+  dataPenari: PenariState,
   withStatus: boolean = true
 ) => {
-  const toastId = withStatus ? toast.loading("Menghapus penari") : undefined;
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // DELETE PENARI FROM SANGGAR
-        if (!sanggar) {
-          stepController(2);
-          return;
-        }
-        withStatus &&
-          toast.loading("Menghapus penari dari sanggar", { id: toastId });
-        managePersonOnSanggar(
-          sanggar,
-          "penaris",
-          penari.id,
-          "delete",
-          dispatch,
-          { penari }
-        )
-          .then(() => {
-            stepController(2);
-          })
-          .catch((error) => toastFirebaseError(error, toastId));
-        break;
-      case 2:
-        // DELETE PAS FOTO
-        withStatus &&
-          toast.loading("Menghapus pas foto penari", { id: toastId });
-        axios
-          .delete(`/api/file?directory=${penari.fotoUrl}`)
-          .then(() => stepController(5))
-          .catch((error) => {
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      // case 3:
-      //   // DELETE KTP
-      //   withStatus && toast.loading("Menghapus KTP penari", { id: toastId });
-      //   axios
-      //     .delete(`/api/file?directory=${penari.ktpUrl}`)
-      //     .then(() => stepController(4))
-      //     .catch((error) => {
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      // case 4:
-      //   // DELETE KK
-      //   withStatus && toast.loading("Menghapus kk penari", { id: toastId });
-      //   axios
-      //     .delete(`/api/file?directory=${penari.kkUrl}`)
-      //     .then(() => stepController(5))
-      //     .catch((error) => {
-      //       toastFirebaseError(error, toastId);
-      //     });
-      //   break;
-      case 5:
-        // DELETE PENARI
-        withStatus && toast.loading("Menghapus penari", { id: toastId });
-        axios
-          // .delete(`/api/penaris/${penari.creatorEmail}/${penari.id}`)
-          .delete(`/api/penaris?email=${penari.creatorEmail}&id=${penari.id}`)
-          .then((res) => {
-            withStatus &&
-              toast.success("Penari berhasil dihapus", { id: toastId });
-            dispatch(deletePenariRedux(penari));
-            onComplete && onComplete();
-          })
-          .catch((error) => toastFirebaseError(error, toastId));
-        break;
+  let penari: PenariState = { ...dataPenari };
+  const { fotoUrl } = getFileUrl("penari", penari.id);
+  const toastId = withStatus
+    ? toast.loading("Memperbaharui data penari")
+    : undefined;
+  try {
+    // UPLOAD NEW PAS FOTO
+    if (penari.fotoFile) {
+      withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
+      penari.downloadFotoUrl = await sendFile(penari.fotoFile, fotoUrl);
+      delete penari.fotoFile;
     }
-  };
-  stepController(1);
+
+    withStatus && toast.loading("Memperbaharui penari", { id: toastId });
+    await axios.patch("/api/penaris", penari);
+    withStatus &&
+      toast.success("Penari berhasil diperbaharui", { id: toastId });
+
+    return penari;
+  } catch (error) {
+    withStatus && toastFirebaseError(error, toastId);
+    throw error;
+  }
+};
+
+export const deletePenari = async (
+  dataPenari: PenariState,
+  dataSanggar?: SanggarState
+) => {
+  const withStatus = dataSanggar ? false : true;
+  const toastId = withStatus ? toast.loading("Menghapus penari") : undefined;
+
+  let penari: PenariState = dataPenari;
+  let sanggar: SanggarState | undefined = dataSanggar;
+
+  const { fotoUrl, ktpUrl, kkUrl } = getFileUrl("penari", penari.id);
+  try {
+    // DELETE PENARI FROM SANGGAR
+    if (dataSanggar) {
+      withStatus &&
+        toast.loading("Menghapus penari dari sanggar", { id: toastId });
+      sanggar = await managePersonOnSanggar(dataSanggar, penari, "delete");
+    }
+
+    // DELETE PAS FOTO
+    withStatus && toast.loading("Menghapus pas foto penari", { id: toastId });
+    await axios.delete(`/api/file?directory=${fotoUrl}`);
+
+    // DELETE KTP
+    withStatus && toast.loading("Menghapus KTP", { id: toastId });
+    await axios.delete(`/api/file?directory=${ktpUrl}`);
+
+    // DELETE KK
+    withStatus && toast.loading("Menghapus KK", { id: toastId });
+    await axios.delete(`/api/file?directory=${kkUrl}`);
+
+    // DELETE PENARI
+    withStatus && toast.loading("Menghapus penari", { id: toastId });
+    await axios.delete(
+      `/api/penaris?email=${penari.creatorEmail}&id=${penari.id}`
+    );
+    withStatus && toast.success("Penari berhasil dihapus", { id: toastId });
+
+    return sanggar;
+  } catch (error) {
+    withStatus && toastFirebaseError(error, toastId);
+    throw error;
+  }
 };
 
 export const getBiayaPenaris = (penaris: PenariState[]) => {

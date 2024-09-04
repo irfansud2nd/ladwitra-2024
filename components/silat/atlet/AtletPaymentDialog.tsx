@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AtletPaymentForm from "./AtletPaymentForm";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import { useState } from "react";
 
 const AtletPaymentDialog = ({

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
-import { atletInitialValue } from "@/utils/silat/atlet/atletConstats";
+import { atletInitialValue } from "@/utils/silat/atlet/atletConstants";
 import { closePayment, closePendaftaran, editOnly } from "@/utils/constants";
 
 const AtletDialog = () => {

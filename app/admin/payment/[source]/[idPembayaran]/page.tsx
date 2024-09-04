@@ -31,9 +31,16 @@ import {
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
 import { paymentInitialValue } from "@/utils/payment/paymentConstants";
 import { deletePayment } from "@/utils/payment/paymentFunctions";
-import { setPaymentToConfirmRedux } from "@/utils/redux/silat/paymentsSlice";
+import { updatePenariRedux } from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
+import { updateAtletRedux } from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
+import {
+  deletePaymentRedux,
+  setPaymentToConfirmRedux,
+} from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import { getPertandinganId } from "@/utils/silat/atlet/atletFunctions";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import axios from "axios";
@@ -150,15 +157,22 @@ const page = ({
     const result = await confirm("Batalkan Pembayaran");
     if (result) {
       setDisable(true);
-      deletePayment(
-        source,
-        group,
-        pesertas,
-        payment,
-        setDisable,
-        dispatch,
-        () => setInvalidId(true)
-      );
+      deletePayment(source, group, pesertas, payment)
+        .then(({ newGroup, newPesertas }) => {
+          dispatch(
+            source == "silat"
+              ? updateKontingenRedux(newGroup as KontingenState)
+              : updateSanggarRedux(newGroup as SanggarState)
+          );
+          newPesertas.map((peserta) => {
+            source == "silat"
+              ? dispatch(updateAtletRedux(peserta as AtletState))
+              : dispatch(updatePenariRedux(peserta as PenariState));
+          });
+          dispatch(deletePaymentRedux(payment));
+          setInvalidId(true);
+        })
+        .finally(() => setDisable(false));
     }
   };
 

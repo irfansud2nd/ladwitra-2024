@@ -12,14 +12,19 @@ import {
   SetFieldValue,
 } from "@/utils/form/FormConstants";
 import { setFieldValues } from "@/utils/form/FormFunctions";
-import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  addAtletRedux,
+  setAtletToEditRedux,
+  updateAtletRedux,
+} from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 import { RootState } from "@/utils/redux/store";
 import {
   AtletState,
   atletInitialValue,
   atletValidationSchema,
   atletValidationSchemaWithoutFile,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import { sendAtlet, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -44,17 +49,22 @@ const AtletForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (atletToEdit.id) {
-      updateAtlet(atlet, dispatch, {
-        setSubmitting,
-        onComplete: () => {
+      updateAtlet(atlet)
+        .then((atlet) => {
+          dispatch(updateAtletRedux(atlet));
+          dispatch(setAtletToEditRedux(atletInitialValue));
           resetForm();
           setOpen(false);
-          dispatch(setAtletToEditRedux(atletInitialValue));
-        },
-        withoutStatus: true,
-      });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      sendAtlet(atlet, kontingen, dispatch, setSubmitting, resetForm);
+      sendAtlet(atlet, kontingen)
+        .then(({ atlet, kontingen }) => {
+          dispatch(addAtletRedux(atlet));
+          dispatch(updateKontingenRedux(kontingen));
+          resetForm();
+        })
+        .finally(() => setSubmitting(false));
     }
   };
 

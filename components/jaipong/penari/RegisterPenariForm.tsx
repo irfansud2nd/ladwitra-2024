@@ -33,7 +33,12 @@ import {
   setCountNomorTarian,
   setCountNomorTarianClient,
 } from "@/utils/redux/admin/countSlice";
-import { setTarianToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
+import {
+  setPenariToEditRedux,
+  setTarianToEditRedux,
+  updatePenariRedux,
+} from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 import { RootState } from "@/utils/redux/store";
 
 import { Form, Formik, FormikProps } from "formik";
@@ -54,7 +59,7 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
   const sanggar = useSelector((state: RootState) => state.sanggar.registered);
   const dispatch = useDispatch();
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: UnregisteredPenariState,
     resetForm: ResetForm,
     setSubmitting: SetSubmitting
@@ -204,29 +209,30 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
       };
     }
 
-    updatePenari(newPenari, dispatch, {
-      setSubmitting,
-      onComplete: () => {
-        if (tarianToEdit.id) {
-          setOpen(false);
-          resetForm();
-        } else {
-          dispatch(setCountNomorTarianClient(1));
-          setSubmitting(true);
-          const biaya =
-            jenis == "Rampak" ? biayaPenari.rampak : biayaPenari.tunggal;
-          const newSanggar: SanggarState = {
-            ...sanggar,
-            tagihan: sanggar.tagihan + biaya,
-            nomorTarian: sanggar.nomorTarian + 1,
-          };
-          updateSanggar(newSanggar, sanggar, dispatch, {
-            setSubmitting,
-            onComplete: resetForm,
-          });
-        }
-      },
-    });
+    try {
+      const updatedPenari = await updatePenari(newPenari);
+      dispatch(updatePenariRedux(updatedPenari));
+      if (tarianToEdit.id) {
+        setSubmitting(false);
+        setOpen(false);
+        resetForm();
+      } else {
+        dispatch(setCountNomorTarianClient(1));
+        let newSanggar = { ...sanggar };
+        newSanggar.tagihan +=
+          jenis == "Rampak" ? biayaPenari.rampak : biayaPenari.tunggal;
+        newSanggar.nomorTarian += 1;
+
+        const { sanggar: updatedSanggar } = await updateSanggar(
+          newSanggar,
+          sanggar
+        );
+        dispatch(updateSanggarRedux(updatedSanggar));
+      }
+    } finally {
+      setSubmitting(false);
+      dispatch(setPenariToEditRedux(penariInitialValue));
+    }
   };
 
   const handleCancel = (resetForm: ResetForm) => {

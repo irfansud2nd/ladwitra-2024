@@ -13,6 +13,23 @@ export type PaymentState = {
   source: "jaipong" | "silat";
 };
 
+// id: string;
+// pembayaran: {
+//   total: number;
+//   waktu: number;
+// };
+// bukti: {
+//   file?: undefined;
+//   downloadUrl: string;
+// };
+// creatorEmail: string;
+// noHp: string;
+// confirmed: {
+//   state: boolean;
+//   by: string;
+// };
+// source: "jaipong" | "silat";
+
 export const paymentInitialValue: PaymentState = {
   id: "",
   totalPembayaran: 0,

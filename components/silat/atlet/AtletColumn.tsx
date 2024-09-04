@@ -9,15 +9,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
-import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  deleteAtletRedux,
+  setAtletToEditRedux,
+} from "@/utils/redux/silat/atletsSlice";
 import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
 import { closePendaftaran, editOnly } from "@/utils/constants";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 
 let columns: ColumnDef<AtletState>[] = [
   {
@@ -72,7 +76,11 @@ let columns: ColumnDef<AtletState>[] = [
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Atlet", message, options);
-        result && deleteAtlet(atlet, dispatch, kontingen);
+        if (!result) return;
+        const updatedKontingen = await deleteAtlet(atlet, kontingen);
+        dispatch(deleteAtletRedux(atlet));
+        if (!updatedKontingen) return;
+        dispatch(updateKontingenRedux(updatedKontingen));
       };
 
       return (

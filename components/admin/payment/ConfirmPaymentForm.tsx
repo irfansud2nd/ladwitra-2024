@@ -15,6 +15,7 @@ import { confirmPayment } from "@/utils/payment/paymentFunctions";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
+import { updatePaymentRedux } from "@/utils/redux/silat/paymentsSlice";
 
 type Props = {
   payment: PaymentState;
@@ -46,7 +47,10 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
     const title = confirmed ? "Batalkan Konfrimasi" : "Konfirmasi Pembayaran";
     const result = await confirm(title, "Apakah anda yakin?");
 
-    result && confirmPayment(payment, values.confirmedBy, dispatch, confirmed);
+    result &&
+      confirmPayment(payment, values.confirmedBy, confirmed).then((payment) =>
+        dispatch(updatePaymentRedux(payment))
+      );
   };
 
   return (

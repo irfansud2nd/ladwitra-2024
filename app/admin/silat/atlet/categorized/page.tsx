@@ -12,7 +12,7 @@ import { RootState } from "@/utils/redux/store";
 import {
   jenisPertandingan,
   tingkatanKategoriSilat,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import {
   getAllPertandinganUrl,
   splitPertandinganId,

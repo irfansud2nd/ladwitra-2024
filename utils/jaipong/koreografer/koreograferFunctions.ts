@@ -1,242 +1,128 @@
-import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { SanggarState } from "../sanggar/sanggarConstants";
 import { KoreograferState } from "./koreograferConstants";
-import { SetSubmitting } from "@/utils/form/FormConstants";
 import { toast } from "sonner";
 import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
-import { sendFile } from "@/utils/form/FormFunctions";
+import { getFileUrl, sendFile } from "@/utils/form/FormFunctions";
 import { toastFirebaseError } from "@/utils/functions";
 import { managePersonOnSanggar } from "../sanggar/sanggarFunctions";
 import axios from "axios";
-import {
-  addKoreograferRedux,
-  deleteKoreograferRedux,
-  updateKoreograferRedux,
-} from "@/utils/redux/jaipong/koreografersSlice";
 
-// SEND KOREOGRAFER
-export const sendKoreografer = (
-  koreografer: KoreograferState,
-  sanggar: SanggarState,
-  dispatch: Dispatch<UnknownAction>,
-  setSubmitting: SetSubmitting,
-  resetForm: () => void
+export const sendKoreografer = async (
+  dataKoreografer: KoreograferState,
+  dataSanggar: SanggarState
 ) => {
-  if (!koreografer.creatorEmail) {
-    toast.error("Creator Email not found !");
-    setSubmitting(false);
-    return;
-  }
+  const toastId = toast.loading("Mendaftarkan Koreografer");
   const newDocRef = doc(collection(firestore, "koreografers"));
   const id = newDocRef.id;
-  const fotoUrl = `koreografers/pasFoto/${id}`;
-  let downloadFotoUrl = "";
-  const toastId = toast.loading("Mendaftarkan koreografer");
 
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // SEND FOTO
-        toast.loading("Mengunggah pas foto koreografer", { id: toastId });
-        koreografer.fotoFile &&
-          sendFile(koreografer.fotoFile, fotoUrl)
-            .then((url) => {
-              downloadFotoUrl = url;
-              stepController(2);
-            })
-            .catch((error) => {
-              setSubmitting(false);
-              toastFirebaseError(error, toastId);
-            });
-        break;
-      case 2:
-        // ADD KOREOGRAFER TO SANGGAR IF EVENT ID
-        toast.loading("Menambahkan koreografer ke sanggar", { id: toastId });
-        managePersonOnSanggar(sanggar, "koreografers", id, "add", dispatch)
-          .then(() => {
-            stepController(3);
-          })
-          .catch((error) => {
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // SEND KOREOGRAFER
-        toast.loading("Mendaftarkan koreografer", { id: toastId });
-
-        delete koreografer.fotoFile;
-        const data: KoreograferState = {
-          ...koreografer,
-          id,
-          fotoUrl,
-          downloadFotoUrl,
-          waktuPendaftaran: Date.now(),
-        };
-
-        axios
-          .post("/api/koreografers", data)
-          .then((res) => {
-            toast.success("Koreografer berhasil didaftarkan", { id: toastId });
-            dispatch(addKoreograferRedux(data));
-            setSubmitting(false);
-            resetForm();
-          })
-          .catch((error) => {
-            setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-    }
+  let koreografer: KoreograferState = {
+    ...dataKoreografer,
+    id,
+    waktuPendaftaran: Date.now(),
   };
-  stepController(1);
-};
+  let sanggar: SanggarState = dataSanggar;
 
-// UPDATE OFFFICIAL
-export const updateKoreografer = (
-  koreografer: KoreograferState,
-  dispatch: Dispatch<UnknownAction>,
-  options?: {
-    setSubmitting?: SetSubmitting;
-    onComplete?: () => void;
-    withoutStatus?: boolean;
+  const { fotoUrl } = getFileUrl("koreografer", id);
+
+  try {
+    if (!koreografer.creatorEmail) {
+      throw { message: "Email pendaftar tidak ditemukan" };
+    }
+    if (!koreografer.fotoFile) throw { message: "Pas foto tidak ditemukan" };
+
+    // SEND FOTO
+    toast.loading("Mengunggah pas foto koreografer", { id: toastId });
+    koreografer.downloadFotoUrl = await sendFile(koreografer.fotoFile, fotoUrl);
+    delete koreografer.fotoFile;
+
+    // ADD OFFIICAL TO SANGGAR
+    toast.loading("Menambahkan koreografer ke sanggar", { id: toastId });
+    sanggar = await managePersonOnSanggar(sanggar, koreografer, "add");
+
+    // SEND KOREOGRAFER
+    toast.loading("Mendaftarkan koreografer", { id: toastId });
+    await axios.post("/api/koreografers", koreografer);
+    toast.success("Koreografer berhasil didaftarkan", { id: toastId });
+    return { koreografer, sanggar };
+  } catch (error) {
+    toastFirebaseError(error, toastId);
+    throw error;
   }
-) => {
-  const setSubmitting = options?.setSubmitting;
-  const onComplete = options?.onComplete;
-  const withoutStatus = options?.withoutStatus || false;
-
-  const toastId = withoutStatus
-    ? undefined
-    : toast.loading("Memperbaharui data official");
-
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // CHECK IF PAS FOTO CHANGED
-        if (koreografer.fotoFile) {
-          stepController(2);
-        } else {
-          stepController(4);
-        }
-        break;
-      case 2:
-        // DELETE OLD PAS FOTO
-        !withoutStatus &&
-          toast.loading("Menghapus pas foto lama", { id: toastId });
-        axios
-          .delete(`/api/file?directory=${koreografer.fotoUrl}`)
-          .then(() => stepController(3))
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // UPLOAD NEW PAS FOTO
-        !withoutStatus &&
-          toast.loading("Mengunggah pas foto baru", { id: toastId });
-        koreografer.fotoFile &&
-          sendFile(koreografer.fotoFile, koreografer.fotoUrl)
-            .then((url) => {
-              koreografer.downloadFotoUrl = url;
-              stepController(4);
-            })
-            .catch((error) => {
-              setSubmitting && setSubmitting(false);
-              toastFirebaseError(error, toastId);
-            });
-        break;
-      case 4:
-        // UPDATE KOREOGRAFER
-        !withoutStatus &&
-          toast.loading("Memperbaharui data official", { id: toastId });
-        koreografer.fotoFile && delete koreografer.fotoFile;
-
-        axios
-          .patch("/api/koreografers", koreografer)
-          .then((res) => {
-            dispatch(updateKoreograferRedux(koreografer));
-            !withoutStatus &&
-              toast.success("Official berhasil diperbaharui", {
-                id: toastId,
-              });
-            onComplete && onComplete();
-            setSubmitting && setSubmitting(false);
-          })
-          .catch((error) => {
-            setSubmitting && setSubmitting(false);
-            toastFirebaseError(error, toastId);
-          });
-        break;
-    }
-  };
-  stepController(1);
 };
 
-// DELETE KOREOGRAFER
-export const deleteKoreografer = (
-  koreografer: KoreograferState,
-  dispatch: Dispatch<UnknownAction>,
-  sanggar?: SanggarState,
-  onComplete?: () => void,
+export const updateKoreografer = async (
+  dataKoreografer: KoreograferState,
   withStatus: boolean = true
 ) => {
+  let koreografer: KoreograferState = { ...dataKoreografer };
+  const { fotoUrl } = getFileUrl("koreografer", koreografer.id);
+  const toastId = withStatus
+    ? toast.loading("Memperbaharui data koreografer")
+    : undefined;
+  try {
+    // UPLOAD NEW PAS FOTO
+    if (koreografer.fotoFile) {
+      withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
+      koreografer.downloadFotoUrl = await sendFile(
+        koreografer.fotoFile,
+        fotoUrl
+      );
+      delete koreografer.fotoFile;
+    }
+
+    // UPDATE KOREOGRAFER
+    withStatus &&
+      toast.loading("Memperbaharui data koreografer", { id: toastId });
+    axios.patch("/api/koreografers", koreografer);
+    withStatus &&
+      toast.success("Koreografer berhasil diperbaharui", { id: toastId });
+
+    return koreografer;
+  } catch (error) {
+    withStatus && toastFirebaseError(error, toastId);
+    throw error;
+  }
+};
+
+export const deleteKoreografer = async (
+  dataKoreografer: KoreograferState,
+  dataSanggar?: SanggarState
+) => {
+  const withStatus = dataSanggar ? false : true;
   const toastId = withStatus
     ? toast.loading("Menghapus koreografer")
     : undefined;
-  const stepController = (step: number) => {
-    switch (step) {
-      case 1:
-        // DELETE FROM SANGGAR
-        if (!sanggar) {
-          stepController(2);
-          return;
-        }
-        withStatus &&
-          toast.loading("Menghapus koreografer dari sanggar", { id: toastId });
-        managePersonOnSanggar(
-          sanggar,
-          "koreografers",
-          koreografer.id,
-          "delete",
-          dispatch
-        )
-          .then((s) => {
-            stepController(2);
-          })
-          .catch((error) => toastFirebaseError(error, toastId));
-        break;
-      case 2:
-        // DELETE PAS FOTO
-        withStatus &&
-          toast.loading("Menghapus pas foto koreografer", { id: toastId });
-        axios
-          .delete(`/api/file?directory=${koreografer.fotoUrl}`)
-          .then(() => stepController(3))
-          .catch((error) => {
-            toastFirebaseError(error, toastId);
-          });
-        break;
-      case 3:
-        // DELETE KOREOGRAFER
-        withStatus && toast.loading("Menghapus koreografer", { id: toastId });
-        axios
-          // .delete(
-          //   `/api/koreografers/${koreografer.creatorEmail}/${koreografer.id}`
-          // )
-          .delete(
-            `/api/koreografers?email=${koreografer.creatorEmail}&id=${koreografer.id}`
-          )
-          .then((res) => {
-            withStatus &&
-              toast.success("Koreografer berhasil dihapus", { id: toastId });
-            dispatch(deleteKoreograferRedux(koreografer));
-            onComplete && onComplete();
-          })
-          .catch((error) => toastFirebaseError(error, toastId));
-        break;
+
+  let koreografer: KoreograferState = dataKoreografer;
+  let sanggar: SanggarState | undefined = dataSanggar;
+
+  const { fotoUrl } = getFileUrl("koreografer", koreografer.id);
+
+  try {
+    // DELETE KOREOGRAFER FROM SANGGAR
+    if (dataSanggar) {
+      withStatus &&
+        toast.loading("Menghapus koreografer dari sanggar", { id: toastId });
+      sanggar = await managePersonOnSanggar(dataSanggar, koreografer, "delete");
     }
-  };
-  stepController(1);
+
+    // DELETE PAS FOTO
+    withStatus &&
+      toast.loading("Menghapus pas foto koreografer", { id: toastId });
+    await axios.delete(`/api/file?directory=${fotoUrl}`);
+
+    // DELETE KOREOGRAFER
+    withStatus && toast.loading("Menghapus koreografer", { id: toastId });
+    await axios.delete(
+      `/api/koreografers?email=${koreografer.creatorEmail}&id=${koreografer.id}`
+    );
+    withStatus &&
+      toast.success("Koreografer berhasil dihapus", { id: toastId });
+
+    return sanggar;
+  } catch (error) {
+    withStatus && toastFirebaseError(error, toastId);
+    throw error;
+  }
 };

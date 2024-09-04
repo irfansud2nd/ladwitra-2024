@@ -1,34 +1,13 @@
 import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
 import * as Yup from "yup";
 
-// KATEGORI GENERATOR
-const alphabet = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "X",
-  "Y",
-  "Z",
-];
+const numberToAlphabet = (index: number) => {
+  return String.fromCharCode(index + "A".charCodeAt(0));
+};
+
+const alphabetToNumber = (letter: string) => {
+  return letter.toUpperCase().charCodeAt(0) - "A".charCodeAt(0);
+};
 
 const generateKategoriPertandingan = (
   endAlphabet: string,
@@ -37,7 +16,7 @@ const generateKategoriPertandingan = (
   bebasBawah?: { namaKelas: string; batasKelas?: number },
   bebasAtas?: { namaKelas: string; batasKelas?: number }
 ) => {
-  const repeatValue = alphabet.indexOf(endAlphabet);
+  const repeatValue = alphabetToNumber(endAlphabet);
   let kategoriArr: string[] = [];
   let startKategori: number = 0;
 
@@ -51,7 +30,9 @@ const generateKategoriPertandingan = (
   startKategori = start;
   for (let i = 0; i <= repeatValue; i++) {
     kategoriArr.push(
-      `Kelas ${alphabet[i]} (${startKategori}-${startKategori + step} KG)`
+      `Kelas ${numberToAlphabet(i)} (${startKategori}-${
+        startKategori + step
+      } KG)`
     );
     startKategori += step;
   }

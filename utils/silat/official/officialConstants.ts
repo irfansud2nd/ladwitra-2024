@@ -17,8 +17,8 @@ export type OfficialState = {
   idKontingen: string;
   namaKontingen: string;
   fotoFile: File | undefined;
-  fotoUrl: string;
   downloadFotoUrl: string;
+  fotoUrl: string;
 };
 
 // OFFICIAL INITIAL VALUE
@@ -32,8 +32,8 @@ export const officialInitialValue: OfficialState = {
   idKontingen: "",
   namaKontingen: "",
   fotoFile: undefined,
-  fotoUrl: "",
   downloadFotoUrl: "",
+  fotoUrl: "",
 };
 
 // OFFICIAL VALIDATION SCHEMA

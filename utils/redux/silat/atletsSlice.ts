@@ -3,7 +3,7 @@ import { compare } from "@/utils/functions";
 import {
   AtletState,
   atletInitialValue,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type FilteredAtlets = {

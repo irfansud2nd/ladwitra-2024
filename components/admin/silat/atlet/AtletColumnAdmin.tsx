@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { getPertandinganId } from "@/utils/silat/atlet/atletFunctions";

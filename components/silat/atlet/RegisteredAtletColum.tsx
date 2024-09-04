@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { useDispatch, useSelector } from "react-redux";
 import { isAtletPaid, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
@@ -19,7 +19,11 @@ import { useState } from "react";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import { updateKontingen } from "@/utils/silat/kontingen/kontingenFunctions";
 import { editOnly, closePendaftaran } from "@/utils/constants";
-import { setPertandinganToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  setPertandinganToEditRedux,
+  updateAtletRedux,
+} from "@/utils/redux/silat/atletsSlice";
+import { updateKontingenRedux } from "@/utils/redux/silat/kontingenSlice";
 
 let columns: ColumnDef<AtletState>[] = [
   {
@@ -91,20 +95,27 @@ let columns: ColumnDef<AtletState>[] = [
             pertandingan: newPertandingan,
             nomorPertandingan: atlet.nomorPertandingan - 1,
           };
-          updateAtlet(newAtlet, dispatch, {
-            setSubmitting: setLoading,
-            onComplete: () => {
-              setLoading(true);
-              const newKontingen: KontingenState = {
-                ...kontingen,
-                tagihan: kontingen.tagihan - biayaAtlet,
-                nomorPertandingan: kontingen.nomorPertandingan - 1,
-              };
-              updateKontingen(newKontingen, kontingen, dispatch, {
-                setSubmitting: setLoading,
-              });
-            },
-          });
+
+          try {
+            setLoading(true);
+
+            let newKontingen: KontingenState = { ...kontingen };
+
+            newKontingen.tagihan -= biayaAtlet;
+            newKontingen.nomorPertandingan -= 1;
+
+            const updatedAtlet = await updateAtlet(newAtlet);
+
+            const { kontingen: updatedKontingen } = await updateKontingen(
+              newKontingen,
+              kontingen
+            );
+
+            dispatch(updateAtletRedux(updatedAtlet));
+            dispatch(updateKontingenRedux(updatedKontingen));
+          } finally {
+            setLoading(false);
+          }
         }
       };
 

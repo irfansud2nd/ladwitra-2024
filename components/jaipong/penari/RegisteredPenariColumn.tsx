@@ -27,7 +27,11 @@ import {
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
 import { updateSanggar } from "@/utils/jaipong/sanggar/sanggarFunctions";
 import { editOnly, closePendaftaran } from "@/utils/constants";
-import { setTarianToEditRedux } from "@/utils/redux/jaipong/penarisSlice";
+import {
+  setTarianToEditRedux,
+  updatePenariRedux,
+} from "@/utils/redux/jaipong/penarisSlice";
+import { updateSanggarRedux } from "@/utils/redux/jaipong/sanggarSlice";
 
 let columns: ColumnDef<PenariState>[] = [
   {
@@ -150,24 +154,27 @@ let columns: ColumnDef<PenariState>[] = [
             nomorTarian: penari.nomorTarian - 1,
           };
 
-          updatePenari(newPenari, dispatch, {
-            setSubmitting: setLoading,
-            onComplete: () => {
-              setLoading(true);
-              const biaya =
-                penari.tarian[0].jenis == "Rampak"
-                  ? biayaPenari.rampak
-                  : biayaPenari.tunggal;
-              const newSanggar: SanggarState = {
-                ...sanggar,
-                tagihan: sanggar.tagihan - biaya,
-                nomorTarian: sanggar.nomorTarian - 1,
-              };
-              updateSanggar(newSanggar, sanggar, dispatch, {
-                setSubmitting: setLoading,
-              });
-            },
-          });
+          try {
+            setLoading(true);
+
+            const biaya =
+              penari.tarian[0].jenis == "Rampak"
+                ? biayaPenari.rampak
+                : biayaPenari.tunggal;
+            let newSanggar: SanggarState = { ...sanggar };
+            newSanggar.tagihan -= biaya;
+            newSanggar.nomorTarian -= 1;
+
+            const updatedPenari = await updatePenari(newPenari);
+            const { sanggar: updatedSanggar } = await updateSanggar(
+              newSanggar,
+              sanggar
+            );
+            dispatch(updatePenariRedux(updatedPenari));
+            dispatch(updateSanggarRedux(updatedSanggar));
+          } finally {
+            setLoading(false);
+          }
         }
       };
 

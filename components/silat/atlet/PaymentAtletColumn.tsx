@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getAtletPaymentId } from "@/utils/silat/atlet/atletFunctions";

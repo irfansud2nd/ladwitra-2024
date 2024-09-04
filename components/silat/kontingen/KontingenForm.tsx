@@ -22,9 +22,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setKontingenRedux,
   setKontingenToEditRedux,
+  updateKontingenRedux,
 } from "@/utils/redux/silat/kontingenSlice";
 import { RootState } from "@/utils/redux/store";
 import { setFieldValues } from "@/utils/form/FormFunctions";
+import { addAtletsRedux } from "@/utils/redux/silat/atletsSlice";
+import { addOfficialsRedux } from "@/utils/redux/silat/officialsSlice";
 
 type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,16 +51,22 @@ const KontingenForm = ({ setOpen }: Props) => {
     setSubmitting: SetSubmitting
   ) => {
     if (kontingenToEdit.id) {
-      updateKontingen(values, kontingenToEdit, dispatch, {
-        setSubmitting,
-        onComplete: resetForm,
-        officials,
-        atlets,
-      });
+      updateKontingen(values, kontingenToEdit, { officials, atlets })
+        .then(({ atlets, officials }) => {
+          dispatch(addAtletsRedux(atlets));
+          dispatch(addOfficialsRedux(officials));
+          dispatch(setKontingenToEditRedux(kontingenInitialValue));
+          dispatch(updateKontingenRedux(values));
+          resetForm();
+          setOpen(false);
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     } else {
       sendKontingen(values)
-        .then((res) => {
-          dispatch(setKontingenRedux(res as KontingenState));
+        .then((kontingen) => {
+          dispatch(setKontingenRedux(kontingen));
           setOpen(false);
         })
         .finally(() => {
