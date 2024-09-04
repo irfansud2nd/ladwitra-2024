@@ -29,12 +29,12 @@ export const sendOfficial = async (
     if (!official.creatorEmail) {
       throw { message: "Email pendaftar tidak ditemukan" };
     }
-    if (!official.foto.file) throw { message: "Pas foto tidak ditemukan" };
+    if (!official.fotoFile) throw { message: "Pas foto tidak ditemukan" };
 
     // SEND FOTO
     toast.loading("Mengunggah pas foto official", { id: toastId });
-    official.foto.downloadUrl = await sendFile(official.foto.file, fotoUrl);
-    delete official.foto.file;
+    official.downloadFotoUrl = await sendFile(official.fotoFile, fotoUrl);
+    delete official.fotoFile;
 
     // ADD OFFIICAL TO KONTINGEN
     toast.loading("Menambahkan official ke kontingen", { id: toastId });
@@ -62,10 +62,10 @@ export const updateOfficial = async (
     : undefined;
   try {
     // UPLOAD NEW PAS FOTO
-    if (official.foto.file) {
+    if (official.fotoFile) {
       withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
-      official.foto.downloadUrl = await sendFile(official.foto.file, fotoUrl);
-      delete official.foto.file;
+      official.downloadFotoUrl = await sendFile(official.fotoFile, fotoUrl);
+      delete official.fotoFile;
     }
 
     // UPDATE OFFICIAL
@@ -85,7 +85,7 @@ export const deleteOfficial = async (
   dataOfficial: OfficialState,
   dataKontingen?: KontingenState
 ) => {
-  const withStatus = dataKontingen ? false : true;
+  const withStatus = !!dataKontingen;
   const toastId = withStatus ? toast.loading("Menghapus official") : undefined;
 
   let official: OfficialState = dataOfficial;

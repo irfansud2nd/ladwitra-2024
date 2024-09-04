@@ -24,7 +24,7 @@ import {
   atletInitialValue,
   atletValidationSchema,
   atletValidationSchemaWithoutFile,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import { sendAtlet, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
 import { Form, Formik, FormikProps } from "formik";
 import { useSession } from "next-auth/react";
@@ -82,8 +82,8 @@ const AtletForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (kontingen) {
-      !values.kontingen.id && setFieldValue("kontingen.id", kontingen.id);
-      !values.kontingen.nama && setFieldValue("kontingen.nama", kontingen.nama);
+      !values.idKontingen && setFieldValue("idKontingen", kontingen.id);
+      !values.namaKontingen && setFieldValue("namaKontingen", kontingen.nama);
     }
     if (atletToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, atletToEdit);

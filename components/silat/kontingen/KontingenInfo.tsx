@@ -43,7 +43,7 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
 
   const handleDelete = async () => {
     let message = "";
-    if (kontingen.pembayaran.ids.length) {
+    if (kontingen.idPembayaran.length) {
       message =
         "Kontingen yang sudah melakukan pembayaran tidak dapat dihapus.";
     } else {
@@ -51,11 +51,12 @@ const KontingenInfo = ({ show }: { show: boolean }) => {
         message += `${kontingen.atlets.length} Atlet, dan ${kontingen.officials.length} Official akan ikut terhapus. `;
       message += "Apakah anda yakin?";
     }
-    const options = kontingen.pembayaran.ids.length
+    const options = kontingen.idPembayaran.length
       ? { cancelLabel: "Baik", cancelOnly: true }
       : undefined;
     const result = await confirm("Hapus Kontingen", message, options);
-    result && (await deleteKontingen(kontingen, officials, atlets));
+    if (!result) return;
+    await deleteKontingen(kontingen, officials, atlets);
     dispatch(deleteKontingenRedux());
     dispatch(setAtletsRedux([]));
     dispatch(setOfficialsRedux([]));

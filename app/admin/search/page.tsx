@@ -11,7 +11,7 @@ import { toastFirebaseError } from "@/utils/functions";
 import { KoreograferState } from "@/utils/jaipong/koreografer/koreograferConstants";
 import { PenariState } from "@/utils/jaipong/penari/penariConstants";
 import { SanggarState } from "@/utils/jaipong/sanggar/sanggarConstants";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import { OfficialState } from "@/utils/silat/official/officialConstants";
 import axios from "axios";

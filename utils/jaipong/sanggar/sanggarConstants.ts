@@ -9,11 +9,9 @@ export const sanggarInitialValue: SanggarState = {
   penaris: [],
   nomorTarian: 0,
   koreografers: [],
-  pembayaran: {
-    ids: [],
-    total: 0,
-    tagihan: 0,
-  },
+  idPembayaran: [],
+  totalPembayaran: 0,
+  tagihan: 0,
 };
 
 // SANGGAR STATE
@@ -25,11 +23,9 @@ export type SanggarState = {
   penaris: string[];
   nomorTarian: number;
   koreografers: string[];
-  pembayaran: {
-    ids: string[];
-    total: number;
-    tagihan: number;
-  };
+  idPembayaran: string[];
+  totalPembayaran: number;
+  tagihan: number;
 };
 
 // SANGGAR VALIDATION SCHEMA

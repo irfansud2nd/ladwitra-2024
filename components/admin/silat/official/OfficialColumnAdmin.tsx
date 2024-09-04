@@ -69,7 +69,7 @@ export const OfficialColumnAdmin: ColumnDef<OfficialState>[] = [
       const { showFile, ShowFileDialog } = useShowFileDialog();
 
       const handleClick = () => {
-        showFile(`Pas Foto ${official.nama}`, official.foto.downloadUrl);
+        showFile(`Pas Foto ${official.nama}`, official.downloadFotoUrl);
       };
       return (
         <>

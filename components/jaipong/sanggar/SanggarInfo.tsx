@@ -40,14 +40,14 @@ const SanggarInfo = ({ show }: { show: boolean }) => {
 
   const handleDelete = async () => {
     let message = "";
-    if (sanggar.pembayaran.ids.length) {
+    if (sanggar.idPembayaran.length) {
       message = "Sanggar yang sudah melakukan pembayaran tidak dapat dihapus.";
     } else {
       if (sanggar.penaris.length)
         message += `${sanggar.penaris.length} Penari, dan ${sanggar.koreografers.length} Official akan ikut terhapus. `;
       message += "Apakah anda yakin?";
     }
-    const options = sanggar.pembayaran.ids.length
+    const options = sanggar.idPembayaran.length
       ? { cancelLabel: "Baik", cancelOnly: true }
       : undefined;
     const result = await confirm("Hapus Sanggar", message, options);

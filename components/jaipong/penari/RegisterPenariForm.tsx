@@ -218,8 +218,8 @@ const RegisterPenariForm = ({ setOpen, jenis }: Props) => {
         resetForm();
       } else {
         dispatch(setCountNomorTarianClient(1));
-        let newSanggar = sanggar;
-        newSanggar.pembayaran.tagihan +=
+        let newSanggar = { ...sanggar };
+        newSanggar.tagihan +=
           jenis == "Rampak" ? biayaPenari.rampak : biayaPenari.tunggal;
         newSanggar.nomorTarian += 1;
 

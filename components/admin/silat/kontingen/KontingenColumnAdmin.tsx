@@ -50,12 +50,12 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
     accessorKey: "totalPembayaran",
     header: "Status",
     cell: ({ row }) => {
-      const { total, tagihan } = row.original.pembayaran;
-      if (total == 0 && tagihan > 0)
+      const { totalPembayaran, tagihan } = row.original;
+      if (totalPembayaran == 0 && tagihan > 0)
         return <div className="text-red-500">Belum dibayar</div>;
-      if (total < tagihan)
+      if (totalPembayaran < tagihan)
         return <div className="text-yellow-500">Belum lunas</div>;
-      if (total >= tagihan) {
+      if (totalPembayaran >= tagihan) {
         return <div className="text-green-500">Lunas</div>;
       }
     },
@@ -64,16 +64,14 @@ export const KontingenColumnAdmin: ColumnDef<KontingenState>[] = [
     id: "Tagihan",
     header: "Tagihan",
     accessorKey: "tagihan",
-    cell: ({ row }) => (
-      <div>{formatToRupiah(row.original.pembayaran.tagihan)}</div>
-    ),
+    cell: ({ row }) => <div>{formatToRupiah(row.original.tagihan)}</div>,
   },
   {
     id: "Pembayaran",
     header: "Pembayaran",
     accessorKey: "totalPembayaran",
     cell: ({ row }) => (
-      <div>{formatToRupiah(row.original.pembayaran.total)}</div>
+      <div>{formatToRupiah(row.original.totalPembayaran)}</div>
     ),
   },
   {

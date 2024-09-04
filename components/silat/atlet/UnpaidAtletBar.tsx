@@ -1,4 +1,4 @@
-import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstants";
 import AtletPaymentDialog from "./AtletPaymentDialog";
 import { Row } from "@tanstack/react-table";
 

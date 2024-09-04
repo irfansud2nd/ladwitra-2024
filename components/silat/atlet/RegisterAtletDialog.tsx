@@ -6,7 +6,7 @@ import RegisterAtletForm from "./RegisterAtletForm";
 import {
   JenisPertandingan,
   atletInitialValue,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import { closePayment, closePendaftaran, editOnly } from "@/utils/constants";

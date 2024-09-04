@@ -12,7 +12,10 @@ import { FiMoreHorizontal } from "react-icons/fi";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { OfficialState } from "@/utils/silat/official/officialConstants";
-import { setOfficialToEditRedux } from "@/utils/redux/silat/officialsSlice";
+import {
+  deleteOfficialRedux,
+  setOfficialToEditRedux,
+} from "@/utils/redux/silat/officialsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
@@ -66,11 +69,11 @@ let columns: ColumnDef<OfficialState>[] = [
 
       const handleDelete = async (official: OfficialState) => {
         const result = await confirm("Hapus Official", "Apakah anda yakin?");
-        result &&
-          deleteOfficial(official, kontingen).then(
-            (kontingen) =>
-              kontingen && dispatch(updateKontingenRedux(kontingen))
-          );
+        if (!result) return;
+        const updatedKontingen = await deleteOfficial(official, kontingen);
+        dispatch(deleteOfficialRedux(official));
+        if (!updatedKontingen) return;
+        dispatch(updateKontingenRedux(updatedKontingen));
       };
       return (
         <>

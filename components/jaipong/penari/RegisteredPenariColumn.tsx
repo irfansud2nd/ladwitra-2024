@@ -156,21 +156,21 @@ let columns: ColumnDef<PenariState>[] = [
 
           try {
             setLoading(true);
-            const updatedPenari = await updatePenari(newPenari);
-            dispatch(updatePenariRedux(updatedPenari));
-            setLoading(true);
+
             const biaya =
               penari.tarian[0].jenis == "Rampak"
                 ? biayaPenari.rampak
                 : biayaPenari.tunggal;
-            let newSanggar: SanggarState = sanggar;
-            newSanggar.pembayaran.tagihan -= biaya;
+            let newSanggar: SanggarState = { ...sanggar };
+            newSanggar.tagihan -= biaya;
             newSanggar.nomorTarian -= 1;
 
+            const updatedPenari = await updatePenari(newPenari);
             const { sanggar: updatedSanggar } = await updateSanggar(
               newSanggar,
               sanggar
             );
+            dispatch(updatePenariRedux(updatedPenari));
             dispatch(updateSanggarRedux(updatedSanggar));
           } finally {
             setLoading(false);

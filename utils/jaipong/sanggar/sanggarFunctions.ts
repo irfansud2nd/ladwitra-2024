@@ -38,7 +38,7 @@ export const managePersonOnSanggar = async (
   let penari: PenariState | undefined = undefined;
   let koreografer: KoreograferState | undefined = undefined;
 
-  (person as PenariState).lahir
+  (person as PenariState).tanggalLahir
     ? (penari = person as PenariState)
     : (koreografer = person as KoreograferState);
 
@@ -51,7 +51,7 @@ export const managePersonOnSanggar = async (
 
   if (penari && action == "delete") {
     data.nomorTarian -= penari.nomorTarian;
-    data.pembayaran.tagihan -= getBiayaPenari(penari);
+    data.tagihan -= getBiayaPenari(penari);
   }
 
   try {

@@ -47,10 +47,8 @@ export type PenariState = {
   jenisKelamin: string;
   email: string;
   noHp: string;
-  lahir: {
-    tempat: string;
-    tanggal: string;
-  };
+  tanggalLahir: string;
+  tempatLahir: string;
   tarian: {
     jenis: string;
     kelas: string;
@@ -71,14 +69,11 @@ export type PenariState = {
   }[];
   idPembayaran: string[];
   nomorTarian: number;
-  sanggar: {
-    id: string;
-    nama: string;
-  };
-  foto: {
-    file?: File;
-    downloadUrl: string;
-  };
+  idSanggar: string;
+  namaSanggar: string;
+  fotoFile: File | undefined;
+  downloadFotoUrl: string;
+  fotoUrl: string;
 };
 
 export const penariInitialValue: PenariState = {
@@ -86,10 +81,8 @@ export const penariInitialValue: PenariState = {
   creatorEmail: "",
   waktuPendaftaran: 0,
   nama: "",
-  lahir: {
-    tempat: "",
-    tanggal: "",
-  },
+  tempatLahir: "",
+  tanggalLahir: "",
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   tarian: [],
@@ -98,13 +91,11 @@ export const penariInitialValue: PenariState = {
   pembayaran: [],
   idPembayaran: [],
   nomorTarian: 0,
-  sanggar: {
-    id: "",
-    nama: "",
-  },
-  foto: {
-    downloadUrl: "",
-  },
+  idSanggar: "",
+  namaSanggar: "",
+  fotoFile: undefined,
+  downloadFotoUrl: "",
+  fotoUrl: "",
   email: "",
   noHp: "",
 };

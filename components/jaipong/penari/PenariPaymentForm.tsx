@@ -59,9 +59,9 @@ const PenariPaymentForm = ({ selectedPenaris, setOpen }: Props) => {
   const setForm = (setFieldValue: SetFieldValue, values: PaymentState) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
-    !values.pembayaran.total &&
+    !values.totalPembayaran &&
       setFieldValue(
-        "pembayaran.total",
+        "totalPembayaran",
         formatToRupiah(getBiayaPenaris(selectedPenaris))
       );
   };

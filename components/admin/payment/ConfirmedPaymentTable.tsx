@@ -35,7 +35,7 @@ const ConfirmedPaymentTable = ({ source }: { source: "silat" | "jaipong" }) => {
 
     let url = `/api/payments?status=confirmed&source=${source}&timestamp=${time}&limit=${limit}`;
     if (exception?.length)
-      url += `&exception=${exception.map((item) => item.pembayaran.waktu)}`;
+      url += `&exception=${exception.map((item) => item.waktuPembayaran)}`;
 
     axios
       // .get(`/api/payments/confirmed/${source}/${time}`)
@@ -59,7 +59,7 @@ const ConfirmedPaymentTable = ({ source }: { source: "silat" | "jaipong" }) => {
   }, [page]);
 
   useEffect(() => {
-    if (data.length) setTimestamp(data[data.length - 1].pembayaran.waktu);
+    if (data.length) setTimestamp(data[data.length - 1].waktuPembayaran);
   }, [data]);
 
   useEffect(() => {

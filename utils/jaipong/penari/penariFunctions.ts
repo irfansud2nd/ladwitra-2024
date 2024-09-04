@@ -43,12 +43,12 @@ export const sendPenari = async (
     if (!penari.creatorEmail) {
       throw { message: "Email pendaftar tidak ditemukan" };
     }
-    if (!penari.foto.file) throw { message: "Pas foto tidak ditemukan" };
+    if (!penari.fotoFile) throw { message: "Pas foto tidak ditemukan" };
 
     // SEND FOTO
     toast.loading("Mengunggah pas foto penari", { id: toastId });
-    penari.foto.downloadUrl = await sendFile(penari.foto.file, fotoUrl);
-    delete penari.foto.file;
+    penari.downloadFotoUrl = await sendFile(penari.fotoFile, fotoUrl);
+    delete penari.fotoFile;
 
     // ADD PENARI TO SANGGAR
     toast.loading("Menambahkan penari ke sanggar", { id: toastId });
@@ -76,10 +76,10 @@ export const updatePenari = async (
     : undefined;
   try {
     // UPLOAD NEW PAS FOTO
-    if (penari.foto.file) {
+    if (penari.fotoFile) {
       withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
-      penari.foto.downloadUrl = await sendFile(penari.foto.file, fotoUrl);
-      delete penari.foto.file;
+      penari.downloadFotoUrl = await sendFile(penari.fotoFile, fotoUrl);
+      delete penari.fotoFile;
     }
 
     withStatus && toast.loading("Memperbaharui penari", { id: toastId });

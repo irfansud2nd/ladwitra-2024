@@ -4,7 +4,7 @@ import axios from "axios";
 import { collection, doc } from "firebase/firestore";
 import { toast } from "sonner";
 import { OfficialState } from "../official/officialConstants";
-import { AtletState, biayaAtlet } from "../atlet/atletConstats";
+import { AtletState, biayaAtlet } from "../atlet/atletConstants";
 import { updatePersons, deletePersons } from "@/utils/form/FormFunctions";
 import { toastFirebaseError } from "@/utils/functions";
 
@@ -36,7 +36,7 @@ export const managePersonOnKontingen = async (
   let atlet: AtletState | undefined = undefined;
   let official: OfficialState | undefined = undefined;
 
-  (person as AtletState).lahir
+  (person as AtletState).tanggalLahir
     ? (atlet = person as AtletState)
     : (official = person as OfficialState);
 
@@ -48,7 +48,7 @@ export const managePersonOnKontingen = async (
 
   if (atlet && action == "delete") {
     data.nomorPertandingan -= atlet.nomorPertandingan;
-    data.pembayaran.tagihan -= atlet.nomorPertandingan * biayaAtlet;
+    data.tagihan -= atlet.nomorPertandingan * biayaAtlet;
   }
 
   try {

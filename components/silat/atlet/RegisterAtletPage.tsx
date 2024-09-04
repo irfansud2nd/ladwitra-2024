@@ -1,4 +1,4 @@
-import { JenisPertandingan } from "@/utils/silat/atlet/atletConstats";
+import { JenisPertandingan } from "@/utils/silat/atlet/atletConstants";
 import RegisterAtletDialog from "./RegisterAtletDialog";
 import RegisteredAtletTable from "./RegisteredAtletTable";
 import PersonLoading from "@/components/loadings/PersonLoading";

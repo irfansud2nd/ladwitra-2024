@@ -23,7 +23,7 @@ import {
   jenisPertandingan,
   tingkatanKategoriSilat,
   unregisteredAtletValue,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import {
   getPertandinganId,
   selectCategorySilat,
@@ -132,8 +132,8 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
         resetForm();
       } else {
         dispatch(setCountNomorPertandinganClient(1));
-        let newKontingen: KontingenState = kontingen;
-        newKontingen.pembayaran.tagihan += biayaAtlet;
+        let newKontingen: KontingenState = { ...kontingen };
+        newKontingen.tagihan += biayaAtlet;
         newKontingen.nomorPertandingan += 1;
         const { kontingen: updatedKontingen } = await updateKontingen(
           newKontingen,
@@ -206,19 +206,19 @@ const RegisterAtletForm = ({ setOpen, jenis }: Props) => {
                 />
                 <InputText
                   label="Tinggi Badan"
-                  name="atlet.badan.tinggi"
+                  name="atlet.tinggiBadan"
                   helperText="(CM)"
                   formik={props}
-                  forceValue={atlet.badan.tinggi}
+                  forceValue={atlet.tinggiBadan}
                   forceDisabled
                   showOnEditOnly
                 />
                 <InputText
                   label="Berat Badan"
-                  name="atlet.badan.berat"
+                  name="atlet.beratBadan"
                   helperText="(KG)"
                   formik={props}
-                  forceValue={atlet.badan.berat}
+                  forceValue={atlet.beratBadan}
                   forceDisabled
                   showOnEditOnly
                 />

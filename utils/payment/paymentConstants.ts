@@ -1,35 +1,46 @@
 import * as Yup from "yup";
 export type PaymentState = {
   id: string;
-  pembayaran: {
-    total: number;
-    waktu: number;
-  };
-  bukti: {
-    file?: undefined;
-    downloadUrl: string;
-  };
+  totalPembayaran: number;
+  waktuPembayaran: number;
+  buktiFile: File | undefined;
+  buktiUrl: string;
+  downloadBuktiUrl: string;
   creatorEmail: string;
   noHp: string;
-  confirmed: {
-    state: boolean;
-    by: string;
-  };
+  confirmed: boolean;
+  confirmedBy: string;
   source: "jaipong" | "silat";
 };
 
+// id: string;
+// pembayaran: {
+//   total: number;
+//   waktu: number;
+// };
+// bukti: {
+//   file?: undefined;
+//   downloadUrl: string;
+// };
+// creatorEmail: string;
+// noHp: string;
+// confirmed: {
+//   state: boolean;
+//   by: string;
+// };
+// source: "jaipong" | "silat";
+
 export const paymentInitialValue: PaymentState = {
   id: "",
-  pembayaran: {
-    total: 0,
-    waktu: 0,
-  },
-  bukti: {
-    downloadUrl: "",
-  },
+  totalPembayaran: 0,
+  waktuPembayaran: 0,
+  buktiFile: undefined,
+  buktiUrl: "",
+  downloadBuktiUrl: "",
   creatorEmail: "",
   noHp: "",
-  confirmed: { state: false, by: "" },
+  confirmed: false,
+  confirmedBy: "",
   source: "silat",
 };
 

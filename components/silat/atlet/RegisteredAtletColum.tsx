@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstats";
+import { AtletState, biayaAtlet } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { useDispatch, useSelector } from "react-redux";
 import { isAtletPaid, updateAtlet } from "@/utils/silat/atlet/atletFunctions";
@@ -98,18 +98,20 @@ let columns: ColumnDef<AtletState>[] = [
 
           try {
             setLoading(true);
-            const updatedAtlet = await updateAtlet(newAtlet);
-            dispatch(updateAtletRedux(updatedAtlet));
 
-            let newKontingen: KontingenState = kontingen;
+            let newKontingen: KontingenState = { ...kontingen };
 
-            newKontingen.pembayaran.tagihan -= biayaAtlet;
+            newKontingen.tagihan -= biayaAtlet;
             newKontingen.nomorPertandingan -= 1;
+
+            const updatedAtlet = await updateAtlet(newAtlet);
 
             const { kontingen: updatedKontingen } = await updateKontingen(
               newKontingen,
               kontingen
             );
+
+            dispatch(updateAtletRedux(updatedAtlet));
             dispatch(updateKontingenRedux(updatedKontingen));
           } finally {
             setLoading(false);

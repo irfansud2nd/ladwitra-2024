@@ -35,7 +35,7 @@ const InputFile = ({
   const file = values[name];
   let umur;
   if (under17) {
-    umur = calculateAge(values.lahir.tanggal);
+    umur = calculateAge(values.tanggalLahir);
   }
 
   const [imagePreviewSrc, setImagePreviewSrc] = useState("");

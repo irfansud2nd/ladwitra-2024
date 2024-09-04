@@ -9,11 +9,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { useDispatch, useSelector } from "react-redux";
-import { setAtletToEditRedux } from "@/utils/redux/silat/atletsSlice";
+import {
+  deleteAtletRedux,
+  setAtletToEditRedux,
+} from "@/utils/redux/silat/atletsSlice";
 import { deleteAtlet, isAtletPaid } from "@/utils/silat/atlet/atletFunctions";
 import { RootState } from "@/utils/redux/store";
 import useConfirmationDialog from "@/hooks/UseAlertDialog";
@@ -38,12 +41,12 @@ let columns: ColumnDef<AtletState>[] = [
   {
     accessorKey: "tinggiBadan",
     header: "Tinggi Badan",
-    cell: ({ row }) => <div>{row.original.badan.tinggi} CM</div>,
+    cell: ({ row }) => <div>{row.original.tinggiBadan} CM</div>,
   },
   {
     accessorKey: "beratBadan",
     header: "Berat Badan",
-    cell: ({ row }) => <div>{row.original.badan.berat} KG</div>,
+    cell: ({ row }) => <div>{row.original.beratBadan} KG</div>,
   },
   {
     accessorKey: "waktuPendaftaran",
@@ -73,11 +76,11 @@ let columns: ColumnDef<AtletState>[] = [
           ? { cancelLabel: "Baik", cancelOnly: true }
           : undefined;
         const result = await confirm("Hapus Atlet", message, options);
-        result &&
-          deleteAtlet(atlet, kontingen).then(
-            (kontingen) =>
-              kontingen && dispatch(updateKontingenRedux(kontingen))
-          );
+        if (!result) return;
+        const updatedKontingen = await deleteAtlet(atlet, kontingen);
+        dispatch(deleteAtletRedux(atlet));
+        if (!updatedKontingen) return;
+        dispatch(updateKontingenRedux(updatedKontingen));
       };
 
       return (

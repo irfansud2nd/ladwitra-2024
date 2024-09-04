@@ -88,20 +88,12 @@ export type AtletState = {
   creatorEmail: string;
   nama: string;
   NIK: string;
-  idPembayaran: string[];
-  nomorPertandingan: number;
+  tempatLahir: string;
+  tanggalLahir: string;
+  beratBadan: string;
+  tinggiBadan: string;
   alamatLengkap: string;
   jenisKelamin: string;
-  email: string;
-  noHp: string;
-  lahir: {
-    tempat: string;
-    tanggal: string;
-  };
-  badan: {
-    tinggi: string;
-    berat: string;
-  };
   pertandingan: {
     jenis: string;
     tingkatan: string;
@@ -111,22 +103,21 @@ export type AtletState = {
     idPertandingan: string;
     idPembayaran: string;
   }[];
-  kontingen: {
-    id: string;
-    nama: string;
-  };
-  foto: {
-    file?: File;
-    downloadUrl: string;
-  };
-  kk: {
-    file?: File;
-    downloadUrl: string;
-  };
-  ktp: {
-    file?: File;
-    downloadUrl: string;
-  };
+  idPembayaran: string[];
+  nomorPertandingan: number;
+  idKontingen: string;
+  namaKontingen: string;
+  fotoFile: File | undefined;
+  downloadFotoUrl: string;
+  fotoUrl: string;
+  kkFile: File | undefined;
+  kkUrl: string;
+  downloadKkUrl: string;
+  ktpFile: File | undefined;
+  ktpUrl: string;
+  downloadKtpUrl: string;
+  email: string;
+  noHp: string;
 };
 
 // ATLET INITIAL VALUE
@@ -136,33 +127,27 @@ export const atletInitialValue: AtletState = {
   waktuPendaftaran: 0,
   nama: "",
   NIK: "",
-  lahir: {
-    tempat: "",
-    tanggal: "",
-  },
-  badan: {
-    berat: "",
-    tinggi: "",
-  },
+  tempatLahir: "",
+  tanggalLahir: "",
+  beratBadan: "",
+  tinggiBadan: "",
   alamatLengkap: "",
   jenisKelamin: jenisKelaminPeserta[0],
   pertandingan: [],
   pembayaran: [],
   idPembayaran: [],
   nomorPertandingan: 0,
-  kontingen: {
-    id: "",
-    nama: "",
-  },
-  foto: {
-    downloadUrl: "",
-  },
-  kk: {
-    downloadUrl: "",
-  },
-  ktp: {
-    downloadUrl: "",
-  },
+  idKontingen: "",
+  namaKontingen: "",
+  fotoFile: undefined,
+  fotoUrl: "",
+  downloadFotoUrl: "",
+  kkFile: undefined,
+  kkUrl: "",
+  downloadKkUrl: "",
+  ktpFile: undefined,
+  ktpUrl: "",
+  downloadKtpUrl: "",
   email: "",
   noHp: "",
 };

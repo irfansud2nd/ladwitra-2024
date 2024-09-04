@@ -3,7 +3,7 @@ import {
   AtletState,
   jenisPertandingan,
   tingkatanKategoriSilat,
-} from "./atletConstats";
+} from "./atletConstants";
 import { toast } from "sonner";
 import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
@@ -63,24 +63,24 @@ export const sendAtlet = async (
     if (!atlet.creatorEmail) {
       throw { message: "Email pendaftar tidak ditemukan" };
     }
-    if (!atlet.foto.file) throw { message: "Pas foto tidak ditemukan" };
-    if (!atlet.ktp.file) throw { message: "KTP tidak ditemukan" };
-    if (!atlet.kk.file) throw { message: "KK tidak ditemukan" };
+    if (!atlet.fotoFile) throw { message: "Pas foto tidak ditemukan" };
+    if (!atlet.ktpFile) throw { message: "KTP tidak ditemukan" };
+    if (!atlet.kkFile) throw { message: "KK tidak ditemukan" };
 
     // SEND FOTO
     toast.loading("Mengunggah pas foto atlet", { id: toastId });
-    atlet.foto.downloadUrl = await sendFile(atlet.foto.file, fotoUrl);
-    delete atlet.foto.file;
+    atlet.downloadFotoUrl = await sendFile(atlet.fotoFile, fotoUrl);
+    delete atlet.fotoFile;
 
     // SEND KTP
     toast.loading("Mengunggah KTP", { id: toastId });
-    atlet.ktp.downloadUrl = await sendFile(atlet.ktp.file, ktpUrl);
-    delete atlet.ktp.file;
+    atlet.downloadKtpUrl = await sendFile(atlet.ktpFile, ktpUrl);
+    delete atlet.ktpFile;
 
     // SEND KK
     toast.loading("Mengunggah KK", { id: toastId });
-    atlet.kk.downloadUrl = await sendFile(atlet.kk.file, kkUrl);
-    delete atlet.ktp.file;
+    atlet.downloadKkUrl = await sendFile(atlet.kkFile, kkUrl);
+    delete atlet.kkFile;
 
     // ADD ATLET TO KONTINGEN
     toast.loading("Menambahkan atlet ke kontingen", { id: toastId });
@@ -108,24 +108,24 @@ export const updateAtlet = async (
     : undefined;
   try {
     // UPLOAD NEW PAS FOTO
-    if (atlet.foto.file) {
+    if (atlet.fotoFile) {
       withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
-      atlet.foto.downloadUrl = await sendFile(atlet.foto.file, fotoUrl);
-      delete atlet.foto.file;
+      atlet.downloadFotoUrl = await sendFile(atlet.fotoFile, fotoUrl);
+      delete atlet.fotoFile;
     }
 
     // UPLOAD NEW KTP
-    if (atlet.ktp.file) {
+    if (atlet.ktpFile) {
       withStatus && toast.loading("Memperbaharui KTP", { id: toastId });
-      atlet.ktp.downloadUrl = await sendFile(atlet.ktp.file, ktpUrl);
-      delete atlet.ktp.file;
+      atlet.downloadKtpUrl = await sendFile(atlet.ktpFile, ktpUrl);
+      delete atlet.ktpFile;
     }
 
     // UPLOAD NEW KK
-    if (atlet.kk.file) {
+    if (atlet.kkFile) {
       withStatus && toast.loading("Memperbaharui KK", { id: toastId });
-      atlet.kk.downloadUrl = await sendFile(atlet.kk.file, kkUrl);
-      delete atlet.kk.file;
+      atlet.downloadKkUrl = await sendFile(atlet.kkFile, kkUrl);
+      delete atlet.kkFile;
     }
 
     withStatus && toast.loading("Memperbaharui atlet", { id: toastId });
@@ -143,7 +143,7 @@ export const deleteAtlet = async (
   dataAtlet: AtletState,
   dataKontingen?: KontingenState
 ) => {
-  const withStatus = dataKontingen ? false : true;
+  const withStatus = !!dataKontingen;
   const toastId = withStatus ? toast.loading("Menghapus atlet") : undefined;
 
   let atlet: AtletState = dataAtlet;

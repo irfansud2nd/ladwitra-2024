@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import TableSortButton from "@/components/utils/tabel/TableSortButton";
 import { formatDate } from "@/utils/functions";
 import { getPertandinganId } from "@/utils/silat/atlet/atletFunctions";
@@ -53,9 +53,7 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
   {
     id: "Tanggal Lahir",
     header: "Tanggal Lahir",
-    cell: ({ row }) => (
-      <div>{formatDate(row.original.lahir.tanggal, true)}</div>
-    ),
+    cell: ({ row }) => <div>{formatDate(row.original.tanggalLahir, true)}</div>,
   },
   {
     id: "Alamat Lengkap",
@@ -66,13 +64,13 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
     id: "Tinggi Badan",
     header: "Tinggi Badan",
     accessorKey: "tinggiBadan",
-    cell: ({ row }) => <div>{row.original.badan.tinggi} CM</div>,
+    cell: ({ row }) => <div>{row.original.tinggiBadan} CM</div>,
   },
   {
     id: "Berat Badan",
     header: "Berat Badan",
     accessorKey: "beratBadan",
-    cell: ({ row }) => <div>{row.original.badan.berat} KG</div>,
+    cell: ({ row }) => <div>{row.original.beratBadan} KG</div>,
   },
   {
     id: "Pertandingan",
@@ -157,14 +155,14 @@ export const AtletColumnAdmin: ColumnDef<AtletState>[] = [
         let landscape = false;
         switch (tipe) {
           case "Pas Foto":
-            url = atlet.foto.downloadUrl;
+            url = atlet.downloadFotoUrl;
             break;
           case "KK":
-            url = atlet.kk.downloadUrl;
+            url = atlet.downloadKkUrl;
             landscape = true;
             break;
           case "KTP":
-            url = atlet.ktp.downloadUrl;
+            url = atlet.downloadKtpUrl;
             landscape = true;
             break;
         }

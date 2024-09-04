@@ -2,7 +2,7 @@ import axios from "axios";
 import { axiosFileConfig } from "../constants";
 import { Person, SetFieldValue } from "./FormConstants";
 import { OfficialState } from "../silat/official/officialConstants";
-import { AtletState } from "../silat/atlet/atletConstats";
+import { AtletState } from "../silat/atlet/atletConstants";
 import { toast } from "sonner";
 import {
   deleteOfficial,
@@ -54,16 +54,16 @@ export const deletePersons = async (
         });
         switch (persontType) {
           case "official":
-            await deleteOfficial(persons[0] as OfficialState);
+            await deleteOfficial(persons[i] as OfficialState);
             break;
           case "atlet":
-            await deleteAtlet(persons[0] as AtletState);
+            await deleteAtlet(persons[i] as AtletState);
             break;
           case "penari":
-            await deletePenari(persons[0] as PenariState);
+            await deletePenari(persons[i] as PenariState);
             break;
           case "koreografer":
-            await deleteKoreografer(persons[0] as KoreograferState);
+            await deleteKoreografer(persons[i] as KoreograferState);
             break;
         }
       }
@@ -127,7 +127,7 @@ export const getFileUrl = (
   id: string
 ) => {
   return {
-    fotoUrl: `${type}s/foto/${id}`,
+    fotoUrl: `${type}s/pasFoto/${id}`,
     kkUrl: `${type}s/kk/${id}`,
     ktpUrl: `${type}s/ktp/${id}`,
     buktiUrl: `payments/${id}`,

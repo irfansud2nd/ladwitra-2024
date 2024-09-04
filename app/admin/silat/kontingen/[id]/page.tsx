@@ -29,11 +29,11 @@ const page = ({ params }: { params: { id: string } }) => {
 
   const fetchedOfficials = useSelector(
     (state: RootState) => state.officials.all
-  ).filter((official) => official.kontingen.id == idKontingen);
+  ).filter((official) => official.idKontingen == idKontingen);
   const [officials, setOfficials] = useState(fetchedOfficials);
 
   const atlets = useSelector((state: RootState) => state.atlets.all).filter(
-    (atlet) => atlet.kontingen.id == idKontingen
+    (atlet) => atlet.idKontingen == idKontingen
   );
 
   const dispatch = useDispatch();

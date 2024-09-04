@@ -50,12 +50,12 @@ export const SanggarColumnAdmin: ColumnDef<SanggarState>[] = [
     accessorKey: "totalPembayaran",
     header: "Pembayaran",
     cell: ({ row }) => {
-      const { total, tagihan } = row.original.pembayaran;
-      if (total == 0 && tagihan > 0)
+      const { totalPembayaran, tagihan } = row.original;
+      if (totalPembayaran == 0 && tagihan > 0)
         return <div className="text-red-500">Belum dibayar</div>;
-      if (total < tagihan)
+      if (totalPembayaran < tagihan)
         return <div className="text-yellow-500">Belum lunas</div>;
-      if (total >= tagihan) {
+      if (totalPembayaran >= tagihan) {
         return <div className="text-green-500">Lunas</div>;
       }
     },

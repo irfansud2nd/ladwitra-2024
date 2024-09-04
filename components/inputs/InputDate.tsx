@@ -11,7 +11,7 @@ type InputDateProps = {
 };
 const InputDate = ({ formik, showOnEditOnly }: InputDateProps) => {
   const { values, setFieldValue, isSubmitting } = formik;
-  const value = values.lahir.tanggal;
+  const value = values.tanggalLahir;
   return (
     <div
       className={`input_container 

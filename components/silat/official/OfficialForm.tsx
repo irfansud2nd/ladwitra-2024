@@ -84,8 +84,8 @@ const OfficialForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (kontingen) {
-      !values.kontingen.id && setFieldValue("kontingen.id", kontingen.id);
-      !values.kontingen.nama && setFieldValue("kontingen.nama", kontingen.nama);
+      !values.idKontingen && setFieldValue("idKontingen", kontingen.id);
+      !values.namaKontingen && setFieldValue("namaKontingen", kontingen.nama);
     }
     if (officialToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, officialToEdit);

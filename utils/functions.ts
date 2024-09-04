@@ -10,9 +10,40 @@ export const capitalize = (text: string, collection: boolean = false) => {
 
 // TOAST FIREBASE ERROR
 export const toastFirebaseError = (error: any, id?: string | number) => {
-  toast.error(`${error.response.data.message} | ${error.response.data.code}`, {
-    id,
-  });
+  const getNestedProperty = (obj: any, property: string): any => {
+    if (obj == null) return undefined;
+
+    if (obj.hasOwnProperty(property)) {
+      return obj[property];
+    }
+
+    for (const key in obj) {
+      if (obj[key] && typeof obj[key] === "object") {
+        const result = getNestedProperty(obj[key], property);
+        if (result !== undefined) {
+          return result;
+        }
+      }
+    }
+
+    return undefined;
+  };
+
+  let message: string = error;
+  let code: string | undefined = undefined;
+
+  if (typeof error != "string") {
+    message = getNestedProperty(error, "message") ?? "Something went wrong";
+    code = getNestedProperty(error, "code") ?? undefined;
+  }
+
+  // console.log({ error });
+  // console.log({ message });
+  // console.log({ code });
+  let string = message;
+  if (code) string += ` | ${code}`;
+
+  toast.error(string, { id });
 };
 
 //COMPARE FOR DATA SORTER

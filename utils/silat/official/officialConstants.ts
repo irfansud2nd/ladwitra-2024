@@ -14,14 +14,11 @@ export type OfficialState = {
   nama: string;
   jenisKelamin: string;
   jabatan: string;
-  kontingen: {
-    id: string;
-    nama: string;
-  };
-  foto: {
-    file?: File;
-    downloadUrl: string;
-  };
+  idKontingen: string;
+  namaKontingen: string;
+  fotoFile: File | undefined;
+  downloadFotoUrl: string;
+  fotoUrl: string;
 };
 
 // OFFICIAL INITIAL VALUE
@@ -32,13 +29,11 @@ export const officialInitialValue: OfficialState = {
   nama: "",
   jenisKelamin: jenisKelaminDewasa[0],
   jabatan: jabatanOfficials[0],
-  kontingen: {
-    nama: "",
-    id: "",
-  },
-  foto: {
-    downloadUrl: "",
-  },
+  idKontingen: "",
+  namaKontingen: "",
+  fotoFile: undefined,
+  downloadFotoUrl: "",
+  fotoUrl: "",
 };
 
 // OFFICIAL VALIDATION SCHEMA

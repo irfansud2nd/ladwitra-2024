@@ -29,15 +29,12 @@ export const sendKoreografer = async (
     if (!koreografer.creatorEmail) {
       throw { message: "Email pendaftar tidak ditemukan" };
     }
-    if (!koreografer.foto.file) throw { message: "Pas foto tidak ditemukan" };
+    if (!koreografer.fotoFile) throw { message: "Pas foto tidak ditemukan" };
 
     // SEND FOTO
     toast.loading("Mengunggah pas foto koreografer", { id: toastId });
-    koreografer.foto.downloadUrl = await sendFile(
-      koreografer.foto.file,
-      fotoUrl
-    );
-    delete koreografer.foto.file;
+    koreografer.downloadFotoUrl = await sendFile(koreografer.fotoFile, fotoUrl);
+    delete koreografer.fotoFile;
 
     // ADD OFFIICAL TO SANGGAR
     toast.loading("Menambahkan koreografer ke sanggar", { id: toastId });
@@ -65,13 +62,13 @@ export const updateKoreografer = async (
     : undefined;
   try {
     // UPLOAD NEW PAS FOTO
-    if (koreografer.foto.file) {
+    if (koreografer.fotoFile) {
       withStatus && toast.loading("Memperbaharui pas foto", { id: toastId });
-      koreografer.foto.downloadUrl = await sendFile(
-        koreografer.foto.file,
+      koreografer.downloadFotoUrl = await sendFile(
+        koreografer.fotoFile,
         fotoUrl
       );
-      delete koreografer.foto.file;
+      delete koreografer.fotoFile;
     }
 
     // UPDATE KOREOGRAFER

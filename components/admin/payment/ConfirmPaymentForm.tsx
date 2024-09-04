@@ -30,12 +30,12 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
     values: ConfirmPaymentState
   ) => {
     if (payment.confirmed) {
-      !values.confirmedBy && setFieldValue("confirmedBy", payment.confirmed.by);
+      !values.confirmedBy && setFieldValue("confirmedBy", payment.confirmedBy);
       return;
     }
     !values.totalPembayaran &&
-      payment.pembayaran.total &&
-      setFieldValue("totalPembayaran", payment.pembayaran.total);
+      payment.totalPembayaran &&
+      setFieldValue("totalPembayaran", payment.totalPembayaran);
     !values.confirmedBy &&
       setFieldValue("confirmedBy", session.data?.user?.email);
   };
@@ -48,8 +48,8 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
     const result = await confirm(title, "Apakah anda yakin?");
 
     result &&
-      confirmPayment(payment, values.confirmedBy, confirmed.state).then(
-        (payment) => dispatch(updatePaymentRedux(payment))
+      confirmPayment(payment, values.confirmedBy, confirmed).then((payment) =>
+        dispatch(updatePaymentRedux(payment))
       );
   };
 
@@ -68,7 +68,7 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
               <div className="flex gap-1 flex-col sm:flex-row">
                 <ShowFile
                   label="Bukti Pembayararan"
-                  src={payment.bukti.downloadUrl}
+                  src={payment.downloadBuktiUrl}
                 />
                 <div className="input_group justify-normal">
                   <InputText
@@ -90,7 +90,7 @@ const ConfirmPaymentForm = ({ payment }: Props) => {
                     onClick={() =>
                       props.setFieldValue(
                         "confirmedTotalPembayaran",
-                        payment.pembayaran.total
+                        payment.totalPembayaran
                         )
                       }
                       >

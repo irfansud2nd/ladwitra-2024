@@ -12,7 +12,7 @@ import { FilteredAtletColumnAdmin } from "@/components/admin/silat/atlet/AtletCo
 import {
   jenisPertandingan,
   tingkatanKategoriSilat,
-} from "@/utils/silat/atlet/atletConstats";
+} from "@/utils/silat/atlet/atletConstants";
 import SelectComponent from "@/components/inputs/SelectComponent";
 import { jenisKelaminPeserta } from "@/utils/form/FormConstants";
 import {

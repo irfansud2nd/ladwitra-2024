@@ -9,11 +9,9 @@ export const kontingenInitialValue: KontingenState = {
   atlets: [],
   nomorPertandingan: 0,
   officials: [],
-  pembayaran: {
-    ids: [],
-    total: 0,
-    tagihan: 0,
-  },
+  idPembayaran: [],
+  totalPembayaran: 0,
+  tagihan: 0,
 };
 
 // KONTINGEN STATE
@@ -25,11 +23,9 @@ export type KontingenState = {
   atlets: string[];
   nomorPertandingan: number;
   officials: string[];
-  pembayaran: {
-    ids: string[];
-    total: number;
-    tagihan: number;
-  };
+  idPembayaran: string[];
+  totalPembayaran: number;
+  tagihan: number;
 };
 
 // KONTINGEN VALIDATION SCHEMA

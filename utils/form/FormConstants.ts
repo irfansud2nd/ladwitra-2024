@@ -1,6 +1,6 @@
 import { FormikErrors, FormikState } from "formik";
 import { OfficialState } from "../silat/official/officialConstants";
-import { AtletState } from "../silat/atlet/atletConstats";
+import { AtletState } from "../silat/atlet/atletConstants";
 import { PenariState } from "../jaipong/penari/penariConstants";
 import { KoreograferState } from "../jaipong/koreografer/koreograferConstants";
 

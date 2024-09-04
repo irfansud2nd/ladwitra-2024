@@ -82,8 +82,8 @@ const PenariForm = ({ setOpen }: Props) => {
     !values.creatorEmail &&
       setFieldValue("creatorEmail", session.data?.user?.email);
     if (sanggar) {
-      !values.sanggar.id && setFieldValue("sanggar.id", sanggar.id);
-      !values.sanggar.nama && setFieldValue("sanggar.nama", sanggar.nama);
+      !values.idSanggar && setFieldValue("idSanggar", sanggar.id);
+      !values.namaSanggar && setFieldValue("namaSanggar", sanggar.nama);
     }
     if (penariToEdit?.id && !values.id) {
       setFieldValues(setFieldValue, penariToEdit);

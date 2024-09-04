@@ -40,7 +40,7 @@ import {
   setPaymentToConfirmRedux,
 } from "@/utils/redux/silat/paymentsSlice";
 import { RootState } from "@/utils/redux/store";
-import { AtletState } from "@/utils/silat/atlet/atletConstats";
+import { AtletState } from "@/utils/silat/atlet/atletConstants";
 import { getPertandinganId } from "@/utils/silat/atlet/atletFunctions";
 import { KontingenState } from "@/utils/silat/kontingen/kontingenConstants";
 import axios from "axios";
@@ -211,21 +211,21 @@ const page = ({
             <TableRow>
               <TableCell>{idPembayaran}</TableCell>
               <TableCell>{group?.nama ?? <InlineLoading />}</TableCell>
-              <TableCell>{formatToRupiah(payment.pembayaran.total)}</TableCell>
+              <TableCell>{formatToRupiah(payment.totalPembayaran)}</TableCell>
               <TableCell>
                 {payment.confirmed
-                  ? `Dikonfirmasi oleh ${payment.confirmed.by}`
+                  ? `Dikonfirmasi oleh ${payment.confirmedBy}`
                   : "Menunggu Konfirmasi"}
               </TableCell>
               <TableCell>{payment.creatorEmail}</TableCell>
               <TableCell>{payment.noHp}</TableCell>
-              <TableCell>{formatDate(payment.pembayaran.waktu)}</TableCell>
+              <TableCell>{formatDate(payment.waktuPembayaran)}</TableCell>
               <TableCell>
                 <Button
                   variant={"ghost"}
                   size={"sm"}
                   onClick={() =>
-                    showFile("Bukti Pembayaran", payment.bukti.downloadUrl)
+                    showFile("Bukti Pembayaran", payment.downloadBuktiUrl)
                   }
                 >
                   Show

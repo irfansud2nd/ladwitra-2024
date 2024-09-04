@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { updateKontingen } from "../silat/kontingen/kontingenFunctions";
 import { KontingenState } from "../silat/kontingen/kontingenConstants";
-import { AtletState } from "../silat/atlet/atletConstats";
+import { AtletState } from "../silat/atlet/atletConstants";
 import { getFileUrl, sendFile, updatePersons } from "../form/FormFunctions";
 import { collection, doc } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
@@ -74,20 +74,20 @@ export const sendJaipongPayment = async (
     payment: PaymentState;
   } = {
     penaris: updatedPenaris,
-    sanggar: sanggar,
+    sanggar: { ...sanggar },
     payment: payment,
   };
 
   try {
-    if (!payment.bukti.file) throw { message: "Foto bukti tidak ditemukan" };
+    if (!payment.buktiFile) throw { message: "Foto bukti tidak ditemukan" };
     // UPDATE SANGGAR
-    result.sanggar.pembayaran = {
-      ...result.sanggar.pembayaran,
-      ids: [...result.sanggar.pembayaran.ids, idPembayaran],
-      total:
-        result.sanggar.pembayaran.total +
-        Number(formatToRupiah(payment.pembayaran.total, true)),
-    };
+    result.sanggar.idPembayaran = [
+      ...result.sanggar.idPembayaran,
+      idPembayaran,
+    ];
+    result.sanggar.totalPembayaran += Number(
+      formatToRupiah(payment.totalPembayaran, true)
+    );
 
     result.sanggar = (
       await updateSanggar(result.sanggar, sanggar, { prevToastId: toastId })
@@ -103,20 +103,20 @@ export const sendJaipongPayment = async (
 
     // UPLOAD BUKTI
     toast.loading("Mengunggah bukti pembayaran", { id: toastId });
-    result.payment.bukti.downloadUrl = await sendFile(
-      payment.bukti.file,
+    result.payment.downloadBuktiUrl = await sendFile(
+      payment.buktiFile,
       buktiUrl
     );
-    delete result.payment.bukti.file;
+    delete result.payment.buktiFile;
 
     // SEND PAYMANT
     result.payment = {
       ...result.payment,
       id: idPembayaran,
-      pembayaran: {
-        total: Number(formatToRupiah(result.payment.pembayaran.total, true)),
-        waktu: Date.now(),
-      },
+      totalPembayaran: Number(
+        formatToRupiah(result.payment.totalPembayaran, true)
+      ),
+      waktuPembayaran: Date.now(),
       source: "jaipong",
     };
 
@@ -178,21 +178,21 @@ export const sendSilatPayment = async (
     payment: PaymentState;
   } = {
     atlets: updatedAtlets,
-    kontingen: kontingen,
+    kontingen: { ...kontingen },
     payment: payment,
   };
 
   try {
-    if (!payment.bukti.file) throw { message: "Foto bukti tidak ditemukan" };
+    if (!payment.buktiFile) throw { message: "Foto bukti tidak ditemukan" };
 
     // UPDATE KONTINGEN
-    result.kontingen.pembayaran = {
-      ...result.kontingen.pembayaran,
-      ids: [...result.kontingen.pembayaran.ids, idPembayaran],
-      total:
-        result.kontingen.pembayaran.total +
-        Number(formatToRupiah(payment.pembayaran.total, true)),
-    };
+    result.kontingen.idPembayaran = [
+      ...result.kontingen.idPembayaran,
+      idPembayaran,
+    ];
+    result.kontingen.totalPembayaran += Number(
+      formatToRupiah(payment.totalPembayaran, true)
+    );
 
     result.kontingen = (
       await updateKontingen(result.kontingen, kontingen, {
@@ -210,20 +210,20 @@ export const sendSilatPayment = async (
 
     // UPLOAD BUKTI
     toast.loading("Mengunggah bukti pembayaran", { id: toastId });
-    result.payment.bukti.downloadUrl = await sendFile(
-      payment.bukti.file,
+    result.payment.downloadBuktiUrl = await sendFile(
+      payment.buktiFile,
       buktiUrl
     );
-    delete result.payment.bukti.file;
+    delete result.payment.buktiFile;
 
     // SEND PAYMANT
     result.payment = {
       ...result.payment,
       id: idPembayaran,
-      pembayaran: {
-        total: Number(formatToRupiah(result.payment.pembayaran.total, true)),
-        waktu: Date.now(),
-      },
+      totalPembayaran: Number(
+        formatToRupiah(result.payment.totalPembayaran, true)
+      ),
+      waktuPembayaran: Date.now(),
       source: "silat",
     };
 
@@ -248,11 +248,10 @@ export const deletePayment = async (
   const toastId = toast.loading("Menghapus Pembayaran");
 
   let newGroup: KontingenState | SanggarState = { ...group };
-  newGroup.pembayaran.ids = newGroup.pembayaran.ids.filter(
+  newGroup.idPembayaran = newGroup.idPembayaran.filter(
     (idPembayaran) => idPembayaran != payment.id
   );
-  newGroup.pembayaran.total =
-    newGroup.pembayaran.total - payment.pembayaran.total;
+  newGroup.totalPembayaran = newGroup.totalPembayaran - payment.totalPembayaran;
 
   const changePesertaData = (peserta: AtletState | PenariState) => ({
     ...peserta,
@@ -329,10 +328,8 @@ export const confirmPayment = async (
 
     const newPayment: PaymentState = {
       ...payment,
-      confirmed: {
-        state: !unconfirm,
-        by: unconfirm ? "" : email,
-      },
+      confirmed: !unconfirm,
+      confirmedBy: unconfirm ? "" : email,
     };
 
     await axios.patch("/api/payments", newPayment);

@@ -30,7 +30,7 @@ export const ConfirmedColumn: ColumnDef<PaymentState>[] = [
     accessorKey: "totalPembayaran",
     header: "Jumlah Transaksi",
     cell: ({ row }) => (
-      <div>{formatToRupiah(row.original.pembayaran.total)}</div>
+      <div>{formatToRupiah(row.original.totalPembayaran)}</div>
     ),
   },
   {
@@ -44,7 +44,7 @@ export const ConfirmedColumn: ColumnDef<PaymentState>[] = [
   {
     accessorKey: "waktuPembayaran",
     header: "Waktu Pembayaran",
-    cell: ({ row }) => <div>{formatDate(row.original.pembayaran.waktu)}</div>,
+    cell: ({ row }) => <div>{formatDate(row.original.waktuPembayaran)}</div>,
   },
   {
     header: "Aksi",
