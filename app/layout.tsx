@@ -11,8 +11,8 @@ import Toast from "@/components/ui/Toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ladwitra Championship 2024",
-  description: "Informasi dan Pendaftaran Ladwitra Championship 2024",
+  title: "Ladwimatra Championship III 2025",
+  description: "Informasi dan Pendaftaran Ladwimatra Championship III 2025",
 };
 
 export default async function RootLayout({
