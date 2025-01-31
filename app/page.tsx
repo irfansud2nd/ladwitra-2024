@@ -6,44 +6,45 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <main
-      style={{ backgroundImage: "url(/images/background.png)" }}
-      className="bg-cover bg-center"
+      // style={{ backgroundImage: "url(/images/background.png)" }}
+      // className="bg-cover bg-center"
+      className="temp_bg"
     >
       <div className="bg-background/65 w-full h-full flex justify-center items-center">
         <div className="backdrop-blur-sm flex flex-col items-center justify-center w-full py-10">
           <h1 className="text-4xl font-extrabold mb-5 text-center">
-            Selamat Datang !
+            Segera Hadir !
             <br />
             <span className="text-3xl font-bold">
-              Peserta Ladwitra Championship 2024
+              Ladwimatra Championship III 2025
             </span>
           </h1>
           <div className="flex gap-x-5 mb-2">
             <Link
-              href={"https://maps.app.goo.gl/okajp1pajDAp6bvq7"}
+              href={"https://maps.app.goo.gl/pf3SmMKcd489vbx66"}
               className="border-b-2 hover:border-foreground border-transparent transition-all flex items-center gap-1"
               target="_blank"
             >
               <FaLocationDot />
-              Labschool UPI Cibiru
+              Teras Sunda Cibiru
             </Link>
             <p className="flex items-center gap-1">
               <FaCalendarAlt />
-              18 - 19 Mei 2024
+              Sabtu, 19 April 2025
             </p>
           </div>
           <div className="flex gap-x-10 gap-y-5 flex-col sm:flex-row">
-            <Button>
+            {/* <Button>
               <Link href={"silat/atlet"}>Pendaftaran Pencak Silat</Link>
-            </Button>
+            </Button> */}
             <Button>
               <Link href={"proposal"} target="_blank">
                 Proposal
               </Link>
             </Button>
-            <Button>
+            {/* <Button>
               <Link href={"jaipong/penari"}>Pendaftaran Tari Jaipong</Link>
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

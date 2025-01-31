@@ -5,6 +5,7 @@ import ToggleSideMenu from "@/components/silat/ToggleSideMenu";
 import Container from "@/components/ui/container";
 import ReduxProvider from "@/components/utils/ReduxProvider";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Pendaftaran Silat - Ladwitra",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 const layout = ({ children }: { children: React.ReactNode }) => {
+  return notFound();
   return (
     <Container>
       <IsLoggedIn>
